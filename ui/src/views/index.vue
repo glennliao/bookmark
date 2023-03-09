@@ -1,0 +1,298 @@
+<template>
+  <!--  <HeaderBar/>-->
+  <div class="px-4 py-2 bookmark-area" v-contextmenu:contextmenu>
+
+    <div class="toggle-bar" @click="groupsVisible = !groupsVisible">
+      <div class="n-layout-toggle-bar">
+        <div class="n-layout-toggle-bar__top"></div>
+        <div class="n-layout-toggle-bar__bottom"></div>
+      </div>
+    </div>
+
+    <div class="p-2 ">
+      <ul class="rounded-box bg-base-100 menu menu-horizontal bg-base-100 shadow">
+        <li :class="{'active':isHome}">
+          <span @click="toHome" >
+            ⭐
+          </span>
+        </li>
+        <li v-for="item in cateTree.children" :key="item.cateId" :class="{'active':!isHome && curCate.includes(item.cateId)}">
+          <a-dropdown trigger="hover">
+            <template #overlay>
+              <a-menu v-if="item.children" @click="handleMenuClick($event,item.cateId)">
+                <template v-for="item in item.children" :key="item.cateId">
+                  <template v-if="!item.children">
+                    <a-menu-item :key="item.cateId">
+                      {{ item.title }}
+                    </a-menu-item>
+                  </template>
+                  <template v-else>
+                    <SubMemu :key="item.cateId" :menu-info="item"/>
+                  </template>
+                </template>
+              </a-menu>
+            </template>
+
+            <div @click="handleMenuClick({keyPath:[item.cateId]})">
+              <span>
+              {{ item.title }}
+          </span>
+
+            </div>
+          </a-dropdown>
+        </li>
+        <li @click="cateContextmenu">
+          <span>⚙</span>
+        </li>
+      </ul>
+      <div v-if="isHome">
+        <div>🕐 最近访问</div>
+        <div class="flex mt-1">
+          <transition-group appear name="slide-fade" tag="div" class="flex flex-wrap justify-start">
+            <bookmark :simple="true" v-for="item in latestVisitList" :key="item.bmId" :item="item"></bookmark>
+          </transition-group>
+        </div>
+      </div>
+      <div v-else>
+        {{ curCate }}
+        <div class="flex">
+          <transition-group appear name="slide-fade" tag="div" class="flex flex-wrap justify-start">
+            <bookmark v-for="item in bookmarkList" :key="item.bmId" :item="item"></bookmark>
+          </transition-group>
+        </div>
+      </div>
+
+      <cate-manage ref="cateManageRef"/>
+      <bookmark-edit-modal ref="BookmarkModalRef"/>
+
+    </div>
+
+    <div class="absolute" style="right:34px;bottom:32px">
+      <a-button type="primary" @click="openBookmarkModal({})" shape="circle">
+        <template #icon>
+          <PlusOutlined/>
+        </template>
+      </a-button>
+    </div>
+  </div>
+
+  <a-drawer
+    title="Groups"
+    placement="left"
+    :closable="true"
+    v-model:visible="groupsVisible"
+    width="180px"
+  >
+    <div @click="changeGroup(item)" v-for="item in groups" style="cursor: pointer" class="shadow p-2 rounded bg-orange-500 text-white" :key="item.groupId">
+      {{item.title}}
+    </div>
+  </a-drawer>
+
+  <v-contextmenu ref="contextmenu">
+    <v-contextmenu-item @click="openBookmarkModal({})">➕ 新增书签</v-contextmenu-item>
+    <v-contextmenu-item @click="cateContextmenu({})">⚙ 管理分类</v-contextmenu-item>
+  </v-contextmenu>
+</template>
+
+<script lang="ts" setup>
+// import HeaderBar from './layout/Header.vue'
+import { ref } from 'vue'
+import SubMemu from '@/views/components/SubMemu.vue'
+import TreeNodeContent from '@/views/components/treeNodeContent.vue'
+import { useBookmark } from './hook/bookmark'
+import CateManage from '@/views/components/CateManage.vue'
+import BookmarkEditModal from '@/views/components/BookmarkEditModal.vue'
+import Bookmark from '@/views/components/Bookmark.vue'
+import { SettingOutlined, PlusOutlined } from '@ant-design/icons-vue'
+import { apiJson } from '@/api'
+
+const { loadCate, curCate, clickCate, cateTree, bookmarkList, loadGroup, curGroupId, groups } = useBookmark()
+
+loadGroup().then(() => loadCate())
+
+function changeGroup (item) {
+  curGroupId.value = item.groupId
+  loadCate()
+  groupsVisible.value = false
+}
+
+const cateManageRef = ref(null)
+
+function cateContextmenu (action, cate) {
+  cateManageRef.value && cateManageRef.value.open()
+}
+
+function onContextmenu () {
+
+}
+
+const groupsVisible = ref(false)
+
+const isHome = ref(true)
+
+function toHome () {
+  isHome.value = true
+  loadLatest()
+}
+
+const latestVisitList = ref([])
+
+function loadLatest () {
+  apiJson.get({
+    '[]': {
+      BookmarkUse: {
+        '@order': 'updatedAt desc'
+      },
+      Bookmark: {
+        'bmId@': '/BookmarkUse/bmId'
+      },
+      "count": 10
+    }
+  }).then(data => {
+    console.debug(data)
+    latestVisitList.value = data['[]'].map((item: { Bookmark: any; }) => {
+      return item.Bookmark
+    })
+  })
+}
+
+loadLatest()
+
+function handleMenuClick (e, cateId) {
+  // console.log("?", cateId)
+  // curCate.value = e.keyPath
+  clickCate(e.keyPath)
+  isHome.value = false
+}
+
+const BookmarkModalRef = ref()
+
+function openBookmarkModal (item) {
+  BookmarkModalRef.value.open(item)
+}
+
+</script>
+<style scoped lang="scss">
+
+.bookmark-area {
+  height: 100vh;
+  width: 100vw;
+}
+
+.active {
+  border-bottom: 2px solid;
+}
+
+.slide-fade-enter-active {
+  transition: all .4s ease;
+}
+
+.slide-fade-leave-active {
+  transition: all .4s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+
+.slide-fade-enter {
+  transform: translateX(-50px);
+  opacity: .1;
+}
+
+.slide-fade-leave-to {
+  transform: translateX(-50px);
+  opacity: .1;
+}
+
+ .n-layout-toggle-bar:hover .n-layout-toggle-bar__top {
+  transform: rotate(-12deg) scale(1.15) translateY(-2px);
+}
+
+ .n-layout-toggle-bar:hover .n-layout-toggle-bar__bottom {
+  transform: rotate(12deg) scale(1.15) translateY(2px);
+}
+
+ .n-layout-toggle-bar {
+
+  //left: -28px;
+  transform: rotate(180deg);
+
+}
+
+ .n-layout-toggle-bar:hover .n-layout-toggle-bar__top {
+  transform: rotate(12deg) scale(1.15) translateY(-2px);
+}
+
+ .n-layout-toggle-bar:hover .n-layout-toggle-bar__bottom {
+  transform: rotate(-12deg) scale(1.15) translateY(2px);
+}
+
+ .n-layout-toggle-bar:hover .n-layout-toggle-bar__top {
+  transform: rotate(-12deg) scale(1.15) translateY(-2px);
+}
+
+ .n-layout-toggle-bar:hover .n-layout-toggle-bar__bottom {
+  transform: rotate(12deg) scale(1.15) translateY(2px);
+}
+
+ .toggle-bar {
+   --n-bezier: cubic-bezier(0.4, 0, 0.2, 1);
+   --n-toggle-button-color: #FFF;
+   --n-toggle-button-border: 1px solid rgb(239, 239, 245);
+   --n-toggle-bar-color: rgba(191, 191, 191, 1);
+   --n-toggle-bar-color-hover: rgba(153, 153, 153, 1);
+   --n-color: #fff;
+   --n-text-color: rgb(51, 54, 57);
+   --n-border-color: rgb(239, 239, 245);
+   --n-toggle-button-icon-color: rgb(51, 54, 57);
+   position: absolute;
+   left:-4px;
+   top:0;
+   width: 12px;
+   bottom: 0;
+ }
+
+ .n-layout-toggle-bar {
+
+  cursor: pointer;
+  height: 72px;
+  width: 32px;
+  position: absolute;
+  top: calc(50% - 36px);
+  //right: -28px;
+
+}
+
+ .n-layout-toggle-bar .n-layout-toggle-bar__top,  .n-layout-toggle-bar .n-layout-toggle-bar__bottom {
+
+  position: absolute;
+  width: 4px;
+  border-radius: 2px;
+  height: 38px;
+  left: 14px;
+  transition: background-color .3s var(--n-bezier),
+    transform .3s var(--n-bezier);
+
+}
+
+ .n-layout-toggle-bar .n-layout-toggle-bar__bottom {
+
+  position: absolute;
+  top: 34px;
+
+}
+
+ .n-layout-toggle-bar:hover .n-layout-toggle-bar__top {
+  transform: rotate(12deg) scale(1.15) translateY(-2px);
+}
+
+ .n-layout-toggle-bar:hover .n-layout-toggle-bar__bottom {
+  transform: rotate(-12deg) scale(1.15) translateY(2px);
+}
+
+ .n-layout-toggle-bar .n-layout-toggle-bar__top,  .n-layout-toggle-bar .n-layout-toggle-bar__bottom {
+  background-color: var(--n-toggle-bar-color);
+}
+
+ .n-layout-toggle-bar:hover .n-layout-toggle-bar__top,  .n-layout-toggle-bar:hover .n-layout-toggle-bar__bottom {
+  background-color: var(--n-toggle-bar-color-hover);
+}
+
+</style>

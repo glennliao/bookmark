@@ -1,0 +1,175 @@
+[
+  {
+    "name": "bookmark",
+    "alias": "Bookmark",
+    "get": ["UNKNOWN","LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "head":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "gets":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "heads":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "post":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "put":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "delete":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "rowKey": "bm_id",
+    "fieldsGet": {
+      "default": {
+        "in": {
+          "cate_id": ["*"]
+        },
+        "out": {
+          "bm_id": "",
+          "created_at": "",
+          "created_by": "",
+          "url": "",
+          "title": "",
+          "remark": "",
+          "description": "",
+          "icon": ""
+        }
+      }
+    },
+    "rowKeyGen": "idgen",
+    "executor": "default"
+  },
+  {
+    "name": "bookmark_use",
+    "alias": "BookmarkUse",
+    "get": ["UNKNOWN","LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "head":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "gets":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "heads":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "post":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "put":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "delete":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "rowKey": "id",
+    "fieldsGet": {
+      "default": {
+        "in": {
+
+        },
+        "out": {
+
+        }
+      }
+    },
+    "rowKeyGen": "",
+    "executor": "default"
+  },
+  {
+    "name": "bookmark_cate",
+    "alias": "BookmarkCate",
+    "get": ["UNKNOWN","LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "head":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "gets":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "heads":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "post":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "put":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "delete":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "rowKey": "cate_id",
+    "fieldsGet": {
+      "default": {
+        "in": {},
+        "out": {
+          "cate_id": "",
+          "group_id": "",
+          "parent_id": "",
+          "created_at": "",
+          "created_by": "",
+          "title": ""
+        }
+      }
+    },
+    "rowKeyGen": "idgen",
+    "executor": "default"
+  },
+  {
+    "name": "groups",
+    "alias": "Groups",
+    "get": ["UNKNOWN","LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "head":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "gets":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "heads":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "post":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "put":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "delete":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "rowKey": "group_id",
+    "fieldsGet": {
+      "default": {
+        "in": {},
+        "out": {
+          "group_id": "",
+          "created_at": "",
+          "created_by": "",
+          "title": ""
+        }
+      }
+    },
+    "rowKeyGen": "idgen",
+    "executor": "default"
+  },
+  {
+    "name": "group_user",
+    "alias": "GroupUser",
+    "get": ["UNKNOWN","LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "head":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "gets":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "heads":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "post":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "put":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "delete":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "rowKey": "id",
+    "fieldsGet": {
+      "default": {
+        "in": {},
+        "out": {
+
+        }
+      }
+    },
+    "rowKeyGen": "",
+    "executor": "default"
+  },
+  {
+    "name": "group_bookmark",
+    "alias": "GroupBookmark",
+    "get": ["UNKNOWN","LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "head":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "gets":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "heads":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "post":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "put":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "delete":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "rowKey": "id",
+    "fieldsGet": {
+      "default": {
+        "in": {},
+        "out": {
+
+        }
+      }
+    },
+    "rowKeyGen": "",
+    "executor": "default"
+  },
+  {
+    "name": "user",
+    "alias": "User",
+    "get": ["UNKNOWN","LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "head":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "gets":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "heads":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "post":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "put":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "delete":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "rowKey": "user_id",
+    "fieldsGet": {
+      "default": {
+        "in": {},
+        "out": {
+
+        }
+      }
+    },
+    "rowKeyGen": "idgen",
+    "executor": "default"
+  }
+]

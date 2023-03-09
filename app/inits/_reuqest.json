@@ -1,0 +1,156 @@
+[
+  {
+    "tag": "Bookmark",
+    "version": "1",
+    "method": "POST",
+    "structure": {
+      "Bookmark": {},
+      "GroupBookmark": {}
+    },
+    "execQueue": ["Bookmark","GroupBookmark"]
+  },
+  {
+    "tag": "Bookmark",
+    "version": "1",
+    "method": "PUT",
+    "structure": {
+    }
+  },
+  {
+    "tag": "Bookmark",
+    "version": "1",
+    "method": "DELETE",
+    "structure": {
+    }
+  },
+  {
+    "tag": "BookmarkCate",
+    "version": "1",
+    "method": "POST",
+    "structure": {
+    }
+  },
+  {
+    "tag": "BookmarkCate",
+    "version": "1",
+    "method": "PUT",
+    "structure": {
+    }
+  },
+  {
+    "tag": "BookmarkCate",
+    "version": "1",
+    "method": "DELETE",
+    "structure": {
+    },
+    "Executor": {}
+  },
+  {
+    "tag": "Groups",
+    "version": "1",
+    "method": "POST",
+    "structure": {
+      "Groups": {},
+      "GroupUser[]": {}
+    },
+    "Executor": {},
+    "execQueue": ["Groups","GroupUser[]"]
+  },
+  {
+    "tag": "Groups",
+    "version": "1",
+    "method": "PUT",
+    "structure": {
+    },
+    "Executor": {}
+  },
+  {
+    "tag": "Groups",
+    "version": "1",
+    "method": "DELETE",
+    "structure": {
+    },
+    "Executor": {}
+  },
+  {
+    "tag": "GroupUser",
+    "version": "1",
+    "method": "POST",
+    "structure": {
+    },
+    "Executor": {}
+  },
+  {
+    "tag": "GroupUser",
+    "version": "1",
+    "method": "PUT",
+    "structure": {
+    },
+    "Executor": {}
+  },
+  {
+    "tag": "GroupUser",
+    "version": "1",
+    "method": "DELETE",
+    "structure": {
+    },
+    "Executor": {}
+  },
+  {
+    "tag": "GroupBookmark",
+    "version": "1",
+    "method": "POST",
+    "structure": {
+    },
+    "Executor": {}
+  },
+  {
+    "tag": "GroupBookmark",
+    "version": "1",
+    "method": "PUT",
+    "structure": {
+    },
+    "Executor": {}
+  },
+  {
+    "tag": "GroupBookmark",
+    "version": "1",
+    "method": "DELETE",
+    "structure": {
+    },
+    "Executor": {}
+  },
+  {
+    "tag": "User",
+    "version": "1",
+    "method": "POST",
+    "structure": {
+    },
+    "Executor": {}
+  },
+  {
+    "tag": "User",
+    "version": "1",
+    "method": "PUT",
+    "structure": {
+    },
+    "Executor": {}
+  },
+  {
+    "tag": "User",
+    "version": "1",
+    "method": "DELETE",
+    "structure": {
+    },
+    "Executor": {}
+  },
+  {
+    "tag": "User",
+    "version": "1",
+    "method": "DELETE",
+    "structure": {
+    },
+    "Executor": {}
+  }
+
+]

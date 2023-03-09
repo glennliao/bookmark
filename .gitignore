@@ -1,0 +1,6 @@
+.idea
+.vscode
+node_modules
+bookmark.sqlite3
+temp
+packed/dist.go
