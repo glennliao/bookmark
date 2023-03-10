@@ -151,6 +151,17 @@
     "structure": {
     },
     "Executor": {}
+  },
+  {
+    "tag": "BookmarkUse",
+    "version": "1",
+    "method": "POST",
+    "structure": {
+      "BookmarkUse": {
+        "MUST": ["bmId"]
+      }
+    },
+    "Executor": {}
   }
 
 ]

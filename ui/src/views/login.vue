@@ -10,7 +10,7 @@
           <a-input v-model:value="form.email" />
         </a-form-item>
         <a-form-item label="password">
-          <a-input-password v-model:value="form.password" />
+          <a-input-password @pressEnter="handleOk" v-model:value="form.password" />
         </a-form-item>
         <a-form-item :wrapper-col="{ span: 12, offset: 5 }">
           <a-button type="primary" @click="handleOk">登录</a-button>

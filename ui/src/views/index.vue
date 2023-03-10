@@ -10,7 +10,7 @@
     </div>
 
     <div class="p-2 ">
-      <ul class="rounded-box bg-base-100 menu menu-horizontal bg-base-100 shadow">
+      <ul class="rounded-box bg-base-100 menu menu-horizontal bg-base-100 shadow" style="width: auto">
         <li :class="{'active':isHome}">
           <span @click="toHome" >
             ⭐
@@ -19,11 +19,11 @@
         <li v-for="item in cateTree.children" :key="item.cateId" :class="{'active':!isHome && curCate.includes(item.cateId)}">
           <a-dropdown trigger="hover">
             <template #overlay>
-              <a-menu v-if="item.children" @click="handleMenuClick($event,item.cateId)">
-                <template v-for="item in item.children" :key="item.cateId">
-                  <template v-if="!item.children">
-                    <a-menu-item :key="item.cateId">
-                      {{ item.title }}
+              <a-menu v-if="item.children" @click="handleMenuClick">
+                <template v-for="subItem in item.children" :key="subItem.cateId">
+                  <template v-if="!subItem.children">
+                    <a-menu-item :key="item.cateId+'/'+subItem.cateId">
+                      {{ subItem.title }}
                     </a-menu-item>
                   </template>
                   <template v-else>
@@ -54,11 +54,28 @@
         </div>
       </div>
       <div v-else>
-        {{ curCate }}
+
+        <div class="text-sm breadcrumbs" v-if="curCateInfo.parents.length > 0">
+          <ul>
+            <li v-for="item in curCateInfo.parents" :key="item.cateId">{{item.title}}</li>
+          </ul>
+        </div>
+
         <div class="flex">
           <transition-group appear name="slide-fade" tag="div" class="flex flex-wrap justify-start">
             <bookmark v-for="item in bookmarkList" :key="item.bmId" :item="item"></bookmark>
           </transition-group>
+        </div>
+
+        <div class="mt-4">
+          <div className="tabs">
+            <a :className="'tab tab-sm tab-lifted '+(curSubCateId === item.cateId?'tab-active':'')"  v-for="item in curCateInfo.children" :key="item.cateId" @click="clickSubCate(item.cateId)">{{item.title}}</a>
+          </div>
+          <div class="flex mt-2">
+            <transition-group appear name="slide-fade" tag="div" class="flex flex-wrap justify-start">
+              <bookmark v-for="item in curSubCateBookmark" :key="item.bmId" :item="item"></bookmark>
+            </transition-group>
+          </div>
         </div>
       </div>
 
@@ -91,6 +108,7 @@
   <v-contextmenu ref="contextmenu">
     <v-contextmenu-item @click="openBookmarkModal({})">➕ 新增书签</v-contextmenu-item>
     <v-contextmenu-item @click="cateContextmenu({})">⚙ 管理分类</v-contextmenu-item>
+    <v-contextmenu-item @click="logout({})">🔘 退出登录</v-contextmenu-item>
   </v-contextmenu>
 </template>
 
@@ -98,7 +116,6 @@
 // import HeaderBar from './layout/Header.vue'
 import { ref } from 'vue'
 import SubMemu from '@/views/components/SubMemu.vue'
-import TreeNodeContent from '@/views/components/treeNodeContent.vue'
 import { useBookmark } from './hook/bookmark'
 import CateManage from '@/views/components/CateManage.vue'
 import BookmarkEditModal from '@/views/components/BookmarkEditModal.vue'
@@ -107,6 +124,27 @@ import { SettingOutlined, PlusOutlined } from '@ant-design/icons-vue'
 import { apiJson } from '@/api'
 
 const { loadCate, curCate, clickCate, cateTree, bookmarkList, loadGroup, curGroupId, groups } = useBookmark()
+
+
+const curCateInfo = ref({})
+
+const curSubCateId = ref('')
+const curSubCateBookmark = ref([])
+
+function clickSubCate(cateId){
+  console.log(cateId)
+  curSubCateId.value = cateId
+
+  apiJson.get({
+    "Bookmark[]":{
+      count:0,
+      cateId:cateId,
+    }
+  }).then(data=>{
+    curSubCateBookmark.value = data["Bookmark[]"]
+  })
+
+}
 
 loadGroup().then(() => loadCate())
 
@@ -122,9 +160,6 @@ function cateContextmenu (action, cate) {
   cateManageRef.value && cateManageRef.value.open()
 }
 
-function onContextmenu () {
-
-}
 
 const groupsVisible = ref(false)
 
@@ -158,10 +193,35 @@ function loadLatest () {
 
 loadLatest()
 
-function handleMenuClick (e, cateId) {
-  // console.log("?", cateId)
-  // curCate.value = e.keyPath
-  clickCate(e.keyPath)
+function foundCurCateInfo(keys:string[], tree:any[],parents:any[]) {
+  console.log(tree)
+  for (const treeElement of tree) {
+    if (treeElement.cateId === keys[keys.length-1]) {
+      curCateInfo.value = {
+        ...treeElement,
+        parents:parents,
+      }
+      if(treeElement.children && treeElement.children.length > 0){
+        console.log("fkc",treeElement.children)
+        clickSubCate(treeElement.children[0].cateId)
+      }
+
+      return
+    }
+    if (keys.includes(treeElement.cateId) && treeElement.children) {
+      foundCurCateInfo(keys, treeElement.children,parents.concat(treeElement))
+    }
+  }
+  console.log(curCateInfo.value)
+}
+
+function handleMenuClick (e:{keyPath:string[]}) {
+
+  const keys = e.keyPath[0].split('/').filter(item => item)
+  curCateInfo.value = {}
+  curSubCateBookmark.value = []
+  foundCurCateInfo(keys, cateTree.value.children,[])
+  clickCate(keys)
   isHome.value = false
 }
 
@@ -169,6 +229,11 @@ const BookmarkModalRef = ref()
 
 function openBookmarkModal (item) {
   BookmarkModalRef.value.open(item)
+}
+
+function logout(){
+  localStorage.removeItem("token")
+  location.reload()
 }
 
 </script>

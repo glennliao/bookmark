@@ -168,7 +168,9 @@ function open() {
 
 function loadCate() {
   apiJson.get({
-    "BookmarkCate[]": {}
+    "BookmarkCate[]": {
+      "count":0,
+    }
   }).then(data => {
     console.log(data)
     treeData.value = toCateTree((data["BookmarkCate[]"].map(item => {

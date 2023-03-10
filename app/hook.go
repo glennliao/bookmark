@@ -28,7 +28,7 @@ func initHook(a *apijson.ApiJson) {
 			return nil
 		},
 		AfterExecutorDo: func(ctx context.Context, n *action.Node, method string) error {
-			if n.TableName == TableUser && method == http.MethodPost {
+			if n.AccessName == TableUser && method == http.MethodPost {
 				for _, item := range n.Data {
 					act := a.NewAction(ctx, http.MethodPost, model.Map{
 						"tag": "Groups",

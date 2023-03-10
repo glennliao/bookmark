@@ -14,17 +14,12 @@ import (
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/os/gcmd"
-	"github.com/gogf/gf/v2/os/gres"
-	"github.com/gogf/gf/v2/util/gconv"
-	"golang.org/x/crypto/bcrypt"
 	"net/http"
 	"os"
 	"strings"
 )
 
 func main() {
-
-	gres.Dump()
 
 	a := apijson.Load(app.Init)
 
@@ -71,11 +66,10 @@ func createUser(a *apijson.ApiJson) {
 
 	ctx := context.Background()
 
-	pw, _ := bcrypt.GenerateFromPassword([]byte(password), 10)
 	act := a.NewAction(ctx, http.MethodPost, model.Map{
 		"User": g.Map{
 			"username": email,
-			"password": gconv.String(pw),
+			"password": password,
 		},
 		"tag": "User",
 	})

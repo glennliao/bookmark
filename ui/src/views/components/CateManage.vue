@@ -6,15 +6,14 @@
     @ok="handleOk"
   >
     <p>
-    <div>
-      <a-button type="primary" @click="add">新增</a-button>
-    </div>
-    <div class="mt-4">
-      <a-tree
-        :tree-data="treeData"
-      />
-    </div>
-
+      <div>
+        <a-button type="primary" @click="add">新增</a-button>
+      </div>
+      <div class="mt-4">
+        <a-tree
+          :tree-data="treeData"
+        />
+      </div>
     </p>
   </a-modal>
 
@@ -110,7 +109,9 @@ function open() {
 
 function loadCate() {
   apiJson.get({
-    "BookmarkCate[]": {}
+    "BookmarkCate[]": {
+      count: 0,
+    }
   }).then(data => {
     console.log(data)
     treeData.value = toCateTree((data["BookmarkCate[]"].map(item => {
@@ -138,6 +139,8 @@ function add() {
   resetFields()
   addVisible.value = true
 }
+
+const rules = {}
 
 
 defineExpose({

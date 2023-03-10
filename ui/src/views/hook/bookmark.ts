@@ -1,60 +1,64 @@
-import {ref} from "vue";
-import {apiJson} from "@/api";
-import {toCateTree} from "@/utils/tree";
+import { ref } from 'vue'
+import { apiJson } from '@/api'
+import { toCateTree } from '@/utils/tree'
 
-const cateTree = ref({children: []} as { children: any[] })
+const cateTree = ref({ children: [] } as { children: any[] })
 const curCate = ref([] as string[])
 const curGroupId = ref('')
-function loadCate() {
+function loadCate () {
   apiJson.get({
     'BookmarkCate[]': {
-      "count":0,
+      count: 0
     }
   }).then((data) => {
-
     cateTree.value = {
-      children:toCateTree(data['BookmarkCate[]'])
+      children: toCateTree(data['BookmarkCate[]'])
     }
-
-    console.log(toCateTree(data["BookmarkCate[]"]),data["BookmarkCate[]"])
   })
 }
 
-function clickCate(cateIds: string[]) {
+function clickCate (cateIds: string[]) {
   curCate.value = cateIds
   loadBookmarkList()
 }
 
-const groups = ref([])
+const groups = ref([] as {groupId:string}[])
 
-function loadGroup(){
+function loadGroup () {
   return apiJson.get({
-    "Groups[]":{
+    'Groups[]': {
+      count: 0
     }
-  }).then(data=>{
-    groups.value = data["Groups[]"]
-    curGroupId.value = groups.value[0].groupId
+  }).then(data => {
+    groups.value = data['Groups[]']
+    if (groups.value.length) {
+      curGroupId.value = groups.value[0].groupId
+    }
   })
 }
-
-
 
 const bookmarkList = ref([] as any[])
-function loadBookmarkList(){
+function loadBookmarkList () {
   apiJson.get({
-    "Bookmark[]":{
-      "cateId": curCate.value[curCate.value.length-1]
+    'Bookmark[]': {
+      cateId: curCate.value[curCate.value.length - 1],
+      count: 0
     }
-  }).then(data=>{
-    bookmarkList.value = data["Bookmark[]"]
+  }).then(data => {
+    bookmarkList.value = data['Bookmark[]']
   })
 }
 
-
-
-export function useBookmark(){
+export function useBookmark () {
   return {
-    loadCate,clickCate,curCate,cateTree,
-    bookmarkList,curGroupId, loadGroup,loadBookmarkList,groups
+    loadCate,
+    clickCate,
+    curCate,
+    cateTree,
+    bookmarkList,
+    curGroupId,
+    loadGroup,
+    loadBookmarkList,
+    groups
   }
 }
