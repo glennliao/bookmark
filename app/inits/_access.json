@@ -172,5 +172,10 @@
     },
     "rowKeyGen": "idgen",
     "executor": "default"
+  },
+  {
+    "name": "Token",
+    "alias": "Token",
+    "post": ["UNKNOWN"]
   }
 ]

@@ -5,7 +5,10 @@ import (
 	"github.com/glennliao/apijson-go"
 	"github.com/glennliao/apijson-go/action"
 	"github.com/glennliao/apijson-go/model"
+	"github.com/glennliao/apijson-go/util"
 	"github.com/gogf/gf/v2/errors/gerror"
+	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/util/gconv"
 	"net/http"
 )
 
@@ -49,6 +52,19 @@ func initHook(a *apijson.ApiJson) {
 						return gerror.Wrap(err, "AfterExecutorDo")
 					}
 
+				}
+			}
+
+			if method == http.MethodPut && n.AccessName == TableBookmarkUse {
+				if gconv.Int64(n.Ret["count"]) == 0 {
+					m := g.DB().Model("bookmark_use").Safe().Ctx(ctx)
+
+					user, _ := ctx.Value(UserIdKey).(*CurrentUser)
+					m.Insert(g.Map{
+						"times":   "1",
+						"bm_id":   util.String(n.Where[0]["bm_id"]),
+						"user_id": user.UserId,
+					})
 				}
 			}
 

@@ -19,7 +19,7 @@ const (
 	TableBookmarkUse   = "BookmarkUse"
 	TableBookmarkCate  = "BookmarkCate"
 	TableGroups        = "Groups"
-	TableGroupUser     = "Group_user"
+	TableGroupUser     = "GroupUser"
 	TableGroupBookmark = "GroupBookmark"
 )
 
@@ -89,9 +89,11 @@ func AccessCondition(ctx context.Context, req config.ConditionReq, where *config
 			where.Add("user_id", user.UserId)
 		}
 	case TableBookmarkUse:
-		if req.NodeRole == consts.OWNER {
-			where.Add("user_id", user.UserId)
-		}
+
+		where.Add("bm_id", req.NodeReq["bmId"])
+		delete(req.NodeReq, "bmId")
+		where.Add("user_id", user.UserId)
+
 	case TableBookmarkCate:
 		where.AddRaw("group_id in (select group_id from group_user where user_id = ?)", user.UserId)
 	case TableBookmark:

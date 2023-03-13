@@ -16,7 +16,7 @@ require (
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519
 )
 
-replace github.com/glennliao/apijson-go v0.0.0 => f:/works/apijson-go
+replace github.com/glennliao/apijson-go v0.0.0 => ../apijson-go
 
 require (
 	github.com/BurntSushi/toml v1.1.0 // indirect

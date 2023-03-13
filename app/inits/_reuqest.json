@@ -155,13 +155,29 @@
   {
     "tag": "BookmarkUse",
     "version": "1",
-    "method": "POST",
+    "method": "PUT",
     "structure": {
       "BookmarkUse": {
-        "MUST": ["bmId"]
+        "MUST": ["bmId"],
+        "INSERT": {
+          "times+": 1
+        }
       }
     },
     "Executor": {}
+  },
+  {
+    "tag": "Token",
+    "version": "1",
+    "method": "POST",
+    "structure": {
+      "Token": {
+        "MUST": ["email","password"]
+      }
+    },
+    "Executor": {
+      "Token": "custom"
+    }
   }
 
 ]

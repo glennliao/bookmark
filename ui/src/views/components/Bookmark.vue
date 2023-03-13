@@ -30,7 +30,7 @@
 </template>
 
 <script setup>
-import {addUse} from "@/api/index";
+import {addUse, apiJson} from "@/api/index";
 
 const props = defineProps({
   item:{},
@@ -40,7 +40,13 @@ const props = defineProps({
   }
 })
 function toURL(item){
-  addUse({bmId:item.bmId})
+  apiJson.put({
+    tag:"BookmarkUseAdd",
+    "BookmarkUse":{
+      "bmId":item.bmId
+    }
+  })
+  // addUse({bmId:item.bmId})
   window.open(item.url,"_blank")
 }
 </script>

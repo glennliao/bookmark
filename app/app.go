@@ -40,7 +40,6 @@ func init() {
 					},
 				}
 			}
-
 		}
 		return requestList
 	})
