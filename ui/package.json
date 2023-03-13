@@ -10,7 +10,7 @@
     "dev:prod": "vite --mode prod",
     "build:dev": "vue-tsc --noEmit && vite build --mode dev",
     "build:uat": "vue-tsc --noEmit && vite build --mode uat",
-    "build:prod": "vite build --mode prod && gf pack ./dist ../packed/dist.go",
+    "build:prod": "vite build --mode prod &&  gf pack ./dist ../packed/dist.go",
     "preview": "vite preview",
     "lint": "eslint \"src/**/*.{js,ts,vue,jsx,tsx}\" --fix"
   },

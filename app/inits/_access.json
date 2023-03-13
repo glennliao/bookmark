@@ -13,7 +13,8 @@
     "fieldsGet": {
       "default": {
         "in": {
-          "cate_id": ["*"]
+          "cate_id": ["*"],
+          "url": ["%$%","="]
         },
         "out": {
           "bm_id": "",

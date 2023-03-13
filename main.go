@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	_ "embed"
 	"github.com/glennliao/apijson-go"
 	_ "github.com/glennliao/apijson-go/drivers/config/goframe"
 	_ "github.com/glennliao/apijson-go/drivers/executor/goframe"
@@ -14,12 +15,19 @@ import (
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/os/gcmd"
+	"github.com/gogf/gf/v2/os/gfile"
+	"github.com/gogf/gf/v2/util/grand"
 	"net/http"
 	"os"
 	"strings"
 )
 
+//go:embed config.toml.example
+var configExample string
+
 func main() {
+
+	initConfigFile()
 
 	a := apijson.Load(app.Init)
 
@@ -96,5 +104,12 @@ func response(r *ghttp.Request) {
 			"code": 200,
 			"data": res,
 		})
+	}
+}
+
+func initConfigFile() {
+	if !gfile.Exists("config.toml") {
+		configExample = strings.Replace(configExample, "{{secret}}", grand.S(32), 1)
+		gfile.PutContents("config.toml", configExample)
 	}
 }

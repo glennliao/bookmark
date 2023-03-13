@@ -1,7 +1,7 @@
 [bookmark]
 
 [jwt]
-  secret = "123456789123456789"
+  secret = "{{secret}}"
 
 [server]
   address = ":8082"
@@ -12,11 +12,11 @@
   level = "info"
 
 [database.logger]
-  level = "all"
+  level = "info"
   stdout = true
 
 [database.default]
-  debug = true
+  debug = false
   # link = "mysql:root:root@tcp(127.0.0.1:3306)/db?charset=utf8mb4&parseTime=True&loc=Local"
   link = "sqlite::@file(./bookmark.sqlite3)"
 

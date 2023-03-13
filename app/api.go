@@ -45,11 +45,9 @@ func (a *api) Auth(ctx context.Context, req *AuthReq) (res *AuthRes, err error) 
 		return nil, err
 	}
 
-	if user.IsEmpty() || bcrypt.CompareHashAndPassword([]byte(gconv.String(user.Map()["password"])), []byte(req.Password)) != nil {
+	if user == nil || user.IsEmpty() || bcrypt.CompareHashAndPassword([]byte(gconv.String(user.Map()["password"])), []byte(req.Password)) != nil {
 		time.Sleep(time.Millisecond * time.Duration(grand.N(100, 500)))
-		if err != nil {
-			return nil, gerror.New("账户或密码错误")
-		}
+		return nil, gerror.New("账户或密码错误")
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{

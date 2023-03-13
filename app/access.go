@@ -153,6 +153,14 @@ func Auth(r *ghttp.Request) {
 		userId := ""
 		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 			userId = gconv.String(claims["userId"])
+			if userId == "" {
+				g.Log().Info(ctx, "userId is empty")
+				r.Response.WriteJson(g.Map{
+					"code": 401,
+					"msg":  "未知错误",
+				})
+				return
+			}
 		} else {
 			g.Log().Info(ctx, "token no valid")
 			r.Response.WriteJson(g.Map{

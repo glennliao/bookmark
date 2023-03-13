@@ -10,7 +10,7 @@
       </div>
     </div>
     <div v-if="!simple" class="remark ..." style="height: 58px">
-      {{item.remark}}
+      {{item.remark || item.description}}
     </div>
     <div v-if="!simple" class="flex justify-end" style="height: 12px;line-height: 12px;color:#777" @click.stop="void">
       <a-popover :title="item.title">
