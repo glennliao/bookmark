@@ -31,7 +31,7 @@ func initHook(a *apijson.ApiJson) {
 			return nil
 		},
 		AfterExecutorDo: func(ctx context.Context, n *action.Node, method string) error {
-			if n.AccessName == TableUser && method == http.MethodPost {
+			if n.Key == TableUser && method == http.MethodPost {
 				for _, item := range n.Data {
 					act := a.NewAction(ctx, http.MethodPost, model.Map{
 						"tag": "Groups",
@@ -55,7 +55,7 @@ func initHook(a *apijson.ApiJson) {
 				}
 			}
 
-			if method == http.MethodPut && n.AccessName == TableBookmarkUse {
+			if method == http.MethodPut && n.Key == TableBookmarkUse {
 				if gconv.Int64(n.Ret["count"]) == 0 {
 					m := g.DB().Model("bookmark_use").Safe().Ctx(ctx)
 

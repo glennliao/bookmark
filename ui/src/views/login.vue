@@ -22,7 +22,7 @@
 
 <script setup>
 import {ref} from "vue";
-import {auth} from '../api'
+import {apiJson, auth} from '../api'
 import {useRouter} from "vue-router";
 import {useUser} from "@/views/hook/user";
 

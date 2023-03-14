@@ -44,13 +44,13 @@ func main() {
 
 	s := g.Server()
 
-	//s.Group("/api/", func(group *ghttp.RouterGroup) {
-	//	group.Middleware(app.Cors, app.Auth, response)
-	//	group.Bind(app.Api)
-	//})
-
 	s.Group("/api/data", func(group *ghttp.RouterGroup) {
 		group.Middleware(app.Cors, app.Auth)
+
+		group.POST("/auth", f.CommonResponse(func(ctx context.Context, req model.Map) (res model.Map, err error) {
+			return a.NewAction(ctx, http.MethodPost, req).Result()
+		}, framework_goframe.InDataMode))
+
 		f.Bind(group)
 	})
 
@@ -89,24 +89,6 @@ func createUser(a *apijson.ApiJson) {
 	}
 
 }
-
-//
-//func response(r *ghttp.Request) {
-//	r.Middleware.Next()
-//	res := r.GetHandlerResponse()
-//	err := r.GetError()
-//	if err != nil {
-//		r.Response.WriteJson(g.Map{
-//			"code": 500,
-//			"msg":  err.Error(),
-//		})
-//	} else {
-//		r.Response.WriteJson(g.Map{
-//			"code": 200,
-//			"data": res,
-//		})
-//	}
-//}
 
 func initConfigFile() {
 	if !gfile.Exists("config.toml") {

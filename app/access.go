@@ -174,7 +174,7 @@ func Auth(r *ghttp.Request) {
 		ctx = context.WithValue(ctx, UserIdKey, &CurrentUser{UserId: userId})
 		r.SetCtx(ctx)
 	} else {
-		if r.Request.URL.Path != "/api/auth" {
+		if r.Request.URL.Path != "/api/data/auth" {
 			r.Response.WriteJson(g.Map{
 				"code": 401,
 				"msg":  "未登录",

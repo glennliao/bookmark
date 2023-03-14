@@ -68,6 +68,7 @@
     "rowKey": "cate_id",
     "fieldsGet": {
       "default": {
+        "maxCount": 0,
         "in": {},
         "out": {
           "cate_id": "",
