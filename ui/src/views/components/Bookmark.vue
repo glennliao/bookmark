@@ -30,24 +30,24 @@
 </template>
 
 <script setup>
-import {addUse, apiJson} from "@/api/index";
+import { apiJson } from '@/api/index'
 
 const props = defineProps({
-  item:{},
-  simple:{
-    type:Boolean,
-    default:false
+  item: {},
+  simple: {
+    type: Boolean,
+    default: false
   }
 })
-function toURL(item){
+function toURL (item) {
   apiJson.put({
-    tag:"BookmarkUseAdd",
-    "BookmarkUse":{
-      "bmId":item.bmId
+    tag: 'BookmarkUseAdd',
+    BookmarkUse: {
+      bmId: item.bmId
     }
   })
   // addUse({bmId:item.bmId})
-  window.open(item.url,"_blank")
+  window.open(item.url, '_blank')
 }
 </script>
 
@@ -57,8 +57,6 @@ function toURL(item){
   height: 100px;
   background: white;
   margin: 4px 4px;
-
-
 
   .logo{
     width: 24px;

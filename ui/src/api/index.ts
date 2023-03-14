@@ -7,10 +7,9 @@ export const apiJson = {
   delete: (data: Param) => http.post('/data/get', data)
 }
 
-export function auth(param:{email:string,password:string}){
-  return http.post('/auth', param)
-}
-
-export function addUse(param:{bmId:string}){
-  return http.post('/addUse', param)
+export function auth (param: { email: string, password: string }) {
+  return http.post('/data/auth', {
+    tag: 'Token',
+    Token: param
+  }).then(data=>data.Token)
 }
