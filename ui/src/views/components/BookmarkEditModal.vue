@@ -22,13 +22,13 @@
                 已存在相同url
               </div>
               <div>
-                {{equalBm.title}}
+                {{ equalBm.title }}
               </div>
               <div>
-                {{equalBm.url}}
+                {{ equalBm.url }}
               </div>
               <div>
-                {{equalBm.cate}}
+                {{ equalBm.cate }}
               </div>
             </a-card>
           </div>
@@ -142,29 +142,31 @@ function onSearch() {
       "Bookmark": {
         url // or suffix /
       },
-      "GroupBookmark":{
-        "bmId@":"/Bookmark/bmId"
+      "GroupBookmark": {
+        "bmId@": "/Bookmark/bmId"
       },
-      "BookmarkCate":{
-        "cateId@":"/GroupBookmark/cateId"
+      "BookmarkCate": {
+        "cateId@": "/GroupBookmark/cateId"
       }
     },
     "domain": {
       "Bookmark[]": {
-        "url$": "%"+(new URL(url)).host+"%"
+        "url$": "%" + (new URL(url)).host + "%"
       }
     },
   }).then(data => {
-    console.log(data)
     let equal = data.equal.Bookmark
-    console.log(equal)
-    if (equal.bmId){
+    if (equal.bmId) {
       equal.cate = data.equal.BookmarkCate.title
       equalBm.value = equal
-    }else{
+    } else {
       hasFetchURL.value = true
     }
-    info.value.parentId = bookmark.curCate.value[bookmark.curCate.value.length - 1] || ''
+    if (bookmark.curSubCateId.value) {
+      info.value.parentId = bookmark.curSubCateId.value || ''
+    } else {
+      info.value.parentId = bookmark.curCate.value[bookmark.curCate.value.length - 1] || ''
+    }
     info.value.url = data.meta.url
     info.value.title = data.meta.title
     info.value.icon = data.meta.icon
@@ -198,6 +200,9 @@ function handleAdd(next) {
       }
       bookmark.loadCate()
       bookmark.loadBookmarkList()
+      if (bookmark.curSubCateId.value){
+        bookmark.loadSubCateBookmark()
+      }
     })
   }).finally(() => {
     addLoading.value = false

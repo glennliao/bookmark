@@ -1,32 +1,40 @@
 <template>
-  <div class="bookmark cursor-pointer  rounded shadow p-1 items-baseline" :class="{'simple':simple}" @click="toURL(item)">
-    <div class="flex">
-      <div>
-        <img  v-lazy="item.icon" v-if="item.icon && item.icon !== ''" class="logo" />
-        <div v-else class="logo text-center text-white" :style="{'background': 'orange'}">{{ item.title[0] }}</div>
-      </div>
-      <div class="ml-1 title truncate ...">
-        {{ item.title }}
-      </div>
-    </div>
-    <div v-if="!simple" class="remark ..." style="height: 58px">
-      {{item.remark || item.description}}
-    </div>
-    <div v-if="!simple" class="flex justify-end" style="height: 12px;line-height: 12px;color:#777" @click.stop="void">
-      <a-popover :title="item.title">
-        <template #content>
-          <div style="width:300px">
-            <p>{{item.url}}</p>
-            <p>{{item.description}}</p>
-          </div>
-        </template>
-        <div >
-          ...
+  <div>
+    <div class="bookmark cursor-pointer  rounded shadow p-1 items-baseline" :class="{'simple':simple}" @click="toURL(item)"  v-contextmenu:contextmenu @contextmenu.stop="">
+      <div class="flex">
+        <div>
+          <img  v-lazy="item.icon" v-if="item.icon && item.icon !== ''" class="logo" />
+          <div v-else class="logo text-center text-white" :style="{'background': 'orange'}">{{ item.title[0] }}</div>
         </div>
-      </a-popover>
+        <div class="ml-1 title truncate ...">
+          {{ item.title }}
+        </div>
+      </div>
+      <div v-if="!simple" class="remark ..." style="height: 58px">
+        {{item.remark || item.description}}
+      </div>
+      <div v-if="!simple" class="flex justify-end" style="height: 12px;line-height: 12px;color:#777" @click.stop="void">
+        <a-popover :title="item.title">
+          <template #content>
+            <div style="width:300px">
+              <p>{{item.url}}</p>
+              <p>{{item.description}}</p>
+            </div>
+          </template>
+          <div >
+            ...
+          </div>
+        </a-popover>
+      </div>
+
     </div>
 
+    <v-contextmenu ref="contextmenu">
+      <v-contextmenu-item @click="edit">🖊 编辑</v-contextmenu-item>
+      <v-contextmenu-item @click="del">❌ 删除</v-contextmenu-item>
+    </v-contextmenu>
   </div>
+
 </template>
 
 <script setup>
@@ -49,6 +57,16 @@ function toURL (item) {
   // addUse({bmId:item.bmId})
   window.open(item.url, '_blank')
 }
+
+
+function edit(){
+
+}
+
+function del(){
+
+}
+
 </script>
 
 <style scoped lang="scss">

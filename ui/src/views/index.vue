@@ -1,6 +1,9 @@
 <template>
   <!--  <HeaderBar/>-->
-  <div class="px-4 py-2 bookmark-area" v-contextmenu:contextmenu>
+
+
+
+  <div class="px-4 py-2 bookmark-area z-10 absolute " v-contextmenu:contextmenu>
 
     <div class="toggle-bar" @click="groupsVisible = !groupsVisible">
       <div class="n-layout-toggle-bar">
@@ -9,8 +12,8 @@
       </div>
     </div>
 
-    <div class="p-2 ">
-      <ul class="rounded-box bg-base-100 menu menu-horizontal bg-base-100 shadow" style="width: auto">
+    <div class="p-2 z-10">
+      <ul class="rounded-box bg-base-100 menu menu-horizontal bg-base-100 shadow z-10" style="width: auto">
         <li :class="{'active':isHome}">
           <span @click="toHome" >
             ⭐
@@ -79,10 +82,10 @@
         </div>
       </div>
 
-      <cate-manage ref="cateManageRef"/>
-      <bookmark-edit-modal ref="BookmarkModalRef"/>
-
     </div>
+
+    <cate-manage ref="cateManageRef"/>
+    <bookmark-edit-modal ref="BookmarkModalRef"/>
 
     <div class="absolute" style="right:34px;bottom:32px">
       <a-button type="primary" @click="openBookmarkModal({})" shape="circle">
@@ -105,6 +108,7 @@
     </div>
   </a-drawer>
 
+
   <v-contextmenu ref="contextmenu">
     <v-contextmenu-item @click="openBookmarkModal({})">➕ 新增书签</v-contextmenu-item>
     <v-contextmenu-item @click="cateContextmenu({})">⚙ 管理分类</v-contextmenu-item>
@@ -123,27 +127,14 @@ import Bookmark from '@/views/components/Bookmark.vue'
 import { SettingOutlined, PlusOutlined } from '@ant-design/icons-vue'
 import { apiJson } from '@/api'
 
-const { loadCate, curCate, clickCate, cateTree, bookmarkList, loadGroup, curGroupId, groups } = useBookmark()
-
+const { loadCate, curCate, clickCate, cateTree, bookmarkList, loadGroup, curGroupId, groups, curSubCateId, loadSubCateBookmark,curSubCateBookmark } = useBookmark()
 
 const curCateInfo = ref({})
 
-const curSubCateId = ref('')
-const curSubCateBookmark = ref([])
-
-function clickSubCate(cateId){
+function clickSubCate (cateId:string) {
   console.log(cateId)
   curSubCateId.value = cateId
-
-  apiJson.get({
-    "Bookmark[]":{
-      count:0,
-      cateId:cateId,
-    }
-  }).then(data=>{
-    curSubCateBookmark.value = data["Bookmark[]"]
-  })
-
+  loadSubCateBookmark()
 }
 
 loadGroup().then(() => loadCate())
@@ -159,7 +150,6 @@ const cateManageRef = ref(null)
 function cateContextmenu (action, cate) {
   cateManageRef.value && cateManageRef.value.open()
 }
-
 
 const groupsVisible = ref(false)
 
@@ -181,7 +171,7 @@ function loadLatest () {
       Bookmark: {
         'bmId@': '/BookmarkUse/bmId'
       },
-      "count": 10
+      count: 10
     }
   }).then(data => {
     console.debug(data)
@@ -193,34 +183,34 @@ function loadLatest () {
 
 loadLatest()
 
-function foundCurCateInfo(keys:string[], tree:any[],parents:any[]) {
+function foundCurCateInfo (keys:string[], tree:any[], parents:any[]) {
   console.log(tree)
   for (const treeElement of tree) {
-    if (treeElement.cateId === keys[keys.length-1]) {
+    if (treeElement.cateId === keys[keys.length - 1]) {
       curCateInfo.value = {
         ...treeElement,
-        parents:parents,
+        parents
       }
-      if(treeElement.children && treeElement.children.length > 0){
-        console.log("fkc",treeElement.children)
+      if (treeElement.children && treeElement.children.length > 0) {
+        console.log('fkc', treeElement.children)
         clickSubCate(treeElement.children[0].cateId)
       }
 
       return
     }
     if (keys.includes(treeElement.cateId) && treeElement.children) {
-      foundCurCateInfo(keys, treeElement.children,parents.concat(treeElement))
+      foundCurCateInfo(keys, treeElement.children, parents.concat(treeElement))
     }
   }
   console.log(curCateInfo.value)
 }
 
 function handleMenuClick (e:{keyPath:string[]}) {
-
   const keys = e.keyPath[0].split('/').filter(item => item)
   curCateInfo.value = {}
   curSubCateBookmark.value = []
-  foundCurCateInfo(keys, cateTree.value.children,[])
+  curSubCateId.value = ""
+  foundCurCateInfo(keys, cateTree.value.children, [])
   clickCate(keys)
   isHome.value = false
 }
@@ -231,8 +221,8 @@ function openBookmarkModal (item) {
   BookmarkModalRef.value.open(item)
 }
 
-function logout(){
-  localStorage.removeItem("token")
+function logout () {
+  localStorage.removeItem('token')
   location.reload()
 }
 

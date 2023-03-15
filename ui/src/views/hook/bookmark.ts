@@ -4,6 +4,7 @@ import { toCateTree } from '@/utils/tree'
 
 const cateTree = ref({ children: [] } as { children: any[] })
 const curCate = ref([] as string[])
+
 const curGroupId = ref('')
 function loadCate () {
   apiJson.get({
@@ -49,6 +50,19 @@ function loadBookmarkList () {
   })
 }
 
+const curSubCateBookmark = ref([])
+const curSubCateId = ref('') // 下方分类
+function loadSubCateBookmark(){
+  apiJson.get({
+    'Bookmark[]': {
+      count: 0,
+      cateId:curSubCateId.value
+    }
+  }).then(data => {
+    curSubCateBookmark.value = data['Bookmark[]']
+  })
+}
+
 export function useBookmark () {
   return {
     loadCate,
@@ -59,6 +73,9 @@ export function useBookmark () {
     curGroupId,
     loadGroup,
     loadBookmarkList,
-    groups
+    groups,
+    curSubCateId,
+    curSubCateBookmark,
+    loadSubCateBookmark
   }
 }
