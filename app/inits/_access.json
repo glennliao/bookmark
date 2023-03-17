@@ -143,7 +143,10 @@
     "rowKey": "id",
     "fieldsGet": {
       "default": {
-        "in": {},
+        "in": {
+          "bm_id": ["*"],
+          "group_id": ["*"]
+        },
         "out": {
 
         }

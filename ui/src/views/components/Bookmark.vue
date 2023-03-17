@@ -21,17 +21,16 @@
               <p>{{item.description}}</p>
             </div>
           </template>
-          <div >
+          <div>
             ...
           </div>
         </a-popover>
       </div>
-
     </div>
 
     <v-contextmenu ref="contextmenu">
       <v-contextmenu-item @click="edit">🖊 编辑</v-contextmenu-item>
-      <v-contextmenu-item @click="del">❌ 删除</v-contextmenu-item>
+      <v-contextmenu-item @click="drop">❌ 删除</v-contextmenu-item>
     </v-contextmenu>
   </div>
 
@@ -39,6 +38,12 @@
 
 <script setup>
 import { apiJson } from '@/api/index'
+import { ExclamationCircleOutlined } from '@ant-design/icons-vue'
+import { createVNode } from 'vue'
+import { Modal } from 'ant-design-vue'
+import dayjs from 'dayjs'
+import { useBookmark } from "@/views/hook/bookmark";
+const bookmark = useBookmark()
 
 const props = defineProps({
   item: {},
@@ -47,6 +52,9 @@ const props = defineProps({
     default: false
   }
 })
+
+const emit = defineEmits(["edit"])
+
 function toURL (item) {
   apiJson.put({
     tag: 'BookmarkUseAdd',
@@ -54,17 +62,42 @@ function toURL (item) {
       bmId: item.bmId
     }
   })
-  // addUse({bmId:item.bmId})
   window.open(item.url, '_blank')
 }
 
 
 function edit(){
-
+  emit("edit")
 }
 
-function del(){
+function drop(){
+  Modal.confirm({
+    title: 'Do you Want to delete these items?',
+    icon: createVNode(ExclamationCircleOutlined),
+    content: createVNode('div', { style: 'color:red;' }, ''),
+    onOk() {
 
+      let cateId = bookmark.curSubCateId.value
+      if(!cateId){
+        cateId = bookmark.curCate.value[bookmark.curCate.value.length-1]
+      }
+      apiJson.put({
+        "tag":"GroupBookmark",
+        "GroupBookmark":{
+          "bmId":props.item.bmId,
+          "groupId":bookmark.curGroupId.value,
+          cateId,
+          "dropAt":dayjs().format('YYYY-MM-DD HH:mm:ss')
+        }
+      }).then(data=>{
+        bookmark.loadBookmarkList()
+        bookmark.loadSubCateBookmark()
+      })
+
+    },
+    onCancel() {
+    },
+  });
 }
 
 </script>

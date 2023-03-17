@@ -14,7 +14,10 @@
     "version": "1",
     "method": "PUT",
     "structure": {
-    }
+      "Bookmark": {},
+      "GroupBookmark": {}
+    },
+    "execQueue": ["Bookmark","GroupBookmark"]
   },
   {
     "tag": "Bookmark",

@@ -68,7 +68,7 @@
 
     <template #footer>
       <a-button key="back" @click="visible = false">Close</a-button>
-      <a-button key="submitAndNext" v-if="hasFetchURL" type="primary" :loading="addLoading" @click="handleAdd(true)">
+      <a-button key="submitAndNext" v-if="hasFetchURL && !info.bmId" type="primary" :loading="addLoading" @click="handleAdd(true)">
         Submit & Next
       </a-button>
       <a-button key="submit" v-if="hasFetchURL" type="primary" :loading="addLoading" @click="handleAdd(false)">Submit
@@ -183,13 +183,22 @@ function handleAdd(next) {
   addLoading.value = true
   const _info = toRaw(info.value)
   validate().then(data => {
-    apiJson.post({
+
+    let api = apiJson.post
+    let GroupBookmark = {
+      cateId: _info.parentId,
+      groupId: bookmark.curGroupId.value,
+    }
+    if(_info.bmId){
+      api = apiJson.put
+      GroupBookmark.id = groupBookmarkId.value
+    }else{
+      GroupBookmark["bmId@"] = "Bookmark/bmId"
+    }
+
+    api({
       Bookmark: _info,
-      GroupBookmark: {
-        cateId: _info.parentId,
-        groupId: bookmark.curGroupId.value,
-        'bmId@': 'Bookmark/BmId'
-      },
+      GroupBookmark,
       tag: 'Bookmark'
     }).then(data => {
       console.log(data)
@@ -209,14 +218,32 @@ function handleAdd(next) {
   })
 }
 
-function open() {
+const groupBookmarkId = ref('')
+function open(_info = {}) {
+  resetFields()
   equalBm.value = {}
   visible.value = true
-  info.value = {}
+  info.value = {
+    ..._info
+  }
 
-  hasFetchURL.value = false
+  if(_info.bmId){
+    apiJson.get({
+      "GroupBookmark":{
+        groupId: bookmark.curGroupId.value,
+        "bmId":_info.bmId
+      }
+    }).then(data=>{
+      groupBookmarkId.value = data.GroupBookmark.id
+      info.value = {
+        ...info.value,
+        parentId:data.GroupBookmark.cateId
+      }
+      console.log(data)
+    })
+  }
+  hasFetchURL.value = _info.bmId
   loadCate()
-  resetFields()
 }
 
 function loadCate() {

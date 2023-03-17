@@ -10,6 +10,18 @@ import {
   AntDesignVueResolver,NaiveUiResolver
 } from 'unplugin-vue-components/resolvers'
 
+
+import {execSync} from 'child_process'
+let tag = "dev"
+try{
+  tag = execSync("git describe --abbrev=10 --tags")
+}catch (e){
+  console.log(e.toString())
+}
+// @ts-ignore
+process.env["VITE_app_version"] = tag
+
+
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [

@@ -14,6 +14,7 @@ type Bookmark struct {
 	Icon                string `ddl:"size:256;comment:图标地址"`
 	Description         string `ddl:"size:2048;comment:书签描述(来自网站)"`
 	Remark              string `ddl:"size:1024;comment:书签描述(来自用户)"`
+	EncodeKey           string `ddl:"size:128;comment:加密key"`
 	CreatedAt           *time.Time
 	CreatedBy           string `ddl:"size:32"`
 	UpdatedAt           *time.Time
@@ -47,10 +48,11 @@ type BookmarkCate struct {
 
 type GroupBookmark struct {
 	tablesync.TableMeta `charset:"utf8mb4" comment:"书签目录"`
-	Id                  uint64 `ddl:"primaryKey"`
-	CateId              string `ddl:"size:32;comment:目录id"`
-	BmId                string `ddl:"size:32;comment:书签id"`
-	GroupId             string `ddl:"size:32;comment:群组id"`
+	Id                  uint64     `ddl:"primaryKey"`
+	CateId              string     `ddl:"size:32;comment:目录id"`
+	BmId                string     `ddl:"size:32;comment:书签id"`
+	GroupId             string     `ddl:"size:32;comment:群组id"`
+	DropAt              *time.Time `ddl:"comment:放置到回收站时间"`
 	Sorts               int32
 	CreatedAt           *time.Time
 	CreatedBy           string `ddl:"size:32"`

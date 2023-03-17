@@ -100,12 +100,29 @@ func AccessCondition(ctx context.Context, req config.ConditionReq, where *config
 		if req.Method == http.MethodGet {
 			if v, exists := req.NodeReq["cateId"]; exists {
 				delete(req.NodeReq, "cateId")
-				where.AddRaw("bm_id in (select bm_id from group_bookmark where cate_id = ? and group_id in (select group_id from group_user where user_id = ? ))", []string{v.(string), user.UserId})
+				where.AddRaw("bm_id in (select bm_id from group_bookmark where  drop_at is null and cate_id = ? and group_id in (select group_id from group_user where user_id = ? ))", []string{v.(string), user.UserId})
 			} else {
-				where.AddRaw("bm_id in (select bm_id from group_bookmark where  group_id in (select group_id from group_user where user_id = ? ))", []string{user.UserId})
+				where.AddRaw("bm_id in (select bm_id from group_bookmark where drop_at is null and group_id in (select group_id from group_user where user_id = ? ))", []string{user.UserId})
 			}
+		} else {
+			where.AddRaw("bm_id in (select bm_id from group_bookmark where drop_at is null and group_id in (select group_id from group_user where user_id = ? ))", []string{user.UserId})
 		}
 
+	case TableGroupBookmark:
+		if req.Method == http.MethodPut {
+
+			if _, exists := req.NodeReq["dropAt"]; exists {
+				where.Add("bm_id", req.NodeReq["bmId"])
+				where.Add("group_id", req.NodeReq["groupId"])
+				where.Add("cate_id", req.NodeReq["cateId"])
+				delete(req.NodeReq, "bmId")
+				delete(req.NodeReq, "groupId")
+				delete(req.NodeReq, "cateId")
+			} else {
+
+			}
+			// todo 添加个@where op? 用于专门指定where条件
+		}
 	case TableGroups:
 		if req.Method == http.MethodGet {
 			where.AddRaw("group_id in (select group_id from group_user where user_id = ? )", []string{user.UserId})

@@ -52,7 +52,7 @@
         <div>🕐 最近访问</div>
         <div class="flex mt-1">
           <transition-group appear name="slide-fade" tag="div" class="flex flex-wrap justify-start">
-            <bookmark :simple="true" v-for="item in latestVisitList" :key="item.bmId" :item="item"></bookmark>
+            <bookmark :simple="true" v-for="item in latestVisitList" :key="item.bmId" :item="item" @edit="edit(item)"/>
           </transition-group>
         </div>
       </div>
@@ -66,7 +66,7 @@
 
         <div class="flex">
           <transition-group appear name="slide-fade" tag="div" class="flex flex-wrap justify-start">
-            <bookmark v-for="item in bookmarkList" :key="item.bmId" :item="item"></bookmark>
+            <bookmark v-for="item in bookmarkList" :key="item.bmId" :item="item" @edit="edit(item)"/>
           </transition-group>
         </div>
 
@@ -76,7 +76,7 @@
           </div>
           <div class="flex mt-2">
             <transition-group appear name="slide-fade" tag="div" class="flex flex-wrap justify-start">
-              <bookmark v-for="item in curSubCateBookmark" :key="item.bmId" :item="item"></bookmark>
+              <bookmark v-for="item in curSubCateBookmark" :key="item.bmId" :item="item" @edit="edit(item)"> </bookmark>
             </transition-group>
           </div>
         </div>
@@ -224,6 +224,10 @@ function openBookmarkModal (item) {
 function logout () {
   localStorage.removeItem('token')
   location.reload()
+}
+
+function edit(item){
+  BookmarkModalRef.value.open(item)
 }
 
 </script>
