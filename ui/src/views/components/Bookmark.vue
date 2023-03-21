@@ -57,7 +57,7 @@ const emit = defineEmits(["edit"])
 
 function toURL (item) {
   apiJson.put({
-    tag: 'BookmarkUseAdd',
+    tag: 'BookmarkUse',
     BookmarkUse: {
       bmId: item.bmId
     }

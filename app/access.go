@@ -90,8 +90,11 @@ func AccessCondition(ctx context.Context, req config.ConditionReq, where *config
 		}
 	case TableBookmarkUse:
 
-		where.Add("bm_id", req.NodeReq["bmId"])
-		delete(req.NodeReq, "bmId")
+		if req.Method != http.MethodGet {
+			where.Add("bm_id", req.NodeReq["bmId"])
+			delete(req.NodeReq, "bmId")
+		}
+
 		where.Add("user_id", user.UserId)
 
 	case TableBookmarkCate:

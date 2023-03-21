@@ -165,7 +165,9 @@ function onSearch() {
     if (bookmark.curSubCateId.value) {
       info.value.parentId = bookmark.curSubCateId.value || ''
     } else {
-      info.value.parentId = bookmark.curCate.value[bookmark.curCate.value.length - 1] || ''
+      if(bookmark.curCate.value.length){
+        info.value.parentId = bookmark.curCate.value[bookmark.curCate.value.length - 1] || ''
+      }
     }
     info.value.url = data.meta.url
     info.value.title = data.meta.title

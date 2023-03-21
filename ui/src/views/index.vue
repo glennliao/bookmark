@@ -175,7 +175,7 @@ function loadLatest () {
     }
   }).then(data => {
     console.debug(data)
-    latestVisitList.value = data['[]'].map((item: { Bookmark: any; }) => {
+    latestVisitList.value = data['[]'].filter((item:any)=>item.Bookmark).map((item: { Bookmark: any; }) => {
       return item.Bookmark
     })
   })
