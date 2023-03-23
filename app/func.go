@@ -7,6 +7,7 @@ import (
 	"github.com/glennliao/apijson-go/model"
 	"github.com/glennliao/bookmark/app/util/fetchurl"
 	"github.com/gogf/gf/v2/util/gconv"
+	url2 "net/url"
 	"strings"
 )
 
@@ -30,6 +31,13 @@ func initFunc(a *apijson.ApiJson) {
 				}
 			} else {
 				meta, err = fetchurl.FetchURLMeta(ctx, url)
+			}
+
+			if meta != nil {
+				if strings.HasPrefix(meta.Icon, "/") {
+					_url, _ := url2.Parse(meta.Url)
+					meta.Icon = _url.Scheme + "://" + _url.Host + meta.Icon
+				}
 			}
 
 			return meta, err
