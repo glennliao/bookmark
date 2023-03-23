@@ -5,6 +5,7 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gogf/gf/v2/frame/g"
 	"net/http"
+	"net/url"
 	"strings"
 	"time"
 )
@@ -22,12 +23,18 @@ func FetchURLMeta(ctx context.Context, uri string) (meta *UrlMeta, err error) {
 	}
 	resp, err := client.Get(uri)
 
-	if err != nil && err != http.ErrHandlerTimeout {
-		return
+	if err != nil {
+		if e, ok := err.(*url.Error); ok {
+			if !e.Timeout() {
+				return &UrlMeta{}, err
+			}
+		} else {
+			return &UrlMeta{}, err
+		}
 	}
 
 	// for china
-	if err == http.ErrHandlerTimeout && strings.HasPrefix(uri, "https://github.com") {
+	if err != nil && strings.HasPrefix(uri, "https://github.com") {
 		uri = strings.Replace(uri, "https://github.com/", "https://hub.nuaa.cf/", 1)
 		resp, err = client.Get(uri)
 		if err != nil && err != http.ErrHandlerTimeout {
@@ -41,8 +48,8 @@ func FetchURLMeta(ctx context.Context, uri string) (meta *UrlMeta, err error) {
 		g.Log().Warningf(ctx, "uri:%s status code error: %d %s", uri, resp.StatusCode, resp.Status)
 	}
 
-	doc, err := goquery.NewDocumentFromReader(resp.Body)
-	if err != nil {
+	doc, err2 := goquery.NewDocumentFromReader(resp.Body)
+	if err != nil || err2 != nil {
 		g.Log().Error(ctx, err)
 		return
 	}
