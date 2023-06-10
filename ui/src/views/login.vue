@@ -1,28 +1,30 @@
 <template>
   <div>
     <div class="login">
-      <a-form
-        :form="form"
-        :label-col="{ span: 5 }"
-        :wrapper-col="{ span: 12 }"
-      >
-        <a-form-item label="email">
-          <a-input v-model:value="form.email" />
-        </a-form-item>
-        <a-form-item label="password">
-          <a-input-password @pressEnter="handleOk" v-model:value="form.password" />
-        </a-form-item>
-        <a-form-item :wrapper-col="{ span: 12, offset: 5 }">
-          <a-button type="primary" @click="handleOk">登录</a-button>
-        </a-form-item>
-      </a-form>
+      <div>
+        <a-form
+          :form="form"
+          :label-col="{ span: 5 }"
+          :wrapper-col="{ span: 12 }"
+        >
+          <a-form-item label="email">
+            <a-input v-model:value="form.email" />
+          </a-form-item>
+          <a-form-item label="password">
+            <a-input-password @pressEnter="handleOk" v-model:value="form.password" />
+          </a-form-item>
+          <a-form-item :wrapper-col="{ span: 12, offset: 5 }">
+            <a-button type="primary" @click="handleOk">登录</a-button>
+          </a-form-item>
+        </a-form>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
 import {ref} from "vue";
-import {apiJson, auth} from '../api'
+import {auth} from '../api'
 import {useRouter} from "vue-router";
 import {useUser} from "@/views/hook/user";
 
@@ -44,5 +46,6 @@ function handleOk(){
 .login{
   padding: 100px 0;
   width: 400px;
+  margin: 0 auto;
 }
 </style>

@@ -5,8 +5,24 @@ import router from './router'
 import pinia from '@/store'
 import 'virtual:svg-icons-register'
 import '@/router/guard/index'
+import {
+  Drawer,
+  Button,
+  Tree,
+  Dropdown,
+  Menu,
+  Modal,
+  Form,
+  Alert,
+  Input,
+  Card,
+  TreeSelect,
+  Popover,
+  Tabs,
+  FloatButton
+} from 'ant-design-vue'
+import 'ant-design-vue/dist/reset.css'
 
-import 'ant-design-vue/es/message/style/css'
 // @ts-ignore
 import contextmenu from 'v-contextmenu'
 import 'v-contextmenu/dist/themes/default.css'
@@ -18,4 +34,8 @@ app.use(contextmenu)
 app.use(lazyPlugin, {})
 app.use(router)
 app.use(pinia)
+app.use(Drawer).use(Button).use(Tree)
+  .use(Dropdown).use(Menu).use(Modal)
+  .use(Form).use(Alert).use(Input)
+  .use(Card).use(TreeSelect).use(Popover).use(Tabs).use(FloatButton)
 app.mount('#app')

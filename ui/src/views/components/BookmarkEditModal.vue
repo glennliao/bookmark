@@ -1,8 +1,8 @@
 <template>
   <a-modal
     title="书签"
-    v-model:visible="visible"
-    width="60%"
+    v-model:open="visible"
+
   >
     <div>
       <a-form>
@@ -16,19 +16,19 @@
             :loading="fetchLoading"
           />
 
-          <div v-if="equalBm.bmId">
+          <div v-if="equalBm.bmId" class="mt-4">
             <a-card>
               <div>
                 已存在相同url
               </div>
               <div>
-                {{ equalBm.title }}
+                {{equalBm.title}}
               </div>
               <div>
-                {{ equalBm.url }}
+                {{equalBm.url}}
               </div>
               <div>
-                {{ equalBm.cate }}
+                {{equalBm.cate}}
               </div>
             </a-card>
           </div>
@@ -67,12 +67,29 @@
     </div>
 
     <template #footer>
-      <a-button key="back" @click="visible = false">Close</a-button>
-      <a-button key="submitAndNext" v-if="hasFetchURL && !info.bmId" type="primary" :loading="addLoading" @click="handleAdd(true)">
-        Submit & Next
-      </a-button>
-      <a-button key="submit" v-if="hasFetchURL" type="primary" :loading="addLoading" @click="handleAdd(false)">Submit
-      </a-button>
+      <div class="flex justify-between">
+        <div>
+          <a-popover title="">
+            <template #content>
+              <div>
+                1. 将右侧拖动到浏览器书签 (推荐放在第一位)<a class="ml-2" :href="saveBookJS" title="保存书签">保存书签</a>
+              </div>
+              <div>
+                2. 如遇到需要保存到此处的书签,点击第一步保存的书签即可
+              </div>
+            </template>
+            从书签栏添加
+          </a-popover>
+        </div>
+        <div>
+          <a-button key="back" @click="visible = false">Close</a-button>
+          <a-button key="submitAndNext" v-if="hasFetchURL && !info.bmId" type="primary" :loading="addLoading" @click="handleAdd(true)">
+            Submit & Next
+          </a-button>
+          <a-button key="submit" v-if="hasFetchURL" type="primary" :loading="addLoading" @click="handleAdd(false)">Submit
+          </a-button>
+        </div>
+      </div>
     </template>
   </a-modal>
 
@@ -142,16 +159,16 @@ function onSearch() {
       "Bookmark": {
         url // or suffix /
       },
-      "GroupBookmark": {
-        "bmId@": "/Bookmark/bmId"
+      "GroupBookmark":{
+        "bmId@":"/Bookmark/bmId"
       },
-      "BookmarkCate": {
-        "cateId@": "/GroupBookmark/cateId"
+      "BookmarkCate":{
+        "cateId@":"/GroupBookmark/cateId"
       }
     },
     "domain": {
       "Bookmark[]": {
-        "url$": "%" + (new URL(url)).host + "%"
+        "url$": "%"+(new URL(url)).host+"%"
       }
     },
   }).then(data => {
@@ -229,6 +246,12 @@ function open(_info = {}) {
     ..._info
   }
 
+  if (_info.url) {
+    setTimeout(()=>{
+      onSearch()
+    },512)
+  }
+
   if(_info.bmId){
     apiJson.get({
       "GroupBookmark":{
@@ -274,6 +297,8 @@ function loadCate() {
 function add() {
   addVisible.value = true
 }
+
+const saveBookJS = `javascript:window.open('${window.location.href.split('#')[0]}#/?url='+window.location,'_blank')`
 
 defineExpose({
   open

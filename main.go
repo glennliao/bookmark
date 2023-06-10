@@ -3,10 +3,12 @@ package main
 import (
 	"context"
 	_ "embed"
+	"net/http"
+	"strings"
+
 	"github.com/glennliao/apijson-go"
-	_ "github.com/glennliao/apijson-go/drivers/config/goframe"
-	_ "github.com/glennliao/apijson-go/drivers/executor/goframe"
-	"github.com/glennliao/apijson-go/drivers/framework_goframe"
+	_ "github.com/glennliao/apijson-go/drivers/goframe"
+	"github.com/glennliao/apijson-go/drivers/goframe/web"
 	"github.com/glennliao/apijson-go/model"
 	"github.com/glennliao/bookmark/app"
 	_ "github.com/glennliao/bookmark/packed"
@@ -15,49 +17,71 @@ import (
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/os/gcmd"
+	"github.com/gogf/gf/v2/os/gctx"
 	"github.com/gogf/gf/v2/os/gfile"
 	"github.com/gogf/gf/v2/util/grand"
-	"net/http"
-	"os"
-	"strings"
+	"golang.org/x/crypto/bcrypt"
 )
 
 //go:embed config.toml.example
 var configExample string
 
-func main() {
+var (
+	Main = &gcmd.Command{
+		Name:        "server",
+		Brief:       "start http server",
+		Description: "",
+		Func: func(ctx context.Context, parser *gcmd.Parser) (err error) {
+			a := apijson.Load(app.App)
 
-	initConfigFile()
+			w := web.New(a)
 
-	a := apijson.Load(app.Init)
+			s := g.Server()
 
-	if len(os.Args) > 1 {
-		if os.Args[1] == "adduser" {
-			createUser(a)
-		} else {
-			g.Log().Fatal(nil, "unknown command")
-		}
-		return
+			s.Group("/api/data", func(group *ghttp.RouterGroup) {
+				group.Middleware(app.Cors, app.Auth)
+				group.POST("/auth", w.CommonResponse(func(ctx context.Context, req model.Map) (res model.Map, err error) {
+					return a.NewAction(ctx, http.MethodPost, req).Result()
+				}, web.InDataMode))
+				w.Bind(group)
+			})
+
+			s.AddStaticPath("/", "dist")
+			s.AddStaticPath("/assets", "dist/assets")
+
+			s.Run()
+			return nil
+		},
+	}
+	Init = &gcmd.Command{
+		Name:        "init",
+		Brief:       "init config file",
+		Description: "",
+		Func: func(ctx context.Context, parser *gcmd.Parser) (err error) {
+			if !gfile.Exists("config.toml") {
+				configExample = strings.Replace(configExample, "{{secret}}", grand.S(32), 1)
+				gfile.PutContents("config.toml", configExample)
+			}
+			return
+		},
 	}
 
-	f := framework_goframe.New(a)
+	CreateUser = &gcmd.Command{
+		Name:  "createUser",
+		Brief: "create user",
+		Func: func(ctx context.Context, parser *gcmd.Parser) (err error) {
+			createUser(apijson.Load(app.App))
+			return nil
+		},
+	}
+)
 
-	s := g.Server()
-
-	s.Group("/api/data", func(group *ghttp.RouterGroup) {
-		group.Middleware(app.Cors, app.Auth)
-
-		group.POST("/auth", f.CommonResponse(func(ctx context.Context, req model.Map) (res model.Map, err error) {
-			return a.NewAction(ctx, http.MethodPost, req).Result()
-		}, framework_goframe.InDataMode))
-
-		f.Bind(group)
-	})
-
-	s.AddStaticPath("/", "dist")
-	s.AddStaticPath("/assets", "dist/assets")
-
-	s.Run()
+func main() {
+	err := Main.AddCommand(Init, CreateUser)
+	if err != nil {
+		panic(err)
+	}
+	Main.Run(gctx.New())
 }
 
 func createUser(a *apijson.ApiJson) {
@@ -68,6 +92,8 @@ func createUser(a *apijson.ApiJson) {
 	}
 	password := gcmd.Scan("What's password?\n")
 	password = strings.TrimSpace(password)
+	hash, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	password = string(hash)
 	if email == "" {
 		g.Log().Fatal(nil, "password不为空")
 	}
@@ -86,13 +112,5 @@ func createUser(a *apijson.ApiJson) {
 
 	if err != nil {
 		g.Log().Fatal(ctx, err)
-	}
-
-}
-
-func initConfigFile() {
-	if !gfile.Exists("config.toml") {
-		configExample = strings.Replace(configExample, "{{secret}}", grand.S(32), 1)
-		gfile.PutContents("config.toml", configExample)
 	}
 }

@@ -10,7 +10,7 @@
           {{ item.title }}
         </div>
       </div>
-      <div v-if="!simple" class="remark ..." style="height: 58px">
+      <div v-if="!simple" class="remark ..." style="height: 58px; margin-top: 4px">
         {{item.remark || item.description}}
       </div>
       <div v-if="!simple" class="flex justify-end" style="height: 12px;line-height: 12px;color:#777" @click.stop="void">
@@ -105,7 +105,7 @@ function drop(){
 <style scoped lang="scss">
 .bookmark{
   width:200px;
-  height: 100px;
+  height: 106px;
   background: white;
   margin: 4px 4px;
 
@@ -123,12 +123,13 @@ function drop(){
     font-size: 14px;
     font-weight: 600;
     color: #333;
+    line-height: 24px;
   }
 
   &.simple{
     height: 60px;
     width: 240px;
-    line-height: 60px;
+    //line-height: 60px;
 
     .logo{
       width: 30px;
@@ -139,7 +140,7 @@ function drop(){
       text-transform: uppercase;
       font-weight: bold;
       margin-left: 4px;
-      margin-top: 10px;
+      margin-top: 7px;
       border-radius: 100%;
     }
 

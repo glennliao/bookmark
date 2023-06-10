@@ -4,7 +4,6 @@ import { toCateTree } from '@/utils/tree'
 
 const cateTree = ref({ children: [] } as { children: any[] })
 const curCate = ref([] as string[])
-
 const curGroupId = ref('')
 function loadCate () {
   apiJson.get({

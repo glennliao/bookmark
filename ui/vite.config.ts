@@ -1,20 +1,16 @@
 import {defineConfig} from 'vite'
 import vue from '@vitejs/plugin-vue'
 import path from 'path'
-import eslint from 'vite-plugin-eslint'
+
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import vueSetupExtend from 'vite-plugin-vue-setup-extend'
 import {createSvgIconsPlugin} from 'vite-plugin-svg-icons'
 import Components from 'unplugin-vue-components/vite'
-import {
-  AntDesignVueResolver,NaiveUiResolver
-} from 'unplugin-vue-components/resolvers'
-
 
 import {execSync} from 'child_process'
 let tag = "dev"
 try{
-  tag = execSync("git describe --abbrev=10 --tags")
+  tag = execSync("git describe --abbrev=10 --tags").toString()
 }catch (e){
   console.log(e.toString())
 }
@@ -37,7 +33,8 @@ export default defineConfig({
     }),
     Components({
       resolvers: [
-        AntDesignVueResolver(),NaiveUiResolver()
+        // AntDesignVueResolver(),
+        // NaiveUiResolver()
       ],
     })
   ],

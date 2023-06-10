@@ -2,6 +2,8 @@ package app
 
 import (
 	"context"
+	"net/http"
+
 	"github.com/glennliao/apijson-go"
 	"github.com/glennliao/apijson-go/action"
 	"github.com/glennliao/apijson-go/model"
@@ -9,12 +11,11 @@ import (
 	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/util/gconv"
-	"net/http"
 )
 
 func initHook(a *apijson.ApiJson) {
 	action.RegHook(action.Hook{
-		For: "*",
+		For: []string{"*"},
 		BeforeExecutorDo: func(ctx context.Context, n *action.Node, method string) error {
 			user, ok := ctx.Value(UserIdKey).(*CurrentUser)
 			if ok {

@@ -14,7 +14,8 @@
       "default": {
         "in": {
           "cate_id": ["*"],
-          "url": ["%$%","="]
+          "url": ["%$%","="],
+          "q": ["="]
         },
         "out": {
           "bm_id": "",
@@ -76,7 +77,8 @@
           "parent_id": "",
           "created_at": "",
           "created_by": "",
-          "title": ""
+          "title": "",
+          "sorts": ""
         }
       }
     },

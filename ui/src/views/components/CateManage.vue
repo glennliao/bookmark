@@ -1,27 +1,47 @@
 <template>
   <a-modal
     title="目录管理"
-    v-model:visible="visible"
-    width="70%"
+    v-model:open="visible"
+    width="460px"
     @ok="handleOk"
   >
-    <p>
+    <template #footer>
+      <a-button @click="close">关闭</a-button>
+    </template>
+    <div>
       <div>
         <a-button type="primary" @click="add">新增</a-button>
       </div>
       <div class="mt-4">
         <a-tree
           :tree-data="treeData"
-        />
+          draggable
+          show-line
+          :show-icon="false"
+          block-node
+          @drop="drop"
+        >
+          <template #title="{key, title, parentId}">
+            <div style="height: 36px" class="flex justify-between items-center">
+              <div>
+                {{ title }}
+              </div>
+              <div>
+                <a-button @click="edit(key,title,parentId)" type="text">编辑</a-button>
+                <a-button @click="del(key,title)" type="text">删除</a-button>
+              </div>
+            </div>
+          </template>
+        </a-tree>
       </div>
-    </p>
+    </div>
   </a-modal>
 
   <a-modal
     title="编辑"
-    v-model:visible="addVisible"
+    v-model:open="addVisible"
     @ok="handleAdd"
-    width="60%"
+    width="460px"
   >
     <p>
       <a-form autocomplete="off"
@@ -38,12 +58,14 @@
 
 </template>
 
-<script setup>
-import {reactive, ref, toRaw} from "vue"
-import {apiJson} from "../../api";
-import {toCateTree} from "@/utils/tree";
-import {useBookmark} from "@/views/hook/bookmark";
-import {useForm} from "ant-design-vue/es/form/index.js";
+<script setup lang="ts">
+import { reactive, ref, toRaw } from 'vue'
+import { apiJson } from '../../api'
+import { toCateTree } from '@/utils/tree'
+import { useBookmark } from '@/views/hook/bookmark'
+import { useForm } from 'ant-design-vue/es/form/index.js'
+import { message, Modal } from 'ant-design-vue'
+import { TreeDataItem, DropEvent } from 'ant-design-vue'
 
 const visible = ref(false)
 const addVisible = ref(false)
@@ -53,15 +75,19 @@ const bookmark = useBookmark()
 const info = ref({
   parentId: '',
   title: '',
-  groupId: '',
+  groupId: ''
 })
 
-function handleOk() {
-  console.log("asd")
+function handleOk () {
+  console.log('asd')
   visible.value = false
 }
 
-const {resetFields, validate, validateInfos} = useForm(
+const {
+  resetFields,
+  validate,
+  validateInfos
+} = useForm(
   info,
   reactive({
     parentId: [
@@ -75,16 +101,28 @@ const {resetFields, validate, validateInfos} = useForm(
       },
     ],
   }),
-);
+)
 
-function handleAdd() {
-  console.log("asd")
+function handleAdd () {
+  console.log('asd')
   console.log(info.value)
 
   validate().then(data => {
     let _info = toRaw(info.value)
     _info.groupId = bookmark.curGroupId.value
 
+    if (_info.cateId) {
+      apiJson.put({
+        BookmarkCate: _info,
+        tag: 'BookmarkCate',
+      }).then(data => {
+        console.log(data)
+        addVisible.value = false
+        loadCate()
+        bookmark.loadCate()
+      })
+      return
+    }
     apiJson.post({
       BookmarkCate: _info,
       tag: 'BookmarkCate',
@@ -97,55 +135,158 @@ function handleAdd() {
     })
   })
 
-
 }
 
-
-function open() {
+function open () {
   visible.value = true
   loadCate()
 }
 
-
-function loadCate() {
+function loadCate () {
   apiJson.get({
-    "BookmarkCate[]": {
+    'BookmarkCate[]': {
       count: 0,
+      '@alias': 'list'
     }
   }).then(data => {
-    console.log(data)
-    treeData.value = toCateTree((data["BookmarkCate[]"].map(item => {
+    treeData.value = toCateTree((data.list.map(item => {
       return {
         ...item,
         label: item.title,
-        value: item.cateId,
+        key: item.cateId,
+        value: item.cateId
       }
     })))
     parentIdTreeData.value = toCateTree([{
       value: 'root',
       label: 'root',
       parentId: 'root'
-    }].concat(data["BookmarkCate[]"].map(item => {
+    }].concat(data.list.map(item => {
       return {
         ...item,
         label: item.title,
-        value: item.cateId,
+        key: item.cateId,
+        value: item.cateId
       }
     })))
   })
 }
 
-function add() {
+function add () {
   resetFields()
   addVisible.value = true
 }
 
 const rules = {}
 
-
 defineExpose({
   open
 })
+
+function close () {
+  visible.value = false
+}
+
+function del (key, title) {
+  Modal.confirm({
+    title: '删除',
+    content: `确认删除 ${title} 吗？`,
+    onOk: () => {
+      apiJson.delete({
+        BookmarkCate: {
+          cateId: key
+        },
+        tag: 'BookmarkCate'
+      }).then(data => {
+        message.success('删除成功')
+        loadCate()
+        bookmark.loadCate()
+      })
+    }
+  })
+}
+
+function edit (key, title, parentId) {
+  info.value = {
+    parentId,
+    title,
+    cateId: key
+  }
+  addVisible.value = true
+}
+
+function drop (info) {
+  console.log('dragend', info)
+  // 目标节点
+  const dropKey = info.node.eventKey
+  // 拖动节点
+  const dragKey = info.dragNode.eventKey
+  const dropPos = info.node.pos.split('-')
+  // -1 上
+  // 0 内
+  // 1 下
+  // 拖动的位置
+  const dropPosition =
+    info.dropPosition - Number(dropPos[dropPos.length - 1])
+
+  const loop = (data: TreeDataItem[], key: string, callback: any) => {
+    data.forEach((item, index, arr) => {
+      if (item.key === key) {
+        return callback(item, index, arr)
+      }
+      if (item.children) {
+        return loop(item.children, key, callback)
+      }
+    })
+  }
+  const data = [...treeData.value]
+
+  // 拖动节点的对象
+  let dragObj: TreeDataItem = {}
+
+  if (!info.dropToGap) {
+    return false
+  } else if (
+    (info.node.children || []).length > 0 &&
+    info.node.expanded &&
+    dropPosition === 1
+  ) {
+    return false
+  } else {
+    let a: TreeDataItem[] = []
+    let ii = 0
+    loop(
+      data,
+      dragKey,
+      (item: TreeDataItem, index: number, arr: TreeDataItem[]) => {
+        a = arr
+        ii = index
+        dragObj = item
+      }
+    )
+    // 只允许当前节点下的子节点拖动排序
+    if (a.some((item) => item.key === dropKey)) {
+      a.splice(ii, 1)
+      let ar: TreeDataItem[] = []
+      let i = 0
+      loop(
+        data,
+        dropKey,
+        (item: TreeDataItem, index: number, arr: TreeDataItem[]) => {
+          ar = arr
+          i = index
+        }
+      )
+      if (dropPosition === -1) {
+        ar.splice(i, 0, dragObj)
+      } else {
+        ar.splice(i + 1, 0, dragObj)
+      }
+    }
+  }
+
+  console.log(data)
+}
 
 </script>
 

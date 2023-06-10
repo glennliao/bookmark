@@ -2,6 +2,8 @@ package app
 
 import (
 	"context"
+	"time"
+
 	"github.com/glennliao/apijson-go/config/executor"
 	"github.com/glennliao/apijson-go/model"
 	"github.com/gogf/gf/v2/errors/gerror"
@@ -10,7 +12,6 @@ import (
 	"github.com/gogf/gf/v2/util/grand"
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
-	"time"
 )
 
 func init() {

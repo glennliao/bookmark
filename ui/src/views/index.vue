@@ -2,7 +2,6 @@
   <!--  <HeaderBar/>-->
 
 
-
   <div class="px-4 py-2 bookmark-area z-10 absolute " v-contextmenu:contextmenu>
 
     <div class="toggle-bar" @click="groupsVisible = !groupsVisible">
@@ -15,11 +14,12 @@
     <div class="p-2 z-10">
       <ul class="rounded-box bg-base-100 menu menu-horizontal bg-base-100 shadow z-10" style="width: auto">
         <li :class="{'active':isHome}">
-          <span @click="toHome" >
+          <span @click="toHome">
             ⭐
           </span>
         </li>
-        <li v-for="item in cateTree.children" :key="item.cateId" :class="{'active':!isHome && curCate.includes(item.cateId)}">
+        <li v-for="item in cateTree.children" :key="item.cateId"
+            :class="{'active':!isHome && curCate.includes(item.cateId)}">
           <a-dropdown trigger="hover">
             <template #overlay>
               <a-menu v-if="item.children" @click="handleMenuClick">
@@ -45,7 +45,7 @@
           </a-dropdown>
         </li>
         <li @click="cateContextmenu">
-          <span>⚙</span>
+          <span>⚙️</span>
         </li>
       </ul>
       <div v-if="isHome">
@@ -60,7 +60,7 @@
 
         <div class="text-sm breadcrumbs" v-if="curCateInfo.parents.length > 0">
           <ul>
-            <li v-for="item in curCateInfo.parents" :key="item.cateId">{{item.title}}</li>
+            <li v-for="item in curCateInfo.parents" :key="item.cateId">{{ item.title }}</li>
           </ul>
         </div>
 
@@ -72,11 +72,13 @@
 
         <div class="mt-4">
           <div className="tabs">
-            <a :className="'tab tab-sm tab-lifted '+(curSubCateId === item.cateId?'tab-active':'')"  v-for="item in curCateInfo.children" :key="item.cateId" @click="clickSubCate(item.cateId)">{{item.title}}</a>
+            <a :className="'tab tab-sm tab-lifted '+(curSubCateId === item.cateId?'tab-active':'')"
+               v-for="item in curCateInfo.children" :key="item.cateId"
+               @click="clickSubCate(item.cateId)">{{ item.title }}</a>
           </div>
           <div class="flex mt-2">
             <transition-group appear name="slide-fade" tag="div" class="flex flex-wrap justify-start">
-              <bookmark v-for="item in curSubCateBookmark" :key="item.bmId" :item="item" @edit="edit(item)"> </bookmark>
+              <bookmark v-for="item in curSubCateBookmark" :key="item.bmId" :item="item" @edit="edit(item)"></bookmark>
             </transition-group>
           </div>
         </div>
@@ -86,53 +88,76 @@
 
     <cate-manage ref="cateManageRef"/>
     <bookmark-edit-modal ref="BookmarkModalRef"/>
+    <search ref="BookmarkSearchModalRef"/>
 
-    <div class="absolute" style="right:34px;bottom:32px">
-      <a-button type="primary" @click="openBookmarkModal({})" shape="circle">
+
+    <a-float-button-group shape="square" :style="{ right: '24px' }">
+      <a-float-button @click="searchBookmark({})">
         <template #icon>
-          <PlusOutlined/>
+          <SearchOutlined />
         </template>
-      </a-button>
-    </div>
+      </a-float-button>
+
+      <a-float-button type="primary" @click="openBookmarkModal({})">
+        <template #icon>
+          <PlusOutlined  />
+        </template>
+      </a-float-button>
+    </a-float-button-group>
+
   </div>
 
   <a-drawer
     title="Groups"
     placement="left"
     :closable="true"
-    v-model:visible="groupsVisible"
+    v-model:open="groupsVisible"
     width="180px"
   >
-    <div @click="changeGroup(item)" v-for="item in groups" style="cursor: pointer" class="shadow p-2 rounded bg-orange-500 text-white" :key="item.groupId">
-      {{item.title}}
+    <div @click="changeGroup(item)" v-for="item in groups" style="cursor: pointer"
+         class="shadow p-2 rounded bg-orange-500 text-white" :key="item.groupId">
+      {{ item.title }}
     </div>
   </a-drawer>
 
 
   <v-contextmenu ref="contextmenu">
     <v-contextmenu-item @click="openBookmarkModal({})">➕ 新增书签</v-contextmenu-item>
-    <v-contextmenu-item @click="cateContextmenu({})">⚙ 管理分类</v-contextmenu-item>
+    <v-contextmenu-item @click="cateContextmenu({})">⚙️ 管理分类</v-contextmenu-item>
     <v-contextmenu-item @click="logout({})">🔘 退出登录</v-contextmenu-item>
   </v-contextmenu>
 </template>
 
 <script lang="ts" setup>
 // import HeaderBar from './layout/Header.vue'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import SubMemu from '@/views/components/SubMemu.vue'
 import { useBookmark } from './hook/bookmark'
 import CateManage from '@/views/components/CateManage.vue'
 import BookmarkEditModal from '@/views/components/BookmarkEditModal.vue'
 import Bookmark from '@/views/components/Bookmark.vue'
-import { SettingOutlined, PlusOutlined } from '@ant-design/icons-vue'
+import { PlusOutlined,SearchOutlined } from '@ant-design/icons-vue'
 import { apiJson } from '@/api'
+import { useRoute } from 'vue-router'
+import Search from '@/views/components/Search.vue'
 
-const { loadCate, curCate, clickCate, cateTree, bookmarkList, loadGroup, curGroupId, groups, curSubCateId, loadSubCateBookmark,curSubCateBookmark } = useBookmark()
+const {
+  loadCate,
+  curCate,
+  clickCate,
+  cateTree,
+  bookmarkList,
+  loadGroup,
+  curGroupId,
+  groups,
+  curSubCateId,
+  loadSubCateBookmark,
+  curSubCateBookmark
+} = useBookmark()
 
 const curCateInfo = ref({})
 
-function clickSubCate (cateId:string) {
-  console.log(cateId)
+function clickSubCate (cateId: string) {
   curSubCateId.value = cateId
   loadSubCateBookmark()
 }
@@ -175,7 +200,7 @@ function loadLatest () {
     }
   }).then(data => {
     console.debug(data)
-    latestVisitList.value = data['[]'].filter((item:any)=>item.Bookmark).map((item: { Bookmark: any; }) => {
+    latestVisitList.value = data['[]'].filter((item: any) => item.Bookmark).map((item: { Bookmark: any; }) => {
       return item.Bookmark
     })
   })
@@ -183,7 +208,7 @@ function loadLatest () {
 
 loadLatest()
 
-function foundCurCateInfo (keys:string[], tree:any[], parents:any[]) {
+function foundCurCateInfo (keys: string[], tree: any[], parents: any[]) {
   console.log(tree)
   for (const treeElement of tree) {
     if (treeElement.cateId === keys[keys.length - 1]) {
@@ -205,20 +230,25 @@ function foundCurCateInfo (keys:string[], tree:any[], parents:any[]) {
   console.log(curCateInfo.value)
 }
 
-function handleMenuClick (e:{keyPath:string[]}) {
+function handleMenuClick (e: { keyPath: string[] }) {
   const keys = e.keyPath[0].split('/').filter(item => item)
   curCateInfo.value = {}
   curSubCateBookmark.value = []
-  curSubCateId.value = ""
+  curSubCateId.value = ''
   foundCurCateInfo(keys, cateTree.value.children, [])
   clickCate(keys)
   isHome.value = false
 }
 
 const BookmarkModalRef = ref()
+const BookmarkSearchModalRef = ref()
 
 function openBookmarkModal (item) {
   BookmarkModalRef.value.open(item)
+}
+
+function searchBookmark(item){
+  BookmarkSearchModalRef.value.open(item)
 }
 
 function logout () {
@@ -226,10 +256,17 @@ function logout () {
   location.reload()
 }
 
-function edit(item){
+function edit (item) {
   BookmarkModalRef.value.open(item)
 }
 
+// add from url
+const route = useRoute()
+if (route.query.url) {
+  onMounted(() => {
+    openBookmarkModal({ url: route.query.url })
+  })
+}
 </script>
 <style scoped lang="scss">
 
@@ -260,55 +297,55 @@ function edit(item){
   opacity: .1;
 }
 
- .n-layout-toggle-bar:hover .n-layout-toggle-bar__top {
+.n-layout-toggle-bar:hover .n-layout-toggle-bar__top {
   transform: rotate(-12deg) scale(1.15) translateY(-2px);
 }
 
- .n-layout-toggle-bar:hover .n-layout-toggle-bar__bottom {
+.n-layout-toggle-bar:hover .n-layout-toggle-bar__bottom {
   transform: rotate(12deg) scale(1.15) translateY(2px);
 }
 
- .n-layout-toggle-bar {
+.n-layout-toggle-bar {
 
   //left: -28px;
   transform: rotate(180deg);
 
 }
 
- .n-layout-toggle-bar:hover .n-layout-toggle-bar__top {
+.n-layout-toggle-bar:hover .n-layout-toggle-bar__top {
   transform: rotate(12deg) scale(1.15) translateY(-2px);
 }
 
- .n-layout-toggle-bar:hover .n-layout-toggle-bar__bottom {
+.n-layout-toggle-bar:hover .n-layout-toggle-bar__bottom {
   transform: rotate(-12deg) scale(1.15) translateY(2px);
 }
 
- .n-layout-toggle-bar:hover .n-layout-toggle-bar__top {
+.n-layout-toggle-bar:hover .n-layout-toggle-bar__top {
   transform: rotate(-12deg) scale(1.15) translateY(-2px);
 }
 
- .n-layout-toggle-bar:hover .n-layout-toggle-bar__bottom {
+.n-layout-toggle-bar:hover .n-layout-toggle-bar__bottom {
   transform: rotate(12deg) scale(1.15) translateY(2px);
 }
 
- .toggle-bar {
-   --n-bezier: cubic-bezier(0.4, 0, 0.2, 1);
-   --n-toggle-button-color: #FFF;
-   --n-toggle-button-border: 1px solid rgb(239, 239, 245);
-   --n-toggle-bar-color: rgba(191, 191, 191, 1);
-   --n-toggle-bar-color-hover: rgba(153, 153, 153, 1);
-   --n-color: #fff;
-   --n-text-color: rgb(51, 54, 57);
-   --n-border-color: rgb(239, 239, 245);
-   --n-toggle-button-icon-color: rgb(51, 54, 57);
-   position: absolute;
-   left:-4px;
-   top:0;
-   width: 12px;
-   bottom: 0;
- }
+.toggle-bar {
+  --n-bezier: cubic-bezier(0.4, 0, 0.2, 1);
+  --n-toggle-button-color: #FFF;
+  --n-toggle-button-border: 1px solid rgb(239, 239, 245);
+  --n-toggle-bar-color: rgba(191, 191, 191, 1);
+  --n-toggle-bar-color-hover: rgba(153, 153, 153, 1);
+  --n-color: #fff;
+  --n-text-color: rgb(51, 54, 57);
+  --n-border-color: rgb(239, 239, 245);
+  --n-toggle-button-icon-color: rgb(51, 54, 57);
+  position: absolute;
+  left: -4px;
+  top: 0;
+  width: 12px;
+  bottom: 0;
+}
 
- .n-layout-toggle-bar {
+.n-layout-toggle-bar {
 
   cursor: pointer;
   height: 72px;
@@ -319,7 +356,7 @@ function edit(item){
 
 }
 
- .n-layout-toggle-bar .n-layout-toggle-bar__top,  .n-layout-toggle-bar .n-layout-toggle-bar__bottom {
+.n-layout-toggle-bar .n-layout-toggle-bar__top, .n-layout-toggle-bar .n-layout-toggle-bar__bottom {
 
   position: absolute;
   width: 4px;
@@ -327,30 +364,30 @@ function edit(item){
   height: 38px;
   left: 14px;
   transition: background-color .3s var(--n-bezier),
-    transform .3s var(--n-bezier);
+  transform .3s var(--n-bezier);
 
 }
 
- .n-layout-toggle-bar .n-layout-toggle-bar__bottom {
+.n-layout-toggle-bar .n-layout-toggle-bar__bottom {
 
   position: absolute;
   top: 34px;
 
 }
 
- .n-layout-toggle-bar:hover .n-layout-toggle-bar__top {
+.n-layout-toggle-bar:hover .n-layout-toggle-bar__top {
   transform: rotate(12deg) scale(1.15) translateY(-2px);
 }
 
- .n-layout-toggle-bar:hover .n-layout-toggle-bar__bottom {
+.n-layout-toggle-bar:hover .n-layout-toggle-bar__bottom {
   transform: rotate(-12deg) scale(1.15) translateY(2px);
 }
 
- .n-layout-toggle-bar .n-layout-toggle-bar__top,  .n-layout-toggle-bar .n-layout-toggle-bar__bottom {
+.n-layout-toggle-bar .n-layout-toggle-bar__top, .n-layout-toggle-bar .n-layout-toggle-bar__bottom {
   background-color: var(--n-toggle-bar-color);
 }
 
- .n-layout-toggle-bar:hover .n-layout-toggle-bar__top,  .n-layout-toggle-bar:hover .n-layout-toggle-bar__bottom {
+.n-layout-toggle-bar:hover .n-layout-toggle-bar__top, .n-layout-toggle-bar:hover .n-layout-toggle-bar__bottom {
   background-color: var(--n-toggle-bar-color-hover);
 }
 

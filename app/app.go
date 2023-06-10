@@ -2,50 +2,21 @@ package app
 
 import (
 	"context"
+
 	"github.com/glennliao/apijson-go"
 	"github.com/glennliao/apijson-go/config"
+	jsonConfig "github.com/glennliao/apijson-go/drivers/json/config"
 	"github.com/glennliao/bookmark/app/inits"
 	"github.com/glennliao/table-sync/tablesync"
 	"github.com/gogf/gf/v2/frame/g"
-	"github.com/gogf/gf/v2/util/gconv"
 )
 
 func init() {
-	config.RegAccessListProvider("json", func(ctx context.Context) []config.AccessConfig {
-		var accessList []config.AccessConfig
-		err := gconv.Scan(inits.AccessConfigJson, &accessList)
-		if err != nil {
-			panic(err)
-		}
-		return accessList
-	})
-
-	config.RegRequestListProvider("json", func(ctx context.Context) []config.Request {
-		var requestList []config.Request
-		err := gconv.Scan(inits.RequestConfigJson, &requestList)
-		if err != nil {
-			panic(err)
-		}
-		for i, request := range requestList {
-			if _, ok := request.Structure[request.Tag]; !ok {
-				requestList[i].Structure = map[string]*config.Structure{
-					request.Tag: {
-						Must:    nil,
-						Refuse:  nil,
-						Unique:  nil,
-						Insert:  nil,
-						Update:  nil,
-						Replace: nil,
-						Remove:  nil,
-					},
-				}
-			}
-		}
-		return requestList
-	})
+	config.RegAccessListProvider("json", jsonConfig.AccessListProvider(nil, inits.AccessConfigJson))
+	config.RegRequestListProvider("json", jsonConfig.RequestListProvider(nil, inits.RequestConfigJson))
 }
 
-func Init(ctx context.Context, a *apijson.ApiJson) {
+func App(ctx context.Context, a *apijson.ApiJson) {
 
 	a.Config().Access.ConditionFunc = AccessCondition
 	a.Config().Access.DefaultRoleFunc = Role
