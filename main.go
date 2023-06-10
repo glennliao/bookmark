@@ -32,6 +32,7 @@ var (
 		Brief:       "start http server",
 		Description: "",
 		Func: func(ctx context.Context, parser *gcmd.Parser) (err error) {
+
 			a := apijson.Load(app.App)
 
 			w := web.New(a)
