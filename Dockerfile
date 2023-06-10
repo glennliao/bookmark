@@ -14,5 +14,5 @@ RUN GOOS=linux GOARCH=$TARGETARCH  \
 FROM alpine:latest
 
 WORKDIR /root
-COPY --from=builder /app/output/bookmark .
+COPY --from=builder /app/bookmark .
 CMD /root/bookmark
