@@ -12,7 +12,7 @@ import (
 
 var jwtSecret []byte
 
-func init() {
+func InitToken() {
 	val, err := g.Cfg().Get(nil, "jwt.secret")
 	if err != nil {
 		g.Log().Fatal(nil, err)

@@ -4,7 +4,7 @@ export const apiJson = {
   get: (data: Param) => http.post('/data/get', data),
   post: (data: Param) => http.post('/data/post', data),
   put: (data: Param) => http.post('/data/put', data),
-  delete: (data: Param) => http.post('/data/get', data)
+  delete: (data: Param) => http.post('/data/delete', data)
 }
 
 export function auth (param: { email: string, password: string }) {

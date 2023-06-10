@@ -28,6 +28,8 @@ func App(ctx context.Context, a *apijson.ApiJson) {
 	initHook(a)
 	initRowKeyGen(a)
 	initFunc(a)
+
+	InitToken()
 }
 
 func initDB(ctx context.Context) {

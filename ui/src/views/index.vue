@@ -12,7 +12,7 @@
     </div>
 
     <div class="p-2 z-10">
-      <ul class="rounded-box bg-base-100 menu menu-horizontal bg-base-100 shadow z-10" style="width: auto">
+      <ul class="rounded-box bg-base-100 menu category menu-horizontal bg-base-100 shadow z-10" style="width: auto">
         <li :class="{'active':isHome}">
           <span @click="toHome">
             ⭐
@@ -273,6 +273,10 @@ if (route.query.url) {
 .bookmark-area {
   height: 100vh;
   width: 100vw;
+
+  .category{
+    font-size: 14px;
+  }
 }
 
 .active {

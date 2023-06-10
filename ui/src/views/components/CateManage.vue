@@ -60,7 +60,7 @@
 
 <script setup lang="ts">
 import { reactive, ref, toRaw } from 'vue'
-import { apiJson } from '../../api'
+import { apiJson } from '@/api'
 import { toCateTree } from '@/utils/tree'
 import { useBookmark } from '@/views/hook/bookmark'
 import { useForm } from 'ant-design-vue/es/form/index.js'
@@ -75,7 +75,8 @@ const bookmark = useBookmark()
 const info = ref({
   parentId: '',
   title: '',
-  groupId: ''
+  groupId: '',
+  cateId: '',
 })
 
 function handleOk () {
@@ -174,6 +175,11 @@ function loadCate () {
 
 function add () {
   resetFields()
+  info.value = {
+    parentId: '',
+    title: '',
+    cateId: ''
+  }
   addVisible.value = true
 }
 

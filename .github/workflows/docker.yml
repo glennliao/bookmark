@@ -25,7 +25,7 @@ jobs:
         run: npm install -g pnpm
 
       - name: Setup gf
-        run: wget -O gf https://github.com/gogf/gf/releases/latest/download/gf_$(go env GOOS)_$(go env GOARCH) && chmod +x gf && ./gf install -y && rm ./gf
+        run: wget -q -O gf https://github.com/gogf/gf/releases/latest/download/gf_$(go env GOOS)_$(go env GOARCH) && chmod +x gf && ./gf install -y && rm ./gf
 
       - name: Build
         run: |

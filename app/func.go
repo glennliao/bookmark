@@ -2,13 +2,14 @@ package app
 
 import (
 	"context"
+	url2 "net/url"
+	"strings"
+
 	"github.com/glennliao/apijson-go"
 	"github.com/glennliao/apijson-go/config"
 	"github.com/glennliao/apijson-go/model"
 	"github.com/glennliao/bookmark/app/util/fetchurl"
 	"github.com/gogf/gf/v2/util/gconv"
-	url2 "net/url"
-	"strings"
 )
 
 func initFunc(a *apijson.ApiJson) {
@@ -38,6 +39,8 @@ func initFunc(a *apijson.ApiJson) {
 					_url, _ := url2.Parse(meta.Url)
 					meta.Icon = _url.Scheme + "://" + _url.Host + meta.Icon
 				}
+
+				meta.Url = url
 			}
 
 			return meta, err

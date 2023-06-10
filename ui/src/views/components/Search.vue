@@ -9,6 +9,7 @@
         placeholder="url or title"
         enter-button="Search"
         size="default"
+        ref="input"
         @search="onSearch"
         :loading="fetchLoading"
       />
@@ -47,7 +48,7 @@
 
 import { apiJson } from '../../api'
 import { message } from 'ant-design-vue'
-import { ref } from 'vue'
+import { nextTick, ref } from 'vue'
 
 const visible = ref(false)
 
@@ -62,7 +63,12 @@ const equalBm = ref({})
 window.addEventListener('keydown', function (event) {
   if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'f' && !visible.value) {
     visible.value = true
+
     event.preventDefault()
+    nextTick(() => {
+
+      input.value.focus()
+    })
   }
 })
 
@@ -95,8 +101,12 @@ function onSearch () {
   })
 }
 
+const input = ref(null)
 function open (_info = {}) {
   visible.value = true
+  nextTick(() => {
+    input.value.focus()
+  })
 }
 
 function toURL (item) {

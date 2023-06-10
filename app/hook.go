@@ -29,6 +29,32 @@ func initHook(a *apijson.ApiJson) {
 				}
 			}
 
+			if method == http.MethodDelete {
+				if n.Key == TableBookmarkCate {
+					for _, item := range n.Where {
+						cateId := item["cate_id"]
+
+						one, err := g.DB().Model("bookmark_cate").Where("parent_id", cateId).Safe().Ctx(ctx).One()
+						if err != nil {
+							return err
+						}
+
+						if !one.IsEmpty() {
+							return gerror.Newf("分类下有子分类，不能删除，cate_id: %v", cateId)
+						}
+
+						one, err = g.DB().Model("group_bookmark").Where("cate_id", cateId).Safe().Ctx(ctx).One()
+						if err != nil {
+							return err
+						}
+
+						if !one.IsEmpty() {
+							return gerror.Newf("分类下有书签，不能删除，cate_id: %v", cateId)
+						}
+					}
+				}
+			}
+
 			return nil
 		},
 		AfterExecutorDo: func(ctx context.Context, n *action.Node, method string) error {

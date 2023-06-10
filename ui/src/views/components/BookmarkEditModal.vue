@@ -77,6 +77,9 @@
               <div>
                 2. 如遇到需要保存到此处的书签,点击第一步保存的书签即可
               </div>
+              <div>
+                <img src="../../assets/add_bookmark.gif"/>
+              </div>
             </template>
             从书签栏添加
           </a-popover>
