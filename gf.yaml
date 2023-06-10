@@ -1,7 +1,7 @@
 gfcli:
   build:
     name:     "bookmark"
-    output:   "./bookmark"
+    output:   "/app/bookmark"
     extra:    "-trimpath -ldflags '-s -w'"
 #    varMap:
 #      version: {{APP_VERSION}}
