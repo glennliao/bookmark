@@ -22,8 +22,8 @@ github.com/fsnotify/fsnotify v1.5.4 h1:jRbGcIw6P2Meqdwuo0H1p6JVLbL5DHKAKlYndzMwV
 github.com/fsnotify/fsnotify v1.5.4/go.mod h1:OVB6XrOHzAwXMpEM7uPOzcehqUV2UqJxmVXmkdnm1bU=
 github.com/glebarez/go-sqlite v1.17.3 h1:Rji9ROVSTTfjuWD6j5B+8DtkNvPILoUC3xRhkQzGxvk=
 github.com/glebarez/go-sqlite v1.17.3/go.mod h1:Hg+PQuhUy98XCxWEJEaWob8x7lhJzhNYF1nZbUiRGIY=
-github.com/glennliao/apijson-go v0.2.0-beta6 h1:u/H3VhR8FGOXmTwX3a9p8r6qFA9IZShoEgQqYEYut1o=
-github.com/glennliao/apijson-go v0.2.0-beta6/go.mod h1:M7qcy4mHDHKQrqyeYSWUOXz7241FJFcm4KBUEF08rj4=
+github.com/glennliao/apijson-go v0.2.0-beta7 h1:WgjEwKhLftBROdJzXVGalTRgqmhKth0AUj03eED1ZMg=
+github.com/glennliao/apijson-go v0.2.0-beta7/go.mod h1:M7qcy4mHDHKQrqyeYSWUOXz7241FJFcm4KBUEF08rj4=
 github.com/glennliao/getfavicon v0.1.0 h1:Vx93Qjpdyq+GiphPUN7src3hrzTnPrEwffN/f1d9XRM=
 github.com/glennliao/getfavicon v0.1.0/go.mod h1:auLugLCzHN+5SvIxuWP1QyWQgWlRHXc+1QrHVy1ZE5U=
 github.com/glennliao/table-sync v0.2.1 h1:Z/7j4KJoDzrxIdE2GpaBx+qblYaymqH2+KZOAb5GJ0w=

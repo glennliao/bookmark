@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/PuerkitoBio/goquery v1.8.1
-	github.com/glennliao/apijson-go v0.2.0-beta6
+	github.com/glennliao/apijson-go v0.2.0-beta7
 	github.com/glennliao/getfavicon v0.1.0
 	github.com/glennliao/table-sync v0.2.1
 	github.com/gogf/gf/contrib/drivers/mysql/v2 v2.3.2
@@ -16,7 +16,7 @@ require (
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519
 )
 
-replace github.com/glennliao/apijson-go  v0.2.0-beta6 => ../apijson/apijson-go
+//replace github.com/glennliao/apijson-go  v0.2.0-beta6 => ../apijson/apijson-go
 
 require (
 	github.com/BurntSushi/toml v1.1.0 // indirect

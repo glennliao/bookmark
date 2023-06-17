@@ -1,4 +1,5 @@
-# bookmark 在线书签
+# bookmark 在线书签 
+![](https://img.shields.io/github/v/tag/glennliao/bookmark)
 
 
 ## 截图
@@ -50,10 +51,12 @@ services:
 - 书签排序
 - 用户注册
 
-### 0.4.1 (2023-06-17)
+### 0.4.3 (2023-06-17)
 - fix 分类无法删除
 - fix 新增子分类导致父级消失 (编辑后未清空数据)
-- 增加docker部署支持
+
+### 0.4.1 (2023-06-10)
+- 增加github action 发布docker
 
 
 ### 0.4 (2023-06-10)
