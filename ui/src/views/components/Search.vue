@@ -14,12 +14,12 @@
         :loading="fetchLoading"
       />
 
-      <div v-if="hasSearch" class="mt-4">
+      <div v-if="hasSearch" class="mt-4 p-1 rounded" style="background: #efefef;overflow: auto;max-height: 72vh">
         <a-empty v-if="list.length === 0" />
-        <div v-for="item in list" :key="item.bmId" @click="toURL(item)" class="p-2 m-2 rounded shadow cursor-pointer">
+        <div v-for="item in list" :key="item.bmId" @click="toURL(item)" class="p-2 m-2 bg-white rounded shadow cursor-pointer">
 
-          <div>
-            {{item.title}}
+          <div class="font-bold">
+            {{item.title.length > 30 ? item.title.substring(0, 30) + '...' : item.title}}
           </div>
           <div>
             {{item.url}}

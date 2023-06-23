@@ -4,7 +4,7 @@
       <div class="flex">
         <div>
           <img  v-lazy="item.icon" v-if="item.icon && item.icon !== ''" class="logo" />
-          <div v-else class="logo text-center text-white" :style="{'background': 'orange'}">{{ item.title[0] }}</div>
+          <div v-else class="logo text-center text-white" :style="{'background': colorByURL(item.url)}">{{ item.title[0] }}</div>
         </div>
         <div class="ml-1 title truncate ...">
           {{ item.title }}
@@ -42,7 +42,7 @@ import { ExclamationCircleOutlined } from '@ant-design/icons-vue'
 import { createVNode } from 'vue'
 import { Modal } from 'ant-design-vue'
 import dayjs from 'dayjs'
-import { useBookmark } from "@/views/hook/bookmark";
+import { useBookmark } from '@/views/hook/bookmark'
 const bookmark = useBookmark()
 
 const props = defineProps({
@@ -53,7 +53,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(["edit"])
+const emit = defineEmits(['edit'])
 
 function toURL (item) {
   apiJson.put({
@@ -65,39 +65,65 @@ function toURL (item) {
   window.open(item.url, '_blank')
 }
 
-
-function edit(){
-  emit("edit")
+function edit () {
+  emit('edit')
 }
 
-function drop(){
+function drop () {
   Modal.confirm({
     title: 'Do you Want to delete these items?',
     icon: createVNode(ExclamationCircleOutlined),
     content: createVNode('div', { style: 'color:red;' }, ''),
-    onOk() {
-
+    onOk () {
       let cateId = bookmark.curSubCateId.value
-      if(!cateId){
-        cateId = bookmark.curCate.value[bookmark.curCate.value.length-1]
+      if (!cateId) {
+        cateId = bookmark.curCate.value[bookmark.curCate.value.length - 1]
       }
       apiJson.put({
-        "tag":"GroupBookmark",
-        "GroupBookmark":{
-          "bmId":props.item.bmId,
-          "groupId":bookmark.curGroupId.value,
+        tag: 'GroupBookmark',
+        GroupBookmark: {
+          bmId: props.item.bmId,
+          groupId: bookmark.curGroupId.value,
           cateId,
-          "dropAt":dayjs().format('YYYY-MM-DD HH:mm:ss')
+          dropAt: dayjs().format('YYYY-MM-DD HH:mm:ss')
         }
-      }).then(data=>{
+      }).then(data => {
         bookmark.loadBookmarkList()
         bookmark.loadSubCateBookmark()
       })
+    },
+    onCancel () {
+    }
+  })
+}
 
-    },
-    onCancel() {
-    },
-  });
+function getHostFromUrl(url){
+  let host = ''
+  if (url.indexOf('://') > -1) {
+    host = url.split('/')[2]
+  } else {
+    host = url.split('/')[0]
+  }
+  host = host.split(':')[0]
+  host = host.split('?')[0]
+  return host
+}
+
+function colorByURL (url) {
+
+  const host = getHostFromUrl(url)
+
+  let hash = 0
+  for (let i = 0; i < host.length; i++) {
+    hash = host.charCodeAt(i) + ((hash << 5) - hash)
+  }
+  const c = (hash & 0x00FFFFFF)
+    .toString(16)
+    .toUpperCase()
+
+  console.log(c)
+
+  return '#' + '00000'.substring(0, 6 - c.length) + c
 }
 
 </script>
@@ -147,7 +173,7 @@ function drop(){
     .title{
       line-height: 50px;
       margin-left: 8px;
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 600;
       color: #333;
 

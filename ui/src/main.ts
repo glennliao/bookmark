@@ -20,7 +20,9 @@ import {
   Popover,
   Tabs,
   Empty,
-  FloatButton
+  FloatButton,
+  Upload,
+  Breadcrumb
 } from 'ant-design-vue'
 import 'ant-design-vue/dist/reset.css'
 
@@ -35,8 +37,11 @@ app.use(contextmenu)
 app.use(lazyPlugin, {})
 app.use(router)
 app.use(pinia)
+
 app.use(Drawer).use(Button).use(Tree)
   .use(Dropdown).use(Menu).use(Modal)
   .use(Form).use(Alert).use(Input)
-  .use(Card).use(TreeSelect).use(Popover).use(Tabs).use(FloatButton).use(Empty)
+  .use(Card).use(TreeSelect).use(Popover)
+  .use(Tabs).use(FloatButton).use(Empty).use(Upload).use(Breadcrumb)
+
 app.mount('#app')

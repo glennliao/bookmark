@@ -1,13 +1,5 @@
 <template>
-  <a-modal
-    title="目录管理"
-    v-model:open="visible"
-    width="460px"
-    @ok="handleOk"
-  >
-    <template #footer>
-      <a-button @click="close">关闭</a-button>
-    </template>
+  <div>
     <div>
       <div>
         <a-button type="primary" @click="add">新增</a-button>
@@ -35,54 +27,45 @@
         </a-tree>
       </div>
     </div>
-  </a-modal>
-
-  <a-modal
-    title="编辑"
-    v-model:open="addVisible"
-    @ok="handleAdd"
-    width="460px"
-  >
-    <p>
-      <a-form autocomplete="off"
-              :rules="rules">
-        <a-form-item required label="上级目录" v-bind="validateInfos.parentId">
-          <a-tree-select v-model:value="info.parentId" :tree-data="parentIdTreeData"/>
-        </a-form-item>
-        <a-form-item required label="目录名称" v-bind="validateInfos.title">
-          <a-input v-model:value="info.title"/>
-        </a-form-item>
-      </a-form>
-    </p>
-  </a-modal>
-
+    <a-modal
+      title="编辑"
+      v-model:open="addVisible"
+      @ok="handleAdd"
+      width="460px"
+    >
+      <p>
+        <a-form autocomplete="off"
+                :rules="rules">
+          <a-form-item required label="上级目录" v-bind="validateInfos.parentId">
+            <a-tree-select v-model:value="info.parentId" :tree-data="parentIdTreeData"/>
+          </a-form-item>
+          <a-form-item required label="目录名称" v-bind="validateInfos.title">
+            <a-input v-model:value="info.title"/>
+          </a-form-item>
+        </a-form>
+      </p>
+    </a-modal>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, toRaw } from 'vue'
+import { onMounted, reactive, ref, toRaw } from 'vue'
 import { apiJson } from '@/api'
 import { toCateTree } from '@/utils/tree'
 import { useBookmark } from '@/views/hook/bookmark'
 import { useForm } from 'ant-design-vue/es/form/index.js'
-import { message, Modal } from 'ant-design-vue'
-import { TreeDataItem, DropEvent } from 'ant-design-vue'
+import { message, Modal, TreeDataItem, DropEvent } from 'ant-design-vue'
 
-const visible = ref(false)
 const addVisible = ref(false)
-const treeData = ref([])
-const parentIdTreeData = ref([])
+const treeData = ref([] as any[])
+const parentIdTreeData = ref([] as any[])
 const bookmark = useBookmark()
 const info = ref({
   parentId: '',
   title: '',
   groupId: '',
-  cateId: '',
+  cateId: ''
 })
-
-function handleOk () {
-  console.log('asd')
-  visible.value = false
-}
 
 const {
   resetFields,
@@ -93,29 +76,26 @@ const {
   reactive({
     parentId: [
       {
-        required: true,
-      },
+        required: true
+      }
     ],
-    'title': [
+    title: [
       {
-        required: true,
-      },
-    ],
-  }),
+        required: true
+      }
+    ]
+  })
 )
 
 function handleAdd () {
-  console.log('asd')
-  console.log(info.value)
-
   validate().then(data => {
-    let _info = toRaw(info.value)
+    const _info = toRaw(info.value)
     _info.groupId = bookmark.curGroupId.value
 
     if (_info.cateId) {
       apiJson.put({
         BookmarkCate: _info,
-        tag: 'BookmarkCate',
+        tag: 'BookmarkCate'
       }).then(data => {
         console.log(data)
         addVisible.value = false
@@ -126,7 +106,7 @@ function handleAdd () {
     }
     apiJson.post({
       BookmarkCate: _info,
-      tag: 'BookmarkCate',
+      tag: 'BookmarkCate'
     }).then(data => {
       console.log(data)
 
@@ -135,13 +115,11 @@ function handleAdd () {
       bookmark.loadCate()
     })
   })
-
 }
 
-function open () {
-  visible.value = true
+onMounted(() => {
   loadCate()
-}
+})
 
 function loadCate () {
   apiJson.get({
@@ -185,15 +163,7 @@ function add () {
 
 const rules = {}
 
-defineExpose({
-  open
-})
-
-function close () {
-  visible.value = false
-}
-
-function del (key, title) {
+function del (key: any, title: any) {
   Modal.confirm({
     title: '删除',
     content: `确认删除 ${title} 吗？`,
@@ -212,7 +182,7 @@ function del (key, title) {
   })
 }
 
-function edit (key, title, parentId) {
+function edit (key: any, title: any, parentId: any) {
   info.value = {
     parentId,
     title,

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/glennliao/apijson-go/config"
 	"github.com/glennliao/apijson-go/consts"
@@ -109,8 +110,26 @@ func AccessCondition(ctx context.Context, req config.ConditionReq, where *config
 			if v, exists := req.NodeReq["q"]; exists {
 				delete(req.NodeReq, "q")
 
-				q := fmt.Sprintf("%%%s%%", gconv.String(v))
-				where.AddRaw("(title like ? or url like ?)", []string{q, q})
+				q := fmt.Sprintf("%s", gconv.String(v))
+
+				words := strings.Split(q, " ")
+
+				sql := ""
+				var params []string
+				for i, word := range words {
+
+					if i > 0 {
+						sql += " and "
+					}
+					sql += fmt.Sprintf("(lower(title) like ? or lower(url) like ?)")
+					word = strings.ToLower(word)
+					params = append(params, "%"+word+"%", "%"+word+"%")
+				}
+
+				if len(params) > 0 {
+					where.AddRaw("("+sql+")", params)
+				}
+
 			}
 
 		} else {

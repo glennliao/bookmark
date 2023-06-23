@@ -249,7 +249,7 @@ function open(_info = {}) {
     ..._info
   }
 
-  if (_info.url) {
+  if (_info.url && !_info.bmId) {
     setTimeout(()=>{
       onSearch()
     },512)

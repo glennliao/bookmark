@@ -7,7 +7,7 @@
     <div class="toggle-bar" @click="groupsVisible = !groupsVisible">
       <div class="n-layout-toggle-bar">
         <div class="n-layout-toggle-bar__top"></div>
-        <div class="n-layout-toggle-bar__bottom"></div>
+        <div class="n-l  ayout-toggle-bar__bottom"></div>
       </div>
     </div>
 
@@ -22,25 +22,22 @@
             :class="{'active':!isHome && curCate.includes(item.cateId)}">
           <a-dropdown trigger="hover">
             <template #overlay>
-              <a-menu v-if="item.children" @click="handleMenuClick">
+              <a-menu v-if="item.children" >
                 <template v-for="subItem in item.children" :key="subItem.cateId">
                   <template v-if="!subItem.children">
-                    <a-menu-item :key="item.cateId+'/'+subItem.cateId">
-                      {{ subItem.title }}
+                    <a-menu-item :key="item.cateId +'/'+subItem.cateId">
+                      <div  @click="handleMenuClick([item.cateId,subItem.cateId])">{{ subItem.title }}</div>
                     </a-menu-item>
                   </template>
                   <template v-else>
-                    <SubMemu :key="item.cateId" :menu-info="item"/>
+                    <SubMemu @click="e=>handleMenuClick([subItem.parentId,...e])" :key="subItem.cateId" :menu-info="subItem"/>
                   </template>
                 </template>
               </a-menu>
             </template>
 
-            <div @click="handleMenuClick({keyPath:[item.cateId]})">
-              <span>
-              {{ item.title }}
-          </span>
-
+            <div @click="handleMenuClick([item.cateId])">
+              <span>{{ item.title }}</span>
             </div>
           </a-dropdown>
         </li>
@@ -48,6 +45,8 @@
           <span>⚙️</span>
         </li>
       </ul>
+
+      <!-- content-->
       <div v-if="isHome">
         <div>🕐 最近访问</div>
         <div class="flex mt-1">
@@ -58,11 +57,11 @@
       </div>
       <div v-else>
 
-        <div class="text-sm breadcrumbs" v-if="curCateInfo.parents.length > 0">
-          <ul>
-            <li v-for="item in curCateInfo.parents" :key="item.cateId">{{ item.title }}</li>
-          </ul>
-        </div>
+        <a-breadcrumb class="mb-2" v-if="curCateInfo.parents && curCateInfo.parents.length > 0">
+          <a-breadcrumb-item v-for="item in curCateInfo.parents" :key="item.cateId">{{ item.title }}</a-breadcrumb-item>
+          <a-breadcrumb-item :key="curCateInfo.cateId">{{ curCateInfo.title }}</a-breadcrumb-item>
+        </a-breadcrumb>
+
 
         <div class="flex">
           <transition-group appear name="slide-fade" tag="div" class="flex flex-wrap justify-start">
@@ -86,7 +85,8 @@
 
     </div>
 
-    <cate-manage ref="cateManageRef"/>
+<!--    <cate-manage ref="cateManageRef"/>-->
+    <Setting ref="settingRef"/>
     <bookmark-edit-modal ref="BookmarkModalRef"/>
     <search ref="BookmarkSearchModalRef"/>
 
@@ -129,11 +129,11 @@
 </template>
 
 <script lang="ts" setup>
-// import HeaderBar from './layout/Header.vue'
+
 import { ref, onMounted } from 'vue'
 import SubMemu from '@/views/components/SubMemu.vue'
 import { useBookmark } from './hook/bookmark'
-import CateManage from '@/views/components/CateManage.vue'
+import Setting from './components/Setting.vue'
 import BookmarkEditModal from '@/views/components/BookmarkEditModal.vue'
 import Bookmark from '@/views/components/Bookmark.vue'
 import { PlusOutlined,SearchOutlined } from '@ant-design/icons-vue'
@@ -170,14 +170,15 @@ function changeGroup (item) {
   groupsVisible.value = false
 }
 
-const cateManageRef = ref(null)
+const settingRef = ref(null)
 
-function cateContextmenu (action, cate) {
-  cateManageRef.value && cateManageRef.value.open()
+function cateContextmenu () {
+  settingRef.value && settingRef.value.open()
 }
 
 const groupsVisible = ref(false)
 
+// 当前是否⭐页面
 const isHome = ref(true)
 
 function toHome () {
@@ -199,7 +200,6 @@ function loadLatest () {
       count: 10
     }
   }).then(data => {
-    console.debug(data)
     latestVisitList.value = data['[]'].filter((item: any) => item.Bookmark).map((item: { Bookmark: any; }) => {
       return item.Bookmark
     })
@@ -209,15 +209,17 @@ function loadLatest () {
 loadLatest()
 
 function foundCurCateInfo (keys: string[], tree: any[], parents: any[]) {
-  console.log(tree)
+  console.log("tree",tree)
   for (const treeElement of tree) {
     if (treeElement.cateId === keys[keys.length - 1]) {
       curCateInfo.value = {
         ...treeElement,
         parents
       }
+
+      console.log(curCateInfo.value,"curCateInfo")
+
       if (treeElement.children && treeElement.children.length > 0) {
-        console.log('fkc', treeElement.children)
         clickSubCate(treeElement.children[0].cateId)
       }
 
@@ -227,11 +229,14 @@ function foundCurCateInfo (keys: string[], tree: any[], parents: any[]) {
       foundCurCateInfo(keys, treeElement.children, parents.concat(treeElement))
     }
   }
-  console.log(curCateInfo.value)
 }
 
-function handleMenuClick (e: { keyPath: string[] }) {
-  const keys = e.keyPath[0].split('/').filter(item => item)
+function handleMenuClick (keyPath: string[]) {
+  const keys = keyPath
+
+
+  console.log("keys",keys)
+
   curCateInfo.value = {}
   curSubCateBookmark.value = []
   curSubCateId.value = ''
