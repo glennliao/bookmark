@@ -2,6 +2,7 @@ package fetchurl
 
 import (
 	"context"
+	"crypto/tls"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gogf/gf/v2/frame/g"
 	"net/http"
@@ -20,6 +21,9 @@ type UrlMeta struct {
 func FetchURLMeta(ctx context.Context, uri string) (meta *UrlMeta, err error) {
 	client := http.Client{
 		Timeout: 3 * time.Second,
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		},
 	}
 	resp, err := client.Get(uri)
 
