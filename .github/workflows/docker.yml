@@ -29,7 +29,7 @@ jobs:
 
       - name: Build
         run: |
-          cd ui && pnpm i && pnpm run build:prod
+          cd ui && pnpm i && pnpm run build:prod2gf
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
