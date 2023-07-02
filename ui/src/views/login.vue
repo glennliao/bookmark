@@ -13,7 +13,7 @@
           <a-form-item label="password">
             <a-input-password @pressEnter="handleOk" v-model:value="form.password" />
           </a-form-item>
-          <a-form-item :wrapper-col="{ span: 12, offset: 5 }">
+          <a-form-item>
             <a-button type="primary" @click="handleOk">登录</a-button>
           </a-form-item>
         </a-form>
@@ -45,7 +45,7 @@ function handleOk(){
 <style scoped>
 .login{
   padding: 100px 0;
-  width: 400px;
+  width: 320px;
   margin: 0 auto;
 }
 </style>

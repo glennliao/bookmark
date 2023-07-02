@@ -51,7 +51,7 @@ ul {
 #app{
   background-image: radial-gradient(hsla(0 0% 94.902%/.2) .5px,hsla(0 0% 94.902%/1) .5px);
   background-size: 5px 5px;
-  height: 100vh;
+  min-height: 100vh;
 
 }
 

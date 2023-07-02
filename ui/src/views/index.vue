@@ -2,14 +2,14 @@
   <!--  <HeaderBar/>-->
 
 
-  <div class="px-4 py-2 bookmark-area z-10 absolute " v-contextmenu:contextmenu>
+  <div class="py-2 bookmark-area z-10 " v-contextmenu:contextmenu>
 
-    <div class="toggle-bar" @click="groupsVisible = !groupsVisible">
-      <div class="n-layout-toggle-bar">
-        <div class="n-layout-toggle-bar__top"></div>
-        <div class="n-l  ayout-toggle-bar__bottom"></div>
-      </div>
-    </div>
+<!--    <div class="toggle-bar" @click="groupsVisible = !groupsVisible">-->
+<!--      <div class="n-layout-toggle-bar">-->
+<!--        <div class="n-layout-toggle-bar__top"></div>-->
+<!--        <div class="n-l  ayout-toggle-bar__bottom"></div>-->
+<!--      </div>-->
+<!--    </div>-->
 
     <div class="p-2 z-10">
       <ul class="rounded-box bg-base-100 menu category menu-horizontal bg-base-100 shadow z-10" style="width: auto">
@@ -276,8 +276,8 @@ if (route.query.url) {
 <style scoped lang="scss">
 
 .bookmark-area {
-  height: 100vh;
-  width: 100vw;
+  min-height: calc(100vh - 20px);
+  //width: 100vw;
 
   .category{
     font-size: 14px;

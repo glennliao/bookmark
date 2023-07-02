@@ -4,20 +4,18 @@ go 1.18
 
 require (
 	github.com/PuerkitoBio/goquery v1.8.1
-	github.com/glennliao/apijson-go v0.2.0-beta7
+	github.com/glennliao/apijson-go v0.2.0-beta8
 	github.com/glennliao/getfavicon v0.1.0
 	github.com/glennliao/table-sync v0.2.1
 	github.com/gogf/gf/contrib/drivers/mysql/v2 v2.3.2
 	github.com/gogf/gf/contrib/drivers/sqlite/v2 v2.3.2
-	github.com/gogf/gf/v2 v2.3.2
+	github.com/gogf/gf/v2 v2.4.4
 	github.com/golang-jwt/jwt/v5 v5.0.0-rc.1
 	github.com/samber/lo v1.33.0
 	github.com/yitter/idgenerator-go v1.3.2
 	golang.org/x/crypto v0.1.0
 	golang.org/x/net v0.7.0
 )
-
-//replace github.com/glennliao/apijson-go  v0.2.0-beta6 => ../apijson/apijson-go
 
 require (
 	github.com/BurntSushi/toml v1.1.0 // indirect

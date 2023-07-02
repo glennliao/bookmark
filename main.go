@@ -47,8 +47,10 @@ var (
 				w.Bind(group)
 			})
 
-			s.AddStaticPath("/", "dist")
-			s.AddStaticPath("/assets", "dist/assets")
+			if g.Res().Contains("dist") {
+				s.AddStaticPath("/", "dist")
+				s.AddStaticPath("/assets", "dist/assets")
+			}
 
 			s.Run()
 			return nil
@@ -86,20 +88,20 @@ func main() {
 }
 
 func createUser(a *apijson.ApiJson) {
+	ctx := context.Background()
+
 	email := gcmd.Scan("What's email?\n")
 	email = strings.TrimSpace(email)
 	if email == "" {
-		g.Log().Fatal(nil, "email不为空")
+		g.Log().Fatal(ctx, "email不为空")
 	}
 	password := gcmd.Scan("What's password?\n")
 	password = strings.TrimSpace(password)
 	hash, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	password = string(hash)
 	if email == "" {
-		g.Log().Fatal(nil, "password不为空")
+		g.Log().Fatal(ctx, "password不为空")
 	}
-
-	ctx := context.Background()
 
 	act := a.NewAction(ctx, http.MethodPost, model.Map{
 		"User": g.Map{

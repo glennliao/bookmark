@@ -1,6 +1,5 @@
 <template>
   <a-modal
-    title="Setting"
     v-model:open="visible"
     width="460px"
   >

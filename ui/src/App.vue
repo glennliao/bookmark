@@ -1,6 +1,6 @@
 <template>
   <div id="bg"></div>
-  <div class="z-10 absolute w-full">
+  <div class="z-10 w-full">
     <router-view/>
   </div>
   <Footer/>

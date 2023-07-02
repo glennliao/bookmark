@@ -121,7 +121,6 @@ function colorByURL (url) {
     .toString(16)
     .toUpperCase()
 
-  console.log(c)
 
   return '#' + '00000'.substring(0, 6 - c.length) + c
 }
@@ -180,6 +179,8 @@ function colorByURL (url) {
     }
   }
 
+
+
   .remark{
     font-size: 12px;
     color: #acacac;
@@ -192,6 +193,38 @@ function colorByURL (url) {
   &:hover{
     /*filter: drop-shadow(0 0 4px #42b883aa);*/
     filter: drop-shadow(0 0 4px #646cffaa);
+  }
+}
+
+@media only  screen and (max-width: 415px) {
+  .bookmark{
+    width:calc(50vw - 1rem);
+
+    &.simple {
+      width: calc(50vw - 1rem);
+
+      .logo{
+        width: 22px;
+        min-width: 22px;
+        height: 22px;
+        line-height: 22px;
+        font-size: 14px;
+        text-transform: uppercase;
+        font-weight: bold;
+        margin-left: 4px;
+        margin-top: 14px;
+        border-radius: 100%;
+      }
+
+      .title{
+        line-height: 50px;
+        margin-left: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        color: #333;
+
+      }
+    }
   }
 }
 

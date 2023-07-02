@@ -3,14 +3,17 @@ import { apiJson } from '@/api'
 import { toCateTree } from '@/utils/tree'
 
 const cateTree = ref({ children: [] } as { children: any[] })
+const cateList = ref([])
 const curCate = ref([] as string[])
 const curGroupId = ref('')
+
 function loadCate () {
   apiJson.get({
     'BookmarkCate[]': {
       count: 0
     }
   }).then((data) => {
+    cateList.value = data['BookmarkCate[]']
     cateTree.value = {
       children: toCateTree(data['BookmarkCate[]'])
     }
@@ -42,7 +45,8 @@ function loadBookmarkList () {
   apiJson.get({
     'Bookmark[]': {
       cateId: curCate.value[curCate.value.length - 1],
-      count: 0
+      count: 0,
+      '@order': 'id desc',
     }
   }).then(data => {
     bookmarkList.value = data['Bookmark[]']
@@ -68,6 +72,7 @@ export function useBookmark () {
     clickCate,
     curCate,
     cateTree,
+    cateList,
     bookmarkList,
     curGroupId,
     loadGroup,

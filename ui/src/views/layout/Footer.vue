@@ -16,12 +16,11 @@ const version = import.meta.env.VITE_app_version.trim()
 
 <style scoped>
 .version {
+  height: 20px;
   color: #a1a1a1;
-  position: absolute;
   bottom: 4px;
   text-align: center;
   font-size: 14px;
-  width: 100vw;
   z-index: 10;
 }
 </style>

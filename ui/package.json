@@ -4,13 +4,14 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev": "yarn dev:dev",
+    "dev": "pnpm run dev:dev",
     "dev:dev": "vite --mode dev",
     "dev:uat": "vite --mode uat",
     "dev:prod": "vite --mode prod",
     "build:dev": "vue-tsc --noEmit && vite build --mode dev",
     "build:uat": "vue-tsc --noEmit && vite build --mode uat",
-    "build:prod": "vite build --mode prod &&  gf pack ./dist ../packed/dist.go",
+    "build:prod": "vite build --mode prod",
+    "build:prod2gf": "pnpm run build:prod && gf pack ./dist ../packed/dist.go",
     "preview": "vite preview",
     "lint": "eslint \"src/**/*.{js,ts,vue,jsx,tsx}\" --fix"
   },
