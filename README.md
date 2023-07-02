@@ -5,10 +5,14 @@
 
 
 ## 特性
+### bookmark 书签
 - [x] 分类新增、编辑、删除
 - [x] 书签新增、编辑、删除
 - [x] 书签搜索
 - [x] html 书签导入
+### notes 笔记
+- [ ] 新增note
+- [ ] note搜索
 
 ## 截图
 
@@ -18,7 +22,15 @@
 
 
 ## 使用
-### 1.docker-compose 部署
+### 1. 二进制文件执行
+从[下载页面](https://github.com/glennliao/bookmark/releases)下载对应平台
+
+####  使用
+1. 执行 ./bookmark init 创建配置文件(默认为sqlite数据库)
+2. 执行 ./bookmark createUser 创建用户
+3. 执行 ./bookmark 启动
+
+### 2. docker-compose 部署
 
 ```yaml
 version: "3"
@@ -35,7 +47,7 @@ services:
 ```
 
 
-### 2.源码编译 部署
+### 3 .源码编译 部署
 1. 安装 goframe cli工具
 2. 编译 前端 
 ```bash
@@ -49,10 +61,6 @@ cd ui && pnpm i && pnpm run build:prod
 gf build -s linux -a amd64 main.go
 ```
 
-####  使用
-1. 执行 ./main init 创建配置文件(默认为sqlite数据库)
-2. 执行 ./main createUser 创建用户
-3. 执行 ./main 启动
 
 
 
@@ -62,6 +70,12 @@ gf build -s linux -a amd64 main.go
 - 分类拖动排序
 - 书签排序
 - 用户注册
+- notes
+
+### 0.6.0 (2023-07-02)
+- feat 书签搜索时显示分类信息
+- feat github action 打包
+- fix 界面显示bug
 
 ### 0.5.0 (2023-06-23)
 - feat 书签导入
