@@ -276,7 +276,7 @@ if (route.query.url) {
 <style scoped lang="scss">
 
 .bookmark-area {
-  min-height: calc(100vh - 20px);
+  min-height: calc(100vh - 26px);
   //width: 100vw;
 
   .category{

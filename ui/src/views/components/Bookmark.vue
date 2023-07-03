@@ -1,24 +1,28 @@
 <template>
   <div>
-    <div class="bookmark cursor-pointer  rounded shadow p-1 items-baseline" :class="{'simple':simple}" @click="toURL(item)"  v-contextmenu:contextmenu @contextmenu.stop="">
+    <div class="bookmark cursor-pointer  rounded shadow p-1 items-baseline" :class="{'simple':simple}"
+         @click="toURL(item)" v-contextmenu:contextmenu @contextmenu.stop="">
       <div class="flex">
         <div>
-          <img  v-lazy="item.icon" v-if="item.icon && item.icon !== ''" class="logo" />
-          <div v-else class="logo text-center text-white" :style="{'background': colorByURL(item.url)}">{{ item.title[0] }}</div>
+          <img v-lazy="item.icon" v-if="item.icon && item.icon !== ''" class="logo"/>
+          <div v-else class="logo text-center text-white" :style="{'background': colorByURL(item.url)}">{{
+              item.title[0]
+            }}
+          </div>
         </div>
         <div class="ml-1 title truncate ...">
           {{ item.title }}
         </div>
       </div>
       <div v-if="!simple" class="remark ..." style="height: 58px; margin-top: 4px">
-        {{item.remark || item.description}}
+        {{ item.remark || item.description }}
       </div>
       <div v-if="!simple" class="flex justify-end" style="height: 12px;line-height: 12px;color:#777" @click.stop="void">
         <a-popover :title="item.title">
           <template #content>
             <div style="width:300px">
-              <p>{{item.url}}</p>
-              <p>{{item.description}}</p>
+              <p>{{ item.url }}</p>
+              <p>{{ item.description }}</p>
             </div>
           </template>
           <div>
@@ -43,6 +47,8 @@ import { createVNode } from 'vue'
 import { Modal } from 'ant-design-vue'
 import dayjs from 'dayjs'
 import { useBookmark } from '@/views/hook/bookmark'
+import { colorByURL } from '../../utils/str-utils'
+
 const bookmark = useBookmark()
 
 const props = defineProps({
@@ -97,44 +103,17 @@ function drop () {
   })
 }
 
-function getHostFromUrl(url){
-  let host = ''
-  if (url.indexOf('://') > -1) {
-    host = url.split('/')[2]
-  } else {
-    host = url.split('/')[0]
-  }
-  host = host.split(':')[0]
-  host = host.split('?')[0]
-  return host
-}
-
-function colorByURL (url) {
-
-  const host = getHostFromUrl(url)
-
-  let hash = 0
-  for (let i = 0; i < host.length; i++) {
-    hash = host.charCodeAt(i) + ((hash << 5) - hash)
-  }
-  const c = (hash & 0x00FFFFFF)
-    .toString(16)
-    .toUpperCase()
-
-
-  return '#' + '00000'.substring(0, 6 - c.length) + c
-}
 
 </script>
 
 <style scoped lang="scss">
-.bookmark{
-  width:200px;
+.bookmark {
+  width: 200px;
   height: 106px;
   background: white;
   margin: 4px 4px;
 
-  .logo{
+  .logo {
     width: 24px;
     min-width: 24px;
     height: 24px;
@@ -144,19 +123,19 @@ function colorByURL (url) {
     font-weight: bold;
   }
 
-  .title{
+  .title {
     font-size: 14px;
     font-weight: 600;
     color: #333;
     line-height: 24px;
   }
 
-  &.simple{
+  &.simple {
     height: 60px;
     width: 240px;
     //line-height: 60px;
 
-    .logo{
+    .logo {
       width: 30px;
       min-width: 30px;
       height: 30px;
@@ -169,7 +148,7 @@ function colorByURL (url) {
       border-radius: 100%;
     }
 
-    .title{
+    .title {
       line-height: 50px;
       margin-left: 8px;
       font-size: 14px;
@@ -180,8 +159,7 @@ function colorByURL (url) {
   }
 
 
-
-  .remark{
+  .remark {
     font-size: 12px;
     color: #acacac;
     overflow: hidden;
@@ -190,20 +168,20 @@ function colorByURL (url) {
     line-height: 1.2;
   }
 
-  &:hover{
+  &:hover {
     /*filter: drop-shadow(0 0 4px #42b883aa);*/
     filter: drop-shadow(0 0 4px #646cffaa);
   }
 }
 
-@media only  screen and (max-width: 415px) {
-  .bookmark{
-    width:calc(50vw - 1rem);
+@media only screen and (max-width: 415px) {
+  .bookmark {
+    width: calc(50vw - 1rem);
 
     &.simple {
       width: calc(50vw - 1rem);
 
-      .logo{
+      .logo {
         width: 22px;
         min-width: 22px;
         height: 22px;
@@ -216,7 +194,7 @@ function colorByURL (url) {
         border-radius: 100%;
       }
 
-      .title{
+      .title {
         line-height: 50px;
         margin-left: 8px;
         font-size: 14px;

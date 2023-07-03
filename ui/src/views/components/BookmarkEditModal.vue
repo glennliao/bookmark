@@ -22,22 +22,22 @@
                 已存在相同url
               </div>
               <div>
-                {{equalBm.title}}
+                {{ equalBm.title }}
               </div>
               <div>
-                {{equalBm.url}}
+                {{ equalBm.url }}
               </div>
               <div>
-                {{equalBm.cate}}
+                {{ equalBm.cate }}
               </div>
             </a-card>
           </div>
         </div>
         <div v-else>
           <a-form-item label="目录" v-bind="validateInfos.parentId">
-            <a-tree-select v-model:value="info.parentId" :tree-data="parentIdTreeData"/>
+            <a-tree-select block v-model:value="info.parentId" :tree-data="parentIdTreeData"/>
           </a-form-item>
-          <a-alert show-icon v-if="info.title.length > 20"
+          <a-alert show-icon v-if="info.title && info.title.length > 20"
                    style="width:60%;text-align: center;margin-left: 10%;margin-bottom: 4px">
             <template #message>标题过长, 不利于查看</template>
           </a-alert>
@@ -47,20 +47,23 @@
           <a-form-item label="地址" v-bind="validateInfos.url">
             <a-input v-model:value="info.url"/>
           </a-form-item>
-          <a-form-item label="图标" v-bind="validateInfos.icon">
+          <a-form-item label="图标" help="图标为空时将显示标题的首个字符" v-bind="validateInfos.icon">
             <a-input v-model:value="info.icon">
               <template #addonAfter>
                 <div>
-                  <img :src="info.icon" style="width: 20px;height: 20px;max-width: 20px"/>
+                  <img v-if="info.icon" :src="info.icon" style="width: 20px;height: 20px;max-width: 20px"/>
+                  <div v-else class="logo text-center text-white" :style="{'background': colorByURL(info.url)}">
+                    {{ info.title[0] }}
+                  </div>
                 </div>
               </template>
             </a-input>
           </a-form-item>
           <a-form-item label="描述" v-bind="validateInfos.description">
-            <a-textarea :rows="3" showCount v-model:value="info.description" type="textarea"/>
+            <a-textarea :rows="3" v-model:value="info.description" type="textarea"/>
           </a-form-item>
           <a-form-item label="备注" v-bind="validateInfos.remark">
-            <a-textarea :rows="3" showCount v-model:value="info.remark" type="textarea"/>
+            <a-textarea :rows="3" v-model:value="info.remark" type="textarea"/>
           </a-form-item>
         </div>
       </a-form>
@@ -72,7 +75,8 @@
           <a-popover title="">
             <template #content>
               <div>
-                1. 将右侧拖动到浏览器书签 (推荐放在第一位)<a class="ml-2" :href="saveBookJS" title="保存书签">保存书签</a>
+                1. 将右侧拖动到浏览器书签 (推荐放在第一位)<a class="ml-2" :href="saveBookJS"
+                                                             title="保存书签">保存书签</a>
               </div>
               <div>
                 2. 如遇到需要保存到此处的书签,点击第一步保存的书签即可
@@ -85,12 +89,21 @@
           </a-popover>
         </div>
         <div>
-          <a-button key="back" @click="visible = false">Close</a-button>
-          <a-button key="submitAndNext" v-if="hasFetchURL && !info.bmId" type="primary" :loading="addLoading" @click="handleAdd(true)">
-            Submit & Next
-          </a-button>
-          <a-button key="submit" v-if="hasFetchURL" type="primary" :loading="addLoading" @click="handleAdd(false)">Submit
-          </a-button>
+
+          <a-button key="back" @click="visible = false" class="mr-2">Close</a-button>
+
+          <a-dropdown-button type="primary" v-if="hasFetchURL" :loading="addLoading" @click="handleAdd(false)">
+            Submit
+            <template #overlay>
+              <a-menu>
+                <a-menu-item v-if="hasFetchURL && !info.bmId" key="1" @click="handleAdd(true)">Submit & Next
+                </a-menu-item>
+              </a-menu>
+            </template>
+            <template #icon>
+              <DownOutlined/>
+            </template>
+          </a-dropdown-button>
         </div>
       </div>
     </template>
@@ -99,12 +112,14 @@
 </template>
 
 <script setup>
-import {reactive, ref, toRaw} from 'vue'
-import {apiJson} from '../../api'
-import {toCateTree} from '@/utils/tree'
-import {useBookmark} from '@/views/hook/bookmark'
-import {useForm} from 'ant-design-vue/es/form/index.js'
-import {message} from 'ant-design-vue'
+import { createVNode, reactive, ref, toRaw } from 'vue'
+import { apiJson } from '../../api'
+import { toCateTree } from '@/utils/tree'
+import { useBookmark } from '@/views/hook/bookmark'
+import { useForm } from 'ant-design-vue/es/form/index.js'
+import { message, Modal } from 'ant-design-vue'
+import { ExclamationCircleOutlined, DownOutlined } from '@ant-design/icons-vue'
+import { colorByURL } from '../../utils/str-utils'
 
 const visible = ref(false)
 const addVisible = ref(false)
@@ -123,8 +138,11 @@ const fetchLoading = ref(false)
 
 const equalBm = ref({})
 
-
-const {resetFields, validate, validateInfos} = useForm(
+const {
+  resetFields,
+  validate,
+  validateInfos
+} = useForm(
   info,
   reactive({
     parentId: [
@@ -145,8 +163,8 @@ const {resetFields, validate, validateInfos} = useForm(
   })
 )
 
-function onSearch() {
-  let url = info.value.url.trim()
+function onSearch () {
+  const url = info.value.url.trim()
 
   if (!url) {
     message.warn('url 不能为空')
@@ -154,38 +172,46 @@ function onSearch() {
   }
   fetchLoading.value = true
 
-
-  apiJson.get({
-    url: url,
+  const param = {
+    url,
     'meta()': 'fetchURL(url)',
-    "equal": {
-      "Bookmark": {
+    equal: {
+      Bookmark: {
         url // or suffix /
       },
-      "GroupBookmark":{
-        "bmId@":"/Bookmark/bmId"
+      GroupBookmark: {
+        'bmId@': '/Bookmark/bmId'
       },
-      "BookmarkCate":{
-        "cateId@":"/GroupBookmark/cateId"
+      BookmarkCate: {
+        'cateId@': '/GroupBookmark/cateId'
       }
-    },
-    "domain": {
-      "Bookmark[]": {
-        "url$": "%"+(new URL(url)).host+"%"
+    }
+  }
+
+  try {
+    const host = (new URL(url)).host
+    param.domain = {
+      'Bookmark[]': {
+        url$: '%' + host + '%'
       }
-    },
-  }).then(data => {
-    let equal = data.equal.Bookmark
+    }
+  } catch (e) {
+
+  }
+
+  apiJson.get(param).then(data => {
+    const equal = data.equal.Bookmark
     if (equal.bmId) {
       equal.cate = data.equal.BookmarkCate.title
       equalBm.value = equal
     } else {
       hasFetchURL.value = true
     }
+
     if (bookmark.curSubCateId.value) {
       info.value.parentId = bookmark.curSubCateId.value || ''
     } else {
-      if(bookmark.curCate.value.length){
+      if (bookmark.curCate.value.length) {
         info.value.parentId = bookmark.curCate.value[bookmark.curCate.value.length - 1] || ''
       }
     }
@@ -193,29 +219,42 @@ function onSearch() {
     info.value.title = data.meta.title
     info.value.icon = data.meta.icon
     info.value.description = data.meta.description
-
   }).finally(() => {
     fetchLoading.value = false
+
+    Modal.confirm({
+      title: '操作确认',
+      icon: createVNode(ExclamationCircleOutlined),
+      content: '获取网址信息错误, 是否手动录入',
+      okText: '确认',
+      cancelText: '取消',
+      onOk: () => {
+        info.value.url = url
+        info.value.title = ''
+        hasFetchURL.value = true
+
+      }
+    })
+
   })
 }
 
 const addLoading = ref(false)
 
-function handleAdd(next) {
+function handleAdd (next) {
   addLoading.value = true
   const _info = toRaw(info.value)
   validate().then(data => {
-
     let api = apiJson.post
-    let GroupBookmark = {
+    const GroupBookmark = {
       cateId: _info.parentId,
-      groupId: bookmark.curGroupId.value,
+      groupId: bookmark.curGroupId.value
     }
-    if(_info.bmId){
+    if (_info.bmId) {
       api = apiJson.put
       GroupBookmark.id = groupBookmarkId.value
-    }else{
-      GroupBookmark["bmId@"] = "Bookmark/bmId"
+    } else {
+      GroupBookmark['bmId@'] = 'Bookmark/bmId'
     }
 
     api({
@@ -231,7 +270,7 @@ function handleAdd(next) {
       }
       bookmark.loadCate()
       bookmark.loadBookmarkList()
-      if (bookmark.curSubCateId.value){
+      if (bookmark.curSubCateId.value) {
         bookmark.loadSubCateBookmark()
       }
     })
@@ -241,7 +280,8 @@ function handleAdd(next) {
 }
 
 const groupBookmarkId = ref('')
-function open(_info = {}) {
+
+function open (_info = {}) {
   resetFields()
   equalBm.value = {}
   visible.value = true
@@ -250,22 +290,22 @@ function open(_info = {}) {
   }
 
   if (_info.url && !_info.bmId) {
-    setTimeout(()=>{
+    setTimeout(() => {
       onSearch()
-    },512)
+    }, 512)
   }
 
-  if(_info.bmId){
+  if (_info.bmId) {
     apiJson.get({
-      "GroupBookmark":{
+      GroupBookmark: {
         groupId: bookmark.curGroupId.value,
-        "bmId":_info.bmId
+        bmId: _info.bmId
       }
-    }).then(data=>{
+    }).then(data => {
       groupBookmarkId.value = data.GroupBookmark.id
       info.value = {
         ...info.value,
-        parentId:data.GroupBookmark.cateId
+        parentId: data.GroupBookmark.cateId
       }
       console.log(data)
     })
@@ -274,7 +314,7 @@ function open(_info = {}) {
   loadCate()
 }
 
-function loadCate() {
+function loadCate () {
   apiJson.get({
     'BookmarkCate[]': {
       count: 0
@@ -297,7 +337,7 @@ function loadCate() {
   })
 }
 
-function add() {
+function add () {
   addVisible.value = true
 }
 
@@ -310,5 +350,25 @@ defineExpose({
 </script>
 
 <style scoped>
+.logo {
+  width: 22px;
+  min-width: 22px;
+  height: 22px;
+  line-height: 22px;
+  font-size: 14px;
+  text-transform: uppercase;
+  font-weight: bold;
+  border-radius: 100%;
+}
 
+:deep(.ant-form-item) {
+  margin-bottom: 16px;
+}
+
+@media (max-width: 575px) {
+
+  :deep(.ant-form-item .ant-form-item-label) {
+    padding: 0;
+  }
+}
 </style>
