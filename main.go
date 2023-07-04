@@ -4,6 +4,7 @@ import (
 	"context"
 	_ "embed"
 	"net/http"
+	"path"
 	"strings"
 
 	"github.com/glennliao/apijson-go"
@@ -45,6 +46,38 @@ var (
 					return a.NewAction(ctx, http.MethodPost, req).Result()
 				}, web.InDataMode))
 				w.Bind(group)
+			})
+
+			s.Group("/api", func(group *ghttp.RouterGroup) {
+				iconSavePath := "./runtime/icon"
+
+				group.Group("/", func(group *ghttp.RouterGroup) {
+					group.Middleware(app.Cors, app.Auth)
+					group.POST("/upload", func(req *ghttp.Request) {
+						file := req.GetUploadFile("file")
+						filePath, err := file.Save(iconSavePath, true)
+						if err != nil {
+							req.Response.WriteJson(g.Map{
+								"code": 500,
+								"msg":  err.Error(),
+							})
+							return
+						}
+
+						req.Response.WriteJson(g.Map{
+							"code": 200,
+							"data": g.Map{
+								"path": filePath,
+							},
+						})
+
+					})
+				})
+
+				group.GET("/icon", func(req *ghttp.Request) {
+					name := req.GetQuery("name").String()
+					req.Response.ServeFile(path.Join(iconSavePath, name), false)
+				})
 			})
 
 			if g.Res().Contains("dist") {

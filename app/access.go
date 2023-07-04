@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"fmt"
+	"github.com/gogf/gf/v2/errors/gerror"
 	"net/http"
 	"strings"
 
@@ -138,6 +139,10 @@ func AccessCondition(ctx context.Context, req config.ConditionReq, where *config
 
 	case TableGroupBookmark:
 		if req.Method == http.MethodPut {
+			groupId := req.NodeReq["groupId"]
+			if groupId == nil || groupId.(string) == "" {
+				return gerror.New("groupId为空")
+			}
 
 			if _, exists := req.NodeReq["dropAt"]; exists {
 				where.Add("bm_id", req.NodeReq["bmId"])

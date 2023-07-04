@@ -144,7 +144,7 @@ function drop () {
       text-transform: uppercase;
       font-weight: bold;
       margin-left: 4px;
-      margin-top: 7px;
+      margin-top: 10px;
       border-radius: 100%;
     }
 

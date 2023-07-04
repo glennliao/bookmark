@@ -72,6 +72,10 @@ gf build -s linux -a amd64 main.go
 - 用户注册
 - notes
 
+### 0.7.0 (2023-07-04)
+- feat 可自定义上传书签图标
+
+
 ### 0.6.0 (2023-07-02)
 - feat 书签搜索时显示分类信息
 - feat github action 打包

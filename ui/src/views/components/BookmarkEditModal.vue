@@ -50,11 +50,21 @@
           <a-form-item label="图标" help="图标为空时将显示标题的首个字符" v-bind="validateInfos.icon">
             <a-input v-model:value="info.icon">
               <template #addonAfter>
+
                 <div>
-                  <img v-if="info.icon" :src="info.icon" style="width: 20px;height: 20px;max-width: 20px"/>
-                  <div v-else class="logo text-center text-white" :style="{'background': colorByURL(info.url)}">
-                    {{ info.title[0] }}
-                  </div>
+                  <a-upload-dragger
+                    name="file"
+                    :showUploadList="false"
+                    :multiple="false"
+                    action="./api/upload"
+                    :headers="uploadHeader"
+                    @change="onFileChange"
+                  >
+                    <img v-if="info.icon" :src="info.icon" style="width: 20px;height: 20px;max-width: 20px"/>
+                    <div v-else class="logo text-center text-white" :style="{'background': colorByURL(info.url)}">
+                      {{ info.title[0] }}
+                    </div>
+                  </a-upload-dragger>
                 </div>
               </template>
             </a-input>
@@ -120,6 +130,7 @@ import { useForm } from 'ant-design-vue/es/form/index.js'
 import { message, Modal } from 'ant-design-vue'
 import { ExclamationCircleOutlined, DownOutlined } from '@ant-design/icons-vue'
 import { colorByURL } from '../../utils/str-utils'
+import { useUser } from '@/views/hook/user'
 
 const visible = ref(false)
 const addVisible = ref(false)
@@ -219,9 +230,7 @@ function onSearch () {
     info.value.title = data.meta.title
     info.value.icon = data.meta.icon
     info.value.description = data.meta.description
-  }).finally(() => {
-    fetchLoading.value = false
-
+  }).catch(() => {
     Modal.confirm({
       title: '操作确认',
       icon: createVNode(ExclamationCircleOutlined),
@@ -232,10 +241,10 @@ function onSearch () {
         info.value.url = url
         info.value.title = ''
         hasFetchURL.value = true
-
       }
     })
-
+  }).finally(() => {
+    fetchLoading.value = false
   })
 }
 
@@ -337,6 +346,23 @@ function loadCate () {
   })
 }
 
+const user = useUser()
+const uploadHeader = {
+  Authorization: user.token.value
+}
+
+function onFileChange (e) {
+  if (e.file.response) {
+    const res = e.file.response
+    if (res.code === 200) {
+      info.value.icon = './api/icon?name=' + res.data.path
+    } else {
+      message.warn(res.msg)
+    }
+  }
+  console.log(e)
+}
+
 function add () {
   addVisible.value = true
 }
@@ -363,6 +389,19 @@ defineExpose({
 
 :deep(.ant-form-item) {
   margin-bottom: 16px;
+}
+
+:deep(.ant-upload-wrapper .ant-upload-drag) {
+  border: none;
+}
+
+:deep(.ant-upload-wrapper .ant-upload-drag :hover) {
+  border: 1px dashed #d9d9d9;
+  border-radius: 8px;
+}
+
+:deep(.ant-upload-wrapper .ant-upload-drag .ant-upload) {
+  padding: 0;
 }
 
 @media (max-width: 575px) {

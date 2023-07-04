@@ -4,8 +4,7 @@
       <div>
         <a-form
           :form="form"
-          :label-col="{ span: 5 }"
-          :wrapper-col="{ span: 12 }"
+          layout="vertical"
         >
           <a-form-item label="email">
             <a-input v-model:value="form.email" />
@@ -14,7 +13,9 @@
             <a-input-password @pressEnter="handleOk" v-model:value="form.password" />
           </a-form-item>
           <a-form-item>
-            <a-button type="primary" @click="handleOk">登录</a-button>
+            <div class="mx-auto">
+              <a-button type="primary" block @click="handleOk">登录</a-button>
+            </div>
           </a-form-item>
         </a-form>
       </div>

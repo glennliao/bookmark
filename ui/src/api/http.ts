@@ -24,7 +24,7 @@ export function request (method: string, url: string, query: Record<string, any>
     if (data.code === 200) {
       return data.data
     }
-    if (data.code == 401 && router.currentRoute.value.path != '/login') {
+    if (data.code === 401 && router.currentRoute.value.path !== '/login') {
       router.push('/login')
     }
     message.warning(data.msg)
