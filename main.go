@@ -4,7 +4,7 @@ import (
 	"context"
 	_ "embed"
 	"net/http"
-	"path"
+	"path/filepath"
 	"strings"
 
 	"github.com/glennliao/apijson-go"
@@ -49,7 +49,7 @@ var (
 			})
 
 			s.Group("/api", func(group *ghttp.RouterGroup) {
-				iconSavePath := "./runtime/icon"
+				iconSavePath, _ := filepath.Abs("./runtime/icon")
 
 				group.Group("/", func(group *ghttp.RouterGroup) {
 					group.Middleware(app.Cors, app.Auth)
@@ -76,7 +76,13 @@ var (
 
 				group.GET("/icon", func(req *ghttp.Request) {
 					name := req.GetQuery("name").String()
-					req.Response.ServeFile(path.Join(iconSavePath, name), false)
+					path := filepath.Join(iconSavePath, name)
+					if !strings.HasPrefix(path, iconSavePath) {
+						req.Response.Status = 500
+						req.Response.Write("?")
+						return
+					}
+					req.Response.ServeFile(path, false)
 				})
 			})
 

@@ -40,6 +40,7 @@ services:
     container_name: bookmark
     restart: always
     # 使用mysql可外部挂载配置文件 config.toml , 默认使用sqlite， 需将数据库文件挂载到 /app/bookmark.db
+    # 如果需要上传自定义图标, 需要将 /app/runtime挂载出来
     #volumes:
     #  - ./config.toml:/app/config.toml  
     ports:
