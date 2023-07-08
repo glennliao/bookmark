@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/PuerkitoBio/goquery v1.8.1
-	github.com/glennliao/apijson-go v0.2.0-beta8
+	github.com/glennliao/apijson-go v0.2.0-beta11
 	github.com/glennliao/getfavicon v0.1.0
 	github.com/glennliao/table-sync v0.2.1
 	github.com/gogf/gf/contrib/drivers/mysql/v2 v2.3.2

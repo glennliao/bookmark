@@ -8,8 +8,17 @@ export const apiJson = {
 }
 
 export function auth (param: { email: string, password: string }) {
-  return http.post('/data/auth', {
-    tag: 'Token',
-    Token: param
-  }).then(data=>data.Token)
+  return http.post('/auth', param)
+}
+
+export function register (param: { email: string, password: string, code: string }) {
+  return http.post('/register', param)
+}
+
+export function registerLayout (param: { email: string, password: string, code: string }) {
+  return http.get('/register', param)
+}
+
+export function upload (param: any) {
+  return http.post('/upload', param)
 }

@@ -162,7 +162,10 @@ function clickSubCate (cateId: string) {
   loadSubCateBookmark()
 }
 
-loadGroup().then(() => loadCate())
+loadGroup().then(() => {
+  loadLatest()
+  loadCate()
+})
 
 function changeGroup (item) {
   curGroupId.value = item.groupId
@@ -205,8 +208,6 @@ function loadLatest () {
     })
   })
 }
-
-loadLatest()
 
 function foundCurCateInfo (keys: string[], tree: any[], parents: any[]) {
   console.log("tree",tree)

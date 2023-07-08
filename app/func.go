@@ -2,11 +2,14 @@ package app
 
 import (
 	"context"
-	"github.com/gogf/gf/v2/os/gcache"
 	url2 "net/url"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/gogf/gf/v2/encoding/gjson"
+	"github.com/gogf/gf/v2/net/gclient"
+	"github.com/gogf/gf/v2/os/gcache"
 
 	"github.com/glennliao/apijson-go"
 	"github.com/glennliao/apijson-go/config"
@@ -23,6 +26,7 @@ func initFunc(a *apijson.ApiJson) {
 	a.Config().Functions.Bind("fetchURL", fetchURL)
 	a.Config().Functions.Bind("import", importBookmark)
 	a.Config().Functions.Bind("cateIdByBmId", cateIdByBmId())
+	a.Config().Functions.Bind("latestVersion", latestVersion)
 }
 
 var cateIdByBmId = func() config.Func {
@@ -216,4 +220,19 @@ func process(ctx context.Context, bookmarks *htmlbookmark.Bookmarks, parentId st
 	}
 
 	return nil
+}
+
+var latestVersion = config.Func{
+	Handler: func(ctx context.Context, param model.Map) (res any, err error) {
+
+		url := "https://api.github.com/repos/glennliao/bookmark/releases/latest"
+		resp, err := gclient.New().Get(ctx, url)
+		if err != nil {
+			return nil, err
+		}
+
+		json := gjson.New(resp.ReadAllString())
+
+		return json.Get("tag_name"), nil
+	},
 }

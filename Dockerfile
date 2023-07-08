@@ -4,7 +4,7 @@ WORKDIR /app
 COPY main.go /app/main.go
 COPY app /app/app
 COPY packed /app/packed
-COPY config.toml.example /app/config.toml.example
+COPY config.yaml.example /app/config.yaml.example
 COPY go.* /app
 COPY gf.yaml /app/gf.yaml
 

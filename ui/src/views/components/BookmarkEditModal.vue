@@ -253,12 +253,26 @@ const addLoading = ref(false)
 function handleAdd (next) {
   addLoading.value = true
   const _info = toRaw(info.value)
+
+  if (!_info.parentId){
+    message.warn('请选择分类')
+    addLoading.value = false
+    return
+  }
+
   validate().then(data => {
     let api = apiJson.post
     const GroupBookmark = {
       cateId: _info.parentId,
       groupId: bookmark.curGroupId.value
     }
+
+    if (!GroupBookmark.groupId){
+      message.warn('groupId丢失，请刷新页面')
+      addLoading.value = false
+      return
+    }
+
     if (_info.bmId) {
       api = apiJson.put
       GroupBookmark.id = groupBookmarkId.value

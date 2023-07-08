@@ -6,7 +6,6 @@ import (
 
 	"github.com/glennliao/apijson-go"
 	"github.com/glennliao/apijson-go/action"
-	"github.com/glennliao/apijson-go/model"
 	"github.com/glennliao/apijson-go/util"
 	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/gogf/gf/v2/frame/g"
@@ -58,29 +57,6 @@ func initHook(a *apijson.ApiJson) {
 			return nil
 		},
 		AfterExecutorDo: func(ctx context.Context, n *action.Node, method string) error {
-			if n.Key == TableUser && method == http.MethodPost {
-				for _, item := range n.Data {
-					act := a.NewAction(ctx, http.MethodPost, model.Map{
-						"tag": "Groups",
-						"Groups": model.Map{
-							"groupId": item["user_id"],
-							"title":   "个人分组",
-						},
-						"GroupUser[]": []model.Map{
-							{
-								"groupId": item["user_id"],
-								"userId":  item["user_id"],
-							},
-						},
-					})
-					act.NoAccessVerify = true
-					_, err := act.Result()
-					if err != nil {
-						return gerror.Wrap(err, "AfterExecutorDo")
-					}
-
-				}
-			}
 
 			if method == http.MethodPut && n.Key == TableBookmarkUse {
 				if gconv.Int64(n.Ret["count"]) == 0 {

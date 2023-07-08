@@ -4,10 +4,13 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/gogf/gf/v2/errors/gcode"
+	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/samber/lo"
 )
 
 var jwtSecret []byte
@@ -54,7 +57,7 @@ func Auth(r *ghttp.Request) {
 				g.Log().Info(ctx, "userId is empty")
 				r.Response.WriteJson(g.Map{
 					"code": 401,
-					"msg":  "未知错误",
+					"msg":  "用户登陆信息不存在",
 				})
 				return
 			}
@@ -69,7 +72,14 @@ func Auth(r *ghttp.Request) {
 		ctx = context.WithValue(ctx, UserIdKey, &CurrentUser{UserId: userId})
 		r.SetCtx(ctx)
 	} else {
-		if r.Request.URL.Path != "/api/data/auth" {
+
+		ignoreURL := []string{
+			"/api/register",
+			"/api/auth",
+			"/api/icon",
+		}
+
+		if !lo.Contains(ignoreURL, r.Request.URL.Path) {
 			r.Response.WriteJson(g.Map{
 				"code": 401,
 				"msg":  "未登录",
@@ -87,4 +97,42 @@ func Cors(r *ghttp.Request) {
 	corsOptions.AllowOrigin = r.Request.Header.Get("Origin")
 	r.Response.CORS(corsOptions)
 	r.Middleware.Next()
+}
+
+func Response(r *ghttp.Request) {
+	r.Middleware.Next()
+
+	resp := r.GetHandlerResponse()
+	err := r.GetError()
+	if err != nil {
+
+		if e, ok := err.(*gerror.Error); ok {
+			if e.Code() == gcode.CodeNil {
+				r.Response.WriteJson(g.Map{
+					"code": 400,
+					"msg":  err.Error(),
+				})
+
+				r.SetError(nil)
+
+				return
+			}
+		}
+
+		r.Response.WriteJson(g.Map{
+			"code": 500,
+			"msg":  err.Error(),
+		})
+
+		g.Log().Error(r.Context(), err)
+		return
+	}
+
+	if resp != nil {
+		r.Response.WriteJson(g.Map{
+			"code": 200,
+			"data": resp,
+			"msg":  "Ok",
+		})
+	}
 }

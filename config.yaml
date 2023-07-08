@@ -1,0 +1,26 @@
+app:
+  canReg: true
+  regCode: "123456"
+  iconSavePath: "./runtime/icon"
+
+
+jwt:
+  secret: "123456789123456789"
+
+
+server:
+    address: ":8082"
+    dumpRouterMap: false
+    debug: false
+
+logger:
+    level: "info"
+
+database:
+  default:
+    debug: true
+    link: "sqlite::@file(./bookmark.sqlite3)"
+#    link: "mysql:root:root@tcp(127.0.0.1:3306)/db?charset=utf8mb4&parseTime=True&loc=Local"
+  logger:
+    level: "all"
+    stdout: true
