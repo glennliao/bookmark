@@ -55,10 +55,10 @@
 
 <script setup>
 
-import { apiJson } from '../../api'
+import { apiJson } from '../../../api'
 import { message } from 'ant-design-vue'
 import { nextTick, ref } from 'vue'
-import { useBookmark } from '@/views/hook/bookmark'
+import { useBookmark } from '@/views/bookmark/hook/bookmark'
 
 const visible = ref(false)
 

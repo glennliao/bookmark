@@ -14,6 +14,25 @@ import (
 
 func initHook(a *apijson.ApiJson) {
 	action.RegHook(action.Hook{
+		For:            []string{"Note"},
+		BeforeNodeExec: nil,
+		AfterNodeExec:  nil,
+		BeforeExecutorDo: func(ctx context.Context, n *action.Node, method string) error {
+			user, _ := ctx.Value(UserIdKey).(*CurrentUser)
+
+			for i, _ := range n.Data {
+				n.Data[i]["group_id"] = user.UserId
+			}
+
+			return nil
+		},
+		AfterExecutorDo: func(ctx context.Context, n *action.Node, method string) error {
+
+			return nil
+		},
+	})
+
+	action.RegHook(action.Hook{
 		For: []string{"*"},
 		BeforeExecutorDo: func(ctx context.Context, n *action.Node, method string) error {
 			user, ok := ctx.Value(UserIdKey).(*CurrentUser)

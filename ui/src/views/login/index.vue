@@ -59,9 +59,9 @@
 
 <script setup>
 import { reactive, ref } from 'vue'
-import { auth, register, registerLayout } from '../api'
+import { auth, register, registerLayout } from '../../api/index'
 import { useRouter } from 'vue-router'
-import { useUser } from '@/views/hook/user'
+import { useUser } from '@/views/bookmark/hook/user'
 import { message } from 'ant-design-vue'
 
 const form = ref({})

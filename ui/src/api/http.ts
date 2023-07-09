@@ -1,5 +1,5 @@
 import router from '../router'
-import { useUser } from '@/views/hook/user'
+import { useUser } from '@/views/bookmark/hook/user'
 import { message } from 'ant-design-vue'
 const user = useUser()
 export function request (method: string, url: string, query: Record<string, any> | undefined, data: Record<string, any> | undefined, headers: Record<string, any> = {}): Promise<Record<string, any>> {

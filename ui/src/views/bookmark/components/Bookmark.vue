@@ -46,8 +46,8 @@ import { ExclamationCircleOutlined } from '@ant-design/icons-vue'
 import { createVNode } from 'vue'
 import { Modal } from 'ant-design-vue'
 import dayjs from 'dayjs'
-import { useBookmark } from '@/views/hook/bookmark'
-import { colorByURL } from '../../utils/str-utils'
+import { useBookmark } from '@/views/bookmark/hook/bookmark'
+import { colorByURL } from '../../../utils/str-utils'
 
 const bookmark = useBookmark()
 

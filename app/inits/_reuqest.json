@@ -181,6 +181,24 @@
     "Executor": {
       "Token": "custom"
     }
+  },
+  {
+    "tag": "Note",
+    "version": "1",
+    "method": "POST",
+    "structure": {
+      "Note": {}
+    },
+    "Executor": {}
+  },
+  {
+    "tag": "Note",
+    "version": "1",
+    "method": "PUT",
+    "structure": {
+      "Note": {}
+    },
+    "Executor": {}
   }
 
 ]

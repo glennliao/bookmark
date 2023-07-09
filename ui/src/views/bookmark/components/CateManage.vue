@@ -52,8 +52,8 @@
 import { onMounted, reactive, ref, toRaw } from 'vue'
 import { apiJson } from '@/api'
 import { toCateTree } from '@/utils/tree'
-import { useBookmark } from '@/views/hook/bookmark'
-import { useForm } from 'ant-design-vue/es/form/index.js'
+import { useBookmark } from '@/views/bookmark/hook/bookmark'
+import { useForm } from 'ant-design-vue/es/form/index'
 import { message, Modal, TreeDataItem, DropEvent } from 'ant-design-vue'
 
 const addVisible = ref(false)

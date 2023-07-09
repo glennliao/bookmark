@@ -23,7 +23,7 @@ import { ref } from 'vue'
 import type { UploadChangeParam } from 'ant-design-vue'
 import { message } from 'ant-design-vue'
 import { apiJson } from '@/api'
-import { useBookmark } from '@/views/hook/bookmark'
+import { useBookmark } from '@/views/bookmark/hook/bookmark'
 const bookmark = useBookmark()
 const handleChange = (info: UploadChangeParam) => {
   console.log(info)

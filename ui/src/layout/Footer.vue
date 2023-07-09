@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { RightOutlined } from '@ant-design/icons-vue'
-import { apiJson } from '../../api'
+import { apiJson } from '../api'
 
 const version = import.meta.env.VITE_app_version.trim()
 const latestVersion = ref('')

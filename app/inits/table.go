@@ -107,7 +107,8 @@ type (
 	Note struct {
 		tablesync.TableMeta `charset:"utf8mb4" comment:"笔记"`
 		Id                  uint64 `ddl:"primaryKey"`
-		UserId              string `ddl:"size:32;comment:用户id"`
+		GroupId             string `ddl:"size:32;comment:groupId"`
+		NoteId              string `ddl:"size:32;comment:@rowKey noteId"`
 		Content             string `ddl:"type:json;comment:内容"`
 		Tags                string `ddl:"type:json;comment:标签"`
 		IsPublic            uint8  `ddl:"comment:是否公开"`

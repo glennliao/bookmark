@@ -14,14 +14,17 @@
 - [x] 书签搜索
 - [x] html 书签导入
 ### notes 笔记
-- [ ] 新增note
-- [ ] note搜索
+- [x] note新增、编辑
+  - [ ] 删除
+- [x] note tag 过滤
 
 ## 截图
-
+## bookmark
 ![](./screenshot/bookmark1.png)
 ![](./screenshot/bookmark2.png)
 ![](./screenshot/bookmark3.png)
+## note
+![](./screenshot/note1.png)
 
 
 ## 使用
@@ -30,7 +33,7 @@
 
 ####  使用
 1. 执行 ./bookmark init 创建配置文件(默认为sqlite数据库)
-2. 执行 ./bookmark createUser 创建用户
+2. ~~执行 ./bookmark createUser 创建用户~~ 登录页面注册
 3. 执行 ./bookmark 启动
 
 ### 2. docker-compose 部署
@@ -64,47 +67,3 @@ cd ui && pnpm i && pnpm run build:prod
 # linux/amd64
 gf build -s linux -a amd64 main.go
 ```
-
-
-
-
-## changelog
-
-### todo
-- 分类拖动排序
-- 书签排序
-- notes
-
-### 0.8.0 (2023-07-08)
-- feat 用户注册
-- feat 检查新版本
-
-### 0.7.0 (2023-07-04)
-- feat 可自定义上传书签图标
-
-
-### 0.6.0 (2023-07-02)
-- feat 书签搜索时显示分类信息
-- feat github action 打包
-- fix 界面显示bug
-
-### 0.5.0 (2023-06-23)
-- feat 书签导入
-- fix 书签多级目录显示
-- perf 书签搜索优化
-
-### 0.4.3 (2023-06-17)
-- fix 分类无法删除
-- fix 新增子分类导致父级消失 (编辑后未清空数据)
-
-### 0.4.1 (2023-06-10)
-- 增加github action 发布docker
-
-
-### 0.4 (2023-06-10)
-- 分类编辑，删除
-- 书签编辑，删除
-- 书签搜索
-- 添加从浏览器收藏夹快速添加的支持
-- 使用apijson-go v0.2.0-beta4 以上版本
-

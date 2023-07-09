@@ -35,7 +35,7 @@
   {
     "name": "bookmark_use",
     "alias": "BookmarkUse",
-    "get": ["UNKNOWN","LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "get": ["LOGIN","OWNER","GroupUser","GroupAdmin"],
     "head":["LOGIN","OWNER","GroupUser","GroupAdmin"],
     "gets":["LOGIN","OWNER","GroupUser","GroupAdmin"],
     "heads":["LOGIN","OWNER","GroupUser","GroupAdmin"],
@@ -59,7 +59,7 @@
   {
     "name": "bookmark_cate",
     "alias": "BookmarkCate",
-    "get": ["UNKNOWN","LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "get": ["LOGIN","OWNER","GroupUser","GroupAdmin"],
     "head":["LOGIN","OWNER","GroupUser","GroupAdmin"],
     "gets":["LOGIN","OWNER","GroupUser","GroupAdmin"],
     "heads":["LOGIN","OWNER","GroupUser","GroupAdmin"],
@@ -88,7 +88,7 @@
   {
     "name": "groups",
     "alias": "Groups",
-    "get": ["UNKNOWN","LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "get": ["LOGIN","OWNER","GroupUser","GroupAdmin"],
     "head":["LOGIN","OWNER","GroupUser","GroupAdmin"],
     "gets":["LOGIN","OWNER","GroupUser","GroupAdmin"],
     "heads":["LOGIN","OWNER","GroupUser","GroupAdmin"],
@@ -113,7 +113,7 @@
   {
     "name": "group_user",
     "alias": "GroupUser",
-    "get": ["UNKNOWN","LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "get": ["LOGIN","OWNER","GroupUser","GroupAdmin"],
     "head":["LOGIN","OWNER","GroupUser","GroupAdmin"],
     "gets":["LOGIN","OWNER","GroupUser","GroupAdmin"],
     "heads":["LOGIN","OWNER","GroupUser","GroupAdmin"],
@@ -180,8 +180,49 @@
     "executor": "default"
   },
   {
-    "name": "Token",
-    "alias": "Token",
-    "post": ["UNKNOWN"]
+    "name": "note",
+    "alias": "Note",
+    "get": ["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "head":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "gets":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "heads":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "post":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "put":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "delete":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "rowKey": "note_id",
+    "fieldsGet": {
+      "default": {
+        "in": {
+          "tag": ["="]
+        },
+        "out": {
+
+        }
+      }
+    },
+    "rowKeyGen": "idgen",
+    "executor": "default"
+  },
+  {
+    "name": "tag",
+    "alias": "Tag",
+    "get": ["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "head":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "gets":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "heads":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "post":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "put":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "delete":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "rowKey": "tag",
+    "fieldsGet": {
+      "default": {
+        "in": {},
+        "out": {
+
+        }
+      }
+    },
+    "rowKeyGen": "",
+    "executor": "default"
   }
 ]

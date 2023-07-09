@@ -92,7 +92,7 @@
                 2. 如遇到需要保存到此处的书签,点击第一步保存的书签即可
               </div>
               <div>
-                <img src="../../assets/add_bookmark.gif"/>
+                <img src="../../../assets/add_bookmark.gif"/>
               </div>
             </template>
             从书签栏添加
@@ -123,14 +123,14 @@
 
 <script setup>
 import { createVNode, reactive, ref, toRaw } from 'vue'
-import { apiJson } from '../../api'
+import { apiJson } from '../../../api/index'
 import { toCateTree } from '@/utils/tree'
-import { useBookmark } from '@/views/hook/bookmark'
-import { useForm } from 'ant-design-vue/es/form/index.js'
+import { useBookmark } from '@/views/bookmark/hook/bookmark'
+import { useForm } from 'ant-design-vue/es/form/index'
 import { message, Modal } from 'ant-design-vue'
 import { ExclamationCircleOutlined, DownOutlined } from '@ant-design/icons-vue'
-import { colorByURL } from '../../utils/str-utils'
-import { useUser } from '@/views/hook/user'
+import { colorByURL } from '../../../utils/str-utils'
+import { useUser } from '@/views/bookmark/hook/user'
 
 const visible = ref(false)
 const addVisible = ref(false)

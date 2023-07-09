@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"github.com/gogf/gf/v2/container/gset"
 	url2 "net/url"
 	"strconv"
 	"strings"
@@ -26,7 +27,8 @@ func initFunc(a *apijson.ApiJson) {
 	a.Config().Functions.Bind("fetchURL", fetchURL)
 	a.Config().Functions.Bind("import", importBookmark)
 	a.Config().Functions.Bind("cateIdByBmId", cateIdByBmId())
-	a.Config().Functions.Bind("latestVersion", latestVersion)
+	a.Config().Functions.Bind("latestVersion", latestVersion())
+	a.Config().Functions.Bind("noteTags", noteTags())
 }
 
 var cateIdByBmId = func() config.Func {
@@ -222,17 +224,55 @@ func process(ctx context.Context, bookmarks *htmlbookmark.Bookmarks, parentId st
 	return nil
 }
 
-var latestVersion = config.Func{
-	Handler: func(ctx context.Context, param model.Map) (res any, err error) {
+func latestVersion() config.Func {
+	return config.Func{
+		Handler: func(ctx context.Context, param model.Map) (res any, err error) {
+			url := "https://api.github.com/repos/glennliao/bookmark/releases/latest"
+			resp, err := gclient.New().Get(ctx, url)
+			if err != nil {
+				g.Log().Error(ctx, err)
+				return "v0.0.0", nil
+			}
 
-		url := "https://api.github.com/repos/glennliao/bookmark/releases/latest"
-		resp, err := gclient.New().Get(ctx, url)
-		if err != nil {
-			return nil, err
-		}
+			json := gjson.New(resp.ReadAllString())
 
-		json := gjson.New(resp.ReadAllString())
+			return json.Get("tag_name"), nil
+		},
+	}
+}
 
-		return json.Get("tag_name"), nil
-	},
+func noteTags() config.Func {
+	return config.Func{
+		ParamList: nil,
+		Batch:     false,
+		Handler: func(ctx context.Context, param model.Map) (res any, err error) {
+			user, _ := ctx.Value(UserIdKey).(*CurrentUser)
+
+			type TagRecord struct {
+				Tags []string
+			}
+
+			var list []TagRecord
+
+			var tagSet gset.StrSet
+
+			err = g.DB().Model("note").Where("group_id", user.UserId).Scan(&list)
+			if err != nil {
+				return nil, err
+			}
+
+			if len(list) == 0 {
+				return []string{}, nil
+			}
+
+			for _, record := range list {
+				for _, tag := range record.Tags {
+					tagSet.Add(tag)
+				}
+
+			}
+
+			return tagSet.Slice(), err
+		},
+	}
 }

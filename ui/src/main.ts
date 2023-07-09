@@ -23,7 +23,8 @@ import {
   FloatButton,
   Upload,
   Breadcrumb,
-  Badge
+  Badge,
+  Tag,Avatar
 } from 'ant-design-vue'
 import 'ant-design-vue/dist/reset.css'
 
@@ -44,5 +45,5 @@ app.use(Drawer).use(Button).use(Tree)
   .use(Form).use(Alert).use(Input)
   .use(Card).use(TreeSelect).use(Popover)
   .use(Tabs).use(FloatButton).use(Empty).use(Upload).use(Breadcrumb)
-  .use(Badge)
+  .use(Badge).use(Tag).use(Avatar)
 app.mount('#app')

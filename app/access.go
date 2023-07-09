@@ -137,6 +137,16 @@ func AccessCondition(ctx context.Context, req config.ConditionReq, where *config
 			where.AddRaw("bm_id in (select bm_id from group_bookmark where drop_at is null and group_id in (select group_id from group_user where user_id = ? ))", []string{user.UserId})
 		}
 
+	case "Note":
+		where.Add("group_id", user.UserId)
+
+		if req.Method == http.MethodGet {
+			if _, exists := req.NodeReq["tag"]; exists {
+				where.AddRaw("json_extract(tags,'$') like ?", "%"+gconv.String(req.NodeReq["tag"])+"%")
+				delete(req.NodeReq, "tag")
+			}
+		}
+
 	case TableGroupBookmark:
 		if req.Method == http.MethodPut {
 			groupId := req.NodeReq["groupId"]
