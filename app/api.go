@@ -127,6 +127,7 @@ func (a *Api) RegisterLayout(ctx context.Context, req *RegisterLayoutReq) (res *
 
 	if one.IsEmpty() {
 		msg = "第一个用户注册后即为管理员"
+		canReg = true
 	}
 	return &RegisterLayoutRes{CanReg: canReg, Msg: msg}, nil
 }
