@@ -2,7 +2,7 @@
 import {ref} from 'vue'
 import Bookmark from '@/views/bookmark/index.vue'
 import Note from '@/views/note/index.vue'
-import { PlusOutlined, SearchOutlined,UserOutlined } from '@ant-design/icons-vue'
+import { UserOutlined,DownOutlined } from '@ant-design/icons-vue'
 
 const mode = ref('bookmark')
 

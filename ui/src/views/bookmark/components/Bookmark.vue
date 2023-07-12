@@ -1,6 +1,7 @@
 <template>
   <div>
     <div class="bookmark cursor-pointer  rounded shadow p-1 items-baseline" :class="{'simple':simple}"
+         :style="{'width':width}"
          @click="toURL(item)" v-contextmenu:contextmenu @contextmenu.stop="">
       <div class="flex">
         <div>
@@ -18,11 +19,20 @@
         {{ item.remark || item.description }}
       </div>
       <div v-if="!simple" class="flex justify-end" style="height: 12px;line-height: 12px;color:#777" @click.stop="void">
-        <a-popover :title="item.title">
+        <a-popover >
           <template #content>
             <div style="width:300px">
-              <p>{{ item.url }}</p>
-              <p>{{ item.description }}</p>
+              <div class="font-bold truncate ...">
+                {{item.title}}
+              </div>
+              <div style="font-size: 13px;overflow-wrap: anywhere" class="bg-blue-100 rounded p-1 my-2" >
+                {{item.url}}
+              </div>
+              <div class="bg-gray-100 p-1 rounded" style="font-size: 12px">{{ item.description }}</div>
+            </div>
+            <div class="flex mt-2 justify-end ">
+              <a-button type="primary" @click="edit">Edit</a-button>
+              <a-button class="ml-2" danger @click="drop">Del</a-button>
             </div>
           </template>
           <div>
@@ -33,8 +43,8 @@
     </div>
 
     <v-contextmenu ref="contextmenu">
-      <v-contextmenu-item @click="edit">🖊 编辑</v-contextmenu-item>
-      <v-contextmenu-item @click="drop">❌ 删除</v-contextmenu-item>
+      <v-contextmenu-item @click="edit">🖊 编辑 (下个次版本移除，请使用书签详情的操作)</v-contextmenu-item>
+      <v-contextmenu-item @click="drop">❌ 删除 (这种操作不利于移动端)</v-contextmenu-item>
     </v-contextmenu>
   </div>
 
@@ -56,10 +66,14 @@ const props = defineProps({
   simple: {
     type: Boolean,
     default: false
+  },
+  width:{
+    type:String,
+    default:""
   }
 })
 
-const emit = defineEmits(['edit'])
+const emit = defineEmits(['edit','drop'])
 
 function toURL (item) {
   apiJson.put({
@@ -72,7 +86,7 @@ function toURL (item) {
 }
 
 function edit () {
-  emit('edit')
+  emit('edit',props.item)
 }
 
 function drop () {
@@ -90,10 +104,11 @@ function drop () {
         GroupBookmark: {
           bmId: props.item.bmId,
           groupId: bookmark.curGroupId.value,
-          cateId,
+          cateId:props.item.cateId,
           dropAt: dayjs().format('YYYY-MM-DD HH:mm:ss')
         }
       }).then(data => {
+        emit("drop")
         bookmark.loadBookmarkList()
         bookmark.loadSubCateBookmark()
       })

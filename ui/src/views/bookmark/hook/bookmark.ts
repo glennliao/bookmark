@@ -47,6 +47,7 @@ function loadBookmarkList () {
       cateId: curCate.value[curCate.value.length - 1],
       count: 0,
       '@order': 'createdAt desc',
+      'cateId()': 'cateIdByBmId(bmId,groupId)'
     }
   }).then(data => {
     bookmarkList.value = data['Bookmark[]']
@@ -61,6 +62,7 @@ function loadSubCateBookmark(){
       count: 0,
       cateId:curSubCateId.value,
       '@order': 'createdAt desc',
+      'cateId()': 'cateIdByBmId(bmId,groupId)'
     }
   }).then(data => {
     curSubCateBookmark.value = data['Bookmark[]']

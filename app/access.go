@@ -3,7 +3,6 @@ package app
 import (
 	"context"
 	"fmt"
-	"github.com/gogf/gf/v2/errors/gerror"
 	"net/http"
 	"strings"
 
@@ -149,14 +148,15 @@ func AccessCondition(ctx context.Context, req config.ConditionReq, where *config
 
 	case TableGroupBookmark:
 		if req.Method == http.MethodPut {
-			groupId := req.NodeReq["groupId"]
-			if groupId == nil || groupId.(string) == "" {
-				return gerror.New("groupId为空")
-			}
+
+			//groupId := req.NodeReq["groupId"]
+			//if groupId == nil || groupId.(string) == "" {
+			//	return gerror.New("groupId为空")
+			//}
 
 			if _, exists := req.NodeReq["dropAt"]; exists {
 				where.Add("bm_id", req.NodeReq["bmId"])
-				where.Add("group_id", req.NodeReq["groupId"])
+				//where.Add("group_id", req.NodeReq["groupId"])
 				where.Add("cate_id", req.NodeReq["cateId"])
 				delete(req.NodeReq, "bmId")
 				delete(req.NodeReq, "groupId")
@@ -164,8 +164,8 @@ func AccessCondition(ctx context.Context, req config.ConditionReq, where *config
 			} else {
 
 			}
-			// todo 添加个@where op? 用于专门指定where条件
 		}
+
 	case TableGroups:
 		if req.Method == http.MethodGet {
 			where.AddRaw("group_id in (select group_id from group_user where user_id = ? )", []string{user.UserId})

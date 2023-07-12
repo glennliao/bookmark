@@ -16,23 +16,8 @@
 
       <div v-if="hasSearch" class="mt-4 p-1 rounded" style="background: #efefef;overflow: auto;max-height: 72vh">
         <a-empty v-if="list.length === 0" />
-        <div v-for="item in list" :key="item.bmId"  class="p-2 m-2 bg-white rounded shadow">
-
-          <div class="font-bold  cursor-pointer" @click="toURL(item)">
-            {{item.title.length > 30 ? item.title.substring(0, 30) + '...' : item.title}}
-          </div>
-          <div v-if="item.cateId" class="flex" style="font-size: 13px">
-            <a-breadcrumb>
-              <a-breadcrumb-item v-for="item in item.cateInfo" :key="item.cateId">{{item.title}}</a-breadcrumb-item>
-            </a-breadcrumb>
-
-          </div>
-          <div class=" cursor-pointer" style="font-size: 13px" @click="toURL(item)">
-            {{item.url}}
-          </div>
-          <div v-if="item.remark" style="font-size: 13px">
-            {{item.remark}}
-          </div>
+        <div v-for="item in list" :key="item.bmId" class="m-2 mr-4">
+          <Bookmark :item="item" width="100%" @drop="onSearch" @edit="edit"/>
         </div>
       </div>
     </div>
@@ -59,6 +44,7 @@ import { apiJson } from '../../../api'
 import { message } from 'ant-design-vue'
 import { nextTick, ref } from 'vue'
 import { useBookmark } from '@/views/bookmark/hook/bookmark'
+import Bookmark from '@/views/bookmark/components/Bookmark.vue'
 
 const visible = ref(false)
 
@@ -73,9 +59,15 @@ const {
   cateList
 } = useBookmark()
 
+const emit = defineEmits(["edit"])
+
+function edit(e){
+  emit("edit",e)
+}
+
 window.addEventListener('keydown', function (event) {
   if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'f' && !visible.value) {
-    visible.value = true
+    open({})
 
     event.preventDefault()
     nextTick(() => {
@@ -99,6 +91,7 @@ function onSearch () {
     'Bookmark[]': {
       q,
       '@alias': 'list',
+      '@order': 'createdAt desc',
       '@column': 'bmId,title,remark,url,icon',
       'cateId()': 'cateIdByBmId(bmId,groupId)'
     },
@@ -120,7 +113,14 @@ function onSearch () {
 
 const input = ref(null)
 function open (_info = {}) {
+
+  hasSearch.value = false
+  list.value = []
+  info.value = {
+    q:""
+  }
   visible.value = true
+
   nextTick(() => {
     input.value.focus()
   })
@@ -174,5 +174,22 @@ defineExpose({
 
 :deep(.ant-breadcrumb){
   font-size: 12px;
+}
+
+.logo {
+  width: 24px;
+  min-width: 24px;
+  height: 24px;
+  line-height: 24px;
+  border-radius: 100%;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.title {
+  font-size: 16px;
+  color: #000;
+  line-height: 24px;
+  font-weight: bold;
 }
 </style>

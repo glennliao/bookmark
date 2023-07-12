@@ -79,7 +79,7 @@
 <!--    <cate-manage ref="cateManageRef"/>-->
     <Setting ref="settingRef"/>
     <bookmark-edit-modal ref="BookmarkModalRef"/>
-    <search ref="BookmarkSearchModalRef"/>
+    <search ref="BookmarkSearchModalRef" @edit="edit"/>
 
 
     <a-float-button-group shape="square" :style="{ right: '24px' }">
