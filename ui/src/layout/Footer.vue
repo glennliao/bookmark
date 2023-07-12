@@ -2,20 +2,23 @@
 import { computed, ref } from 'vue'
 import { RightOutlined } from '@ant-design/icons-vue'
 import { apiJson } from '../api'
+import { compareVersion } from '@/utils/str-utils'
 
-const version = import.meta.env.VITE_app_version.trim()
-const latestVersion = ref('')
+const version =  import.meta.env.VITE_app_version.trim()
+const latestVersion = ref('v0.0.0')
 
 function checkNewVersion () {
   apiJson.get({
     'version()': 'latestVersion()'
   }).then(data => {
-    latestVersion.value = data.version
+    if(typeof data.version === "string"){
+      latestVersion.value = data.version
+    }
   })
 }
 
 const canUpdate = computed(() => {
-  return latestVersion.value > version
+  return  compareVersion(latestVersion.value||"",version) > 0
 })
 
 checkNewVersion()
@@ -39,7 +42,6 @@ checkNewVersion()
       <a-badge dot>
     <a target="_blank" href="https://github.com/glennliao/bookmark" class="ml-1">{{ latestVersion }}</a>
   </a-badge>
-
     </span>
   </footer>
 </template>

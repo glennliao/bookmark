@@ -28,7 +28,6 @@ export function treeEach (tree: any[], call: (any) => any): void {
       treeEach(item.children, call)
     }
 
-    console.log("item",item)
     call(item)
   })
 }
