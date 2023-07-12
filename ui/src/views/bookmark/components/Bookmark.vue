@@ -111,6 +111,7 @@ function drop () {
         emit("drop")
         bookmark.loadBookmarkList()
         bookmark.loadSubCateBookmark()
+        bookmark.loadCateBmNum()
       })
     },
     onCancel () {

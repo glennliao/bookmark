@@ -1,22 +1,50 @@
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { apiJson } from '@/api'
-import { toCateTree } from '@/utils/tree'
+import { toCateTree, treeEach } from '@/utils/tree'
 
-const cateTree = ref({ children: [] } as { children: any[] })
 const cateList = ref([])
 const curCate = ref([] as string[])
 const curGroupId = ref('')
+const cateBookmarkNumMap = ref({})
+const cateTree = computed(() => {
+  let treeList = toCateTree(cateList.value)
+
+
+  treeEach(treeList, (item) => {
+    item.count = cateBookmarkNumMap.value[item.cateId] || 0
+    if(item.children){
+      item.children.forEach(subItem=>{
+        item.count += subItem.count
+      })
+    }
+  })
+  return {
+    children: treeList
+  }
+})
 
 function loadCate () {
   apiJson.get({
     'BookmarkCate[]': {
       count: 0
-    }
+    },
+    'cateBmNum()': 'cateBmNum()'
   }).then((data) => {
     cateList.value = data['BookmarkCate[]']
-    cateTree.value = {
-      children: toCateTree(data['BookmarkCate[]'])
-    }
+    loadCateBmNum()
+  })
+}
+
+function loadCateBmNum () {
+  apiJson.get({
+    'cateBmNum()': 'cateBmNum()'
+  }).then((data) => {
+    let list = data.cateBmNum
+    let m = {}
+    list.forEach(item => {
+      m[item.cateId] = item.cnt
+    })
+    cateBookmarkNumMap.value = m
   })
 }
 
@@ -25,7 +53,7 @@ function clickCate (cateIds: string[]) {
   loadBookmarkList()
 }
 
-const groups = ref([] as {groupId:string}[])
+const groups = ref([] as { groupId: string }[])
 
 function loadGroup () {
   return apiJson.get({
@@ -41,6 +69,7 @@ function loadGroup () {
 }
 
 const bookmarkList = ref([] as any[])
+
 function loadBookmarkList () {
   apiJson.get({
     'Bookmark[]': {
@@ -56,11 +85,11 @@ function loadBookmarkList () {
 
 const curSubCateBookmark = ref([])
 const curSubCateId = ref('') // 下方分类
-function loadSubCateBookmark(){
+function loadSubCateBookmark () {
   apiJson.get({
     'Bookmark[]': {
       count: 0,
-      cateId:curSubCateId.value,
+      cateId: curSubCateId.value,
       '@order': 'createdAt desc',
       'cateId()': 'cateIdByBmId(bmId,groupId)'
     }
@@ -69,8 +98,17 @@ function loadSubCateBookmark(){
   })
 }
 
+function fetchMetaBatch () {
+  apiJson.get({
+    'fetchMetaBatch()': 'fetchMetaBatch()'
+  }).then((data) => {
+
+  })
+}
+
 export function useBookmark () {
   return {
+    fetchMetaBatch,
     loadCate,
     clickCate,
     curCate,
@@ -83,6 +121,7 @@ export function useBookmark () {
     groups,
     curSubCateId,
     curSubCateBookmark,
-    loadSubCateBookmark
+    loadSubCateBookmark,
+    loadCateBmNum
   }
 }

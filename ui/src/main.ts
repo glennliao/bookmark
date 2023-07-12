@@ -24,7 +24,7 @@ import {
   Upload,
   Breadcrumb,
   Badge,
-  Tag,Avatar
+  Tag , Avatar
 } from 'ant-design-vue'
 import 'ant-design-vue/dist/reset.css'
 

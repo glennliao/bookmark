@@ -25,7 +25,6 @@ function logout () {
         <a-avatar  :size="32">
           <template #icon><UserOutlined /></template>
         </a-avatar>
-        <DownOutlined />
       </a>
       <template #overlay>
         <a-menu>

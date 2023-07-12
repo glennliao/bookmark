@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"github.com/gogf/gf/v2/container/gset"
+	"github.com/panjf2000/ants/v2"
 	url2 "net/url"
 	"strconv"
 	"strings"
@@ -29,6 +30,8 @@ func initFunc(a *apijson.ApiJson) {
 	a.Config().Functions.Bind("cateIdByBmId", cateIdByBmId())
 	a.Config().Functions.Bind("latestVersion", latestVersion())
 	a.Config().Functions.Bind("noteTags", noteTags())
+	a.Config().Functions.Bind("cateBmNum", cateBmNum())
+	a.Config().Functions.Bind("fetchMetaBatch", fetchMetaBatchFunc())
 }
 
 var cateIdByBmId = func() config.Func {
@@ -273,6 +276,89 @@ func noteTags() config.Func {
 			}
 
 			return tagSet.Slice(), err
+		},
+	}
+}
+
+func cateBmNum() config.Func {
+	return config.Func{
+		ParamList: nil,
+		Batch:     false,
+		Handler: func(ctx context.Context, param model.Map) (res any, err error) {
+			groupId := gconv.String(param["groupId"])
+			if groupId == "" {
+				groupId = ctx.Value(UserIdKey).(*CurrentUser).UserId
+			}
+			values, err := g.DB().Model("group_bookmark").Where("group_id", groupId).WhereNull("drop_at").Group("cate_id").Fields("cate_id cateId, count(1) cnt").All()
+
+			return values.List(), err
+		},
+	}
+}
+
+func fetchMetaBatchFunc() config.Func {
+	return config.Func{
+		Handler: func(ctx context.Context, param model.Map) (res any, err error) {
+			all, err := g.DB().Ctx(ctx).Model("bookmark").Where("description", "@import ").All()
+			if err != nil {
+				return nil, err
+			}
+
+			task := func(data interface{}) {
+				item := data.(g.Map)
+				url := gconv.String(item["url"])
+				bmId := gconv.String(item["bm_id"])
+				var meta *fetchurl.UrlMeta
+				if !strings.HasPrefix(strings.ToLower(url), "http") {
+					meta, err = fetchurl.FetchURLMeta(ctx, "https://"+url)
+					if err != nil {
+						meta, err = fetchurl.FetchURLMeta(ctx, "http://"+url)
+						if err != nil {
+							g.Log().Error(ctx, err, url, bmId)
+							return
+						}
+					}
+				} else {
+					meta, err = fetchurl.FetchURLMeta(ctx, url)
+					if err != nil {
+						g.Log().Error(ctx, err, url, bmId)
+						return
+					}
+				}
+
+				if meta != nil {
+					if strings.HasPrefix(meta.Icon, "/") {
+						_url, err := url2.Parse(meta.Url)
+						if err != nil {
+							g.Log().Error(ctx, err, url, bmId)
+							return
+						}
+						meta.Icon = _url.Scheme + "://" + _url.Host + meta.Icon
+					}
+
+					meta.Url = url
+				}
+
+				_, err := g.DB().Model("bookmark").Ctx(ctx).Where("bm_id", bmId).Update(g.Map{
+					"icon":        meta.Icon,
+					"description": meta.Description,
+				})
+				if err != nil {
+					g.Log().Error(ctx, err)
+				}
+
+			}
+
+			p, _ := ants.NewPoolWithFunc(8, task)
+			defer p.Release()
+
+			for _, item := range all {
+				err := p.Invoke(item.Map())
+				if err != nil {
+					return nil, err
+				}
+			}
+			return nil, err
 		},
 	}
 }

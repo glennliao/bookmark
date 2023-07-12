@@ -1,11 +1,10 @@
-
 export function toCateTree (list: any[]): any[] {
   // 首先按级别进行排序（不需要请删除）
   list.sort(function (a, b) {
     return a.sorts - b.sorts
   })
 
-  const map:Record<string, any[]> = {}
+  const map: Record<string, any[]> = {}
 
   list.forEach(item => {
     map[item.parentId] = map[item.parentId] || []
@@ -19,4 +18,17 @@ export function toCateTree (list: any[]): any[] {
   })
 
   return map.root
+}
+
+export function treeEach (tree: any[], call: (any) => any): void {
+  tree = tree || []
+  tree.forEach(item => {
+
+    if (item.children) {
+      treeEach(item.children, call)
+    }
+
+    console.log("item",item)
+    call(item)
+  })
 }

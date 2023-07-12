@@ -17,6 +17,7 @@
                 <template v-for="subItem in item.children" :key="subItem.cateId">
                   <template v-if="!subItem.children">
                     <a-menu-item :key="item.cateId +'/'+subItem.cateId">
+
                       <div  @click="handleMenuClick([item.cateId,subItem.cateId])">{{ subItem.title }}</div>
                     </a-menu-item>
                   </template>
@@ -28,7 +29,11 @@
             </template>
 
             <div @click="handleMenuClick([item.cateId])">
-              <span>{{ item.title }}</span>
+              <div class="flex items-center">
+                <span>{{ item.title }}</span>
+                <span v-if="item.count > 0" style="font-size: 12px;margin-left: 3px;color:#8b8b8b">({{item.count}})</span>
+              </div>
+
             </div>
           </a-dropdown>
         </li>
@@ -50,7 +55,7 @@
 
         <a-breadcrumb class="mb-2" v-if="curCateInfo.parents && curCateInfo.parents.length > 0">
           <a-breadcrumb-item v-for="item in curCateInfo.parents" :key="item.cateId">{{ item.title }}</a-breadcrumb-item>
-          <a-breadcrumb-item :key="curCateInfo.cateId">{{ curCateInfo.title }}</a-breadcrumb-item>
+          <a-breadcrumb-item :key="curCateInfo.cateId">{{ curCateInfo.title }} ({{curCateInfo.count}})</a-breadcrumb-item>
         </a-breadcrumb>
 
 
@@ -253,7 +258,9 @@ if (route.query.url) {
 </script>
 <style scoped lang="scss">
 
-
+.menu > li > div {
+  padding: 12px;
+}
 .active {
   border-bottom: 2px solid;
 }

@@ -28,6 +28,11 @@ func FetchURLMeta(ctx context.Context, uri string) (meta *UrlMeta, err error) {
 	resp, err := client.Get(uri)
 
 	if err != nil {
+
+		if strings.Contains(err.Error(), "context deadline") {
+			return &UrlMeta{}, err
+		}
+
 		if e, ok := err.(*url.Error); ok {
 			if !e.Timeout() {
 				return &UrlMeta{}, err
