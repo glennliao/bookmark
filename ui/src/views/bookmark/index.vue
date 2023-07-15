@@ -259,7 +259,7 @@ if (route.query.url) {
 <style scoped lang="scss">
 
 .menu > li > div {
-  padding: 12px;
+  //padding: 12px;
 }
 .active {
   border-bottom: 2px solid;

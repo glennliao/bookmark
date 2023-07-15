@@ -104,11 +104,12 @@ function handleAdd (next) {
     "tag":"Note"
   }
 
-  const tagReg = /#(\w+)/g
+  const tagReg = /#([^#\s]+)/g
 
   const tags = new Set((markdownText.match(tagReg)||[]).map(item=>item.slice(1)))
 
   param.Note.tags = Array.from(tags)
+
 
   if (_info.noteId) {
     api = apiJson.put
