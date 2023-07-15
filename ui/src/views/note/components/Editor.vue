@@ -19,6 +19,14 @@ const value = ref('')
 
 onMounted(() => {
   vditor.value = new Vditor('vditor', {
+    // cdn:'https://cdn.jsdelivr.net/npm/vditor',
+    preview:{
+      hljs:{
+        enable:false,
+        style:'solarized-dark',
+        lineNumber:true,
+      }
+    },
     mode: 'ir',
     height: '400px',
     toolbar: [],
@@ -53,14 +61,20 @@ defineExpose({
 <template>
   <div id="vditor"/>
   <div style="font-size: 13px;color:rgba(159,159,159,0.78)">
-    support markdown
+    markdown
   </div>
 </template>
 
 <style scoped lang="scss">
 
+#vditor {
+  border-radius: 6px;
+  border: 2px solid #e7e7e7 !important;
+}
+
 :deep(.vditor-toolbar) {
   padding-left: 0 !important;
+  display: none;
 }
 
 :deep(.vditor){

@@ -3,6 +3,7 @@
     title="Note"
     v-model:open="visible"
     destroy-on-close
+    :mask-closable="false"
   >
     <div>
       <editor ref="editor" :model-value="info.content.markdown" />

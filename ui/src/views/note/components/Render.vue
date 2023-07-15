@@ -2,22 +2,23 @@
 import { ref, onMounted, watch, nextTick, onUnmounted } from 'vue'
 import markdownIt from 'markdown-it'
 import Clipboard from 'clipboard'
-import "github-markdown-css/github-markdown.css"
+
 
 import hljs from 'highlight.js' // https://highlightjs.org
-import "highlight.js/styles/atom-one-dark.css"
+
 import go from 'highlight.js/lib/languages/go'
 import shell from 'highlight.js/lib/languages/shell'
 import bash from 'highlight.js/lib/languages/bash'
 import json from 'highlight.js/lib/languages/json'
 import yaml from 'highlight.js/lib/languages/yaml'
+import { message } from 'ant-design-vue'
 
 hljs.registerLanguage("go",go)
 hljs.registerLanguage("shell",bash)
 hljs.registerLanguage("bash",bash)
 hljs.registerLanguage("json",json)
 hljs.registerLanguage("yaml",yaml)
-import { message } from 'ant-design-vue'
+
 const codeIndex = parseInt(Date.now()) + Math.floor(Math.random() * 10000000)
 
 const md = new markdownIt({
@@ -25,7 +26,9 @@ const md = new markdownIt({
     // 当前时间加随机数生成唯一的id标识
 
     // 复制功能主要使用的是 clipboard.js
-    let html = `<button class="copy-btn" id="copy-btn-${codeIndex}" type="button" data-clipboard-action="copy" data-clipboard-target="#copy${codeIndex}">复制</button>`
+    let html = `<span class="copy-btn" data-tips="复制代码" title="copy" id="copy-btn-${codeIndex}" type="button" data-clipboard-action="copy" data-clipboard-target="#copy${codeIndex}"><svg class="copy-btn-icon" aria-hidden="true">
+<use xlink:href="#icon-copy"></use>
+  </svg></span>`
     const linesLength = str.split(/\n/).length - 1
     // 生成行号
     let linesNum = '<span aria-hidden="true" class="line-numbers-rows">'
@@ -34,7 +37,6 @@ const md = new markdownIt({
     }
     linesNum += '</span>'
 
-    console.log("land",lang)
     if (lang && hljs.getLanguage(lang)) {
       try {
         // highlight.js 高亮代码
@@ -45,7 +47,7 @@ const md = new markdownIt({
         }).value
         html = html + preCode
         if (linesLength) {
-          html += '<b class="name">' + lang + '</b>'
+          html = '<b class="name">' + lang + '</b>'+html
         }
         // 将代码包裹在 textarea 中，由于防止textarea渲染出现问题，这里将 "<" 用 "&lt;" 代替，不影响复制功能
         return `<pre class="hljs"><code>${html}</code>${linesNum}</pre><textarea style="position: absolute;top: -9999px;left: -9999px;z-index: -9999;" id="copy${codeIndex}">${str.replace(/<\/textarea>/g, '&lt;/textarea>')}</textarea>`
@@ -94,8 +96,6 @@ onUnmounted(()=>{
 const ele = ref(null)
 const html = ref('')
 watch(() => [props.content,props.tags], (e) => {
-
-
   let _html = md.render(props.content)
   props.tags?.forEach(item=>{
     _html = _html.replaceAll("#"+item,`<a href="#/note?tag=${item}" >#${item}</a>`)
@@ -105,10 +105,15 @@ watch(() => [props.content,props.tags], (e) => {
 </script>
 
 <template>
-  <div class="render-area markdown-body" ref="ele" v-html="html"/>
+  <div class="render-area markdown-body" ref="ele" v-html="html">
+  </div>
 </template>
 
 <style lang="scss">
+
+@import "github-markdown-css/github-markdown.css";
+@import "highlight.js/styles/atom-one-dark.css";
+
 
 :deep(.vditor-toolbar){
   padding-left: 0 !important;
@@ -146,7 +151,11 @@ watch(() => [props.content,props.tags], (e) => {
     line-height: 22px !important;
     overflow: hidden !important;
     background: #282c34;
+    font-family: source-code-pro, Menlo, Monaco, Consolas, Courier New, monospace;
+
+
     code {
+      line-height: 1.5;
       display: block !important;
       margin: 0 10px !important;
       overflow-x: auto !important;
@@ -203,17 +212,71 @@ watch(() => [props.content,props.tags], (e) => {
       color: #999;
       pointer-events: none;
     }
+
+    .copy-btn-icon {
+      width:24px;
+      height: 24px;
+    }
+
+
     .copy-btn {
       position: absolute;
       top: 2px;
       right: 4px;
       font-size:12px;
       z-index: 10;
-      color: #333;
+      color: #a9b7c6;
       cursor: pointer;
-      background-color: rgba(255, 255, 255, 0.74);
+      background-color: rgba(255, 255, 255, 0.68);
       border: 0;
       border-radius: 2px;
+      width:24px;
+      height: 24px;
+
+      &:before {
+        content: attr(data-tips);
+        color: white;
+        background-color: rgb(61, 90, 110);
+        position: absolute;
+        font-size: 12px;
+        font-family: sans-serif;
+        width: max-content;
+        text-align: center;
+        padding: 4px;
+        border-radius: 2px;
+        box-shadow: 0 0 2px #0003;
+        left: 0;
+        z-index:10;
+        top: 50%;
+        transform: translate(-100%, -50%)
+      }
+
+      &:after {
+        content: "";
+        color: #ccc;
+        position: absolute;
+        width: 0;
+        height: 0;
+        border: 5px solid rgba(0, 0, 0, 0);
+        border-right-width: 0;
+        border-left-color: currentColor;
+        left: -2px;
+        top: 50%;
+        transform: translateY(-50%);
+        filter: drop-shadow(4px 0 2px rgba(0, 0, 0, .2))
+      }
+
+
+      &:before,&:after{
+        visibility: hidden;
+        transition: .3s
+      }
+
+      &:hover{
+        &:before,&:after{
+          visibility: visible
+        }
+      }
     }
   }
 }

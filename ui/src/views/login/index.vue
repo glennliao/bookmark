@@ -72,7 +72,7 @@ const user = useUser()
 function handleOk () {
   auth(form.value).then(data => {
     user.token.value = data.token
-    localStorage.setItem('token', data.token)
+    localStorage.setItem('bm_token', data.token)
     router.push('/')
   })
 }
