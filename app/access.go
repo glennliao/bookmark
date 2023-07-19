@@ -13,13 +13,12 @@ import (
 )
 
 const (
-	TableUser          = "User"
-	TableBookmark      = "Bookmark"
-	TableBookmarkUse   = "BookmarkUse"
-	TableBookmarkCate  = "BookmarkCate"
-	TableGroups        = "Groups"
-	TableGroupUser     = "GroupUser"
-	TableGroupBookmark = "GroupBookmark"
+	TableUser         = "User"
+	TableBookmark     = "Bookmark"
+	TableBookmarkUse  = "BookmarkUse"
+	TableBookmarkCate = "BookmarkCate"
+	TableGroups       = "Groups"
+	TableGroupUser    = "GroupUser"
 )
 
 const UserIdKey = "userId"
@@ -100,13 +99,6 @@ func AccessCondition(ctx context.Context, req config.ConditionReq, where *config
 		where.AddRaw("group_id in (select group_id from group_user where user_id = ?)", user.UserId)
 	case TableBookmark:
 		if req.Method == http.MethodGet {
-			if v, exists := req.NodeReq["cateId"]; exists {
-				delete(req.NodeReq, "cateId")
-				where.AddRaw("bm_id in (select bm_id from group_bookmark where  drop_at is null and cate_id = ? and group_id in (select group_id from group_user where user_id = ? ))", []string{v.(string), user.UserId})
-			} else {
-				where.AddRaw("bm_id in (select bm_id from group_bookmark where drop_at is null and group_id in (select group_id from group_user where user_id = ? ))", []string{user.UserId})
-			}
-
 			if v, exists := req.NodeReq["q"]; exists {
 				delete(req.NodeReq, "q")
 
@@ -132,8 +124,9 @@ func AccessCondition(ctx context.Context, req config.ConditionReq, where *config
 
 			}
 
+			where.AddRaw("drop_at is null and group_id in (select group_id from group_user where user_id = ? )", []string{user.UserId})
 		} else {
-			where.AddRaw("bm_id in (select bm_id from group_bookmark where drop_at is null and group_id in (select group_id from group_user where user_id = ? ))", []string{user.UserId})
+			where.AddRaw("drop_at is null and group_id in (select group_id from group_user where user_id = ? )", []string{user.UserId})
 		}
 
 	case "Note":
@@ -143,26 +136,6 @@ func AccessCondition(ctx context.Context, req config.ConditionReq, where *config
 			if _, exists := req.NodeReq["tag"]; exists {
 				where.AddRaw("json_extract(tags,'$') like ?", "%"+gconv.String(req.NodeReq["tag"])+"%")
 				delete(req.NodeReq, "tag")
-			}
-		}
-
-	case TableGroupBookmark:
-		if req.Method == http.MethodPut {
-
-			//groupId := req.NodeReq["groupId"]
-			//if groupId == nil || groupId.(string) == "" {
-			//	return gerror.New("groupId为空")
-			//}
-
-			if _, exists := req.NodeReq["dropAt"]; exists {
-				where.Add("bm_id", req.NodeReq["bmId"])
-				//where.Add("group_id", req.NodeReq["groupId"])
-				where.Add("cate_id", req.NodeReq["cateId"])
-				delete(req.NodeReq, "bmId")
-				delete(req.NodeReq, "groupId")
-				delete(req.NodeReq, "cateId")
-			} else {
-
 			}
 		}
 

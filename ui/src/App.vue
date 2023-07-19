@@ -1,7 +1,7 @@
 <template>
   <div id="bg"></div>
   <Header/>
-  <div  class="body z-10 w-full">
+  <div class="body z-10 w-full">
     <router-view/>
   </div>
   <Footer/>

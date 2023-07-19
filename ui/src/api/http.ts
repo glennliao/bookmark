@@ -1,7 +1,8 @@
 import router from '../router'
-import { useUser } from '@/views/bookmark/hook/user'
+
 import { message } from 'ant-design-vue'
-const user = useUser()
+import useUserStore from '@/store/modules/user'
+
 export function request (method: string, url: string, query: Record<string, any> | undefined, data: Record<string, any> | undefined, headers: Record<string, any> = {}): Promise<Record<string, any>> {
   if (query) {
     const paramsArray: string[] = []
@@ -13,7 +14,8 @@ export function request (method: string, url: string, query: Record<string, any>
     }
   }
 
-  headers.Authorization = user.token.value
+  const user = useUserStore()
+  headers.Authorization = user.token
   url = './api' + url
 
   return fetch(url, {

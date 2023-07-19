@@ -7,11 +7,11 @@ const curCate = ref([] as string[])
 const curGroupId = ref('')
 const cateBookmarkNumMap = ref({})
 const cateTree = computed(() => {
-  let treeList = toCateTree(cateList.value)
+  const treeList = toCateTree(cateList.value)
   treeEach(treeList, (item) => {
     item.count = cateBookmarkNumMap.value[item.cateId] || 0
-    if(item.children){
-      item.children.forEach(subItem=>{
+    if (item.children) {
+      item.children.forEach(subItem => {
         item.count += subItem.count
       })
     }
@@ -37,8 +37,8 @@ function loadCateBmNum () {
   apiJson.get({
     'cateBmNum()': 'cateBmNum()'
   }).then((data) => {
-    let list = data.cateBmNum
-    let m = {}
+    const list = data.cateBmNum
+    const m = {}
     list.forEach(item => {
       m[item.cateId] = item.cnt
     })

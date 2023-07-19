@@ -3,7 +3,7 @@
   <div class="bookmark-area z-10 ">
 
     <div class="p-2 z-10">
-      <ul class="rounded-box bg-base-100 menu category menu-horizontal bg-base-100 shadow z-10" style="width: auto">
+      <ul class="rounded-box bg-base-100 menu category menu-horizontal shadow z-10" style="width: auto">
         <li :class="{'active':isHome}">
           <span @click="toHome">
             ⭐
@@ -99,11 +99,6 @@
           <PlusOutlined  />
         </template>
       </a-float-button>
-      <a-float-button tooltip="toggle to note" @click="toggleTo('note')">
-        <template #icon>
-          <block-outlined />
-        </template>
-      </a-float-button>
     </a-float-button-group>
 
   </div>
@@ -117,7 +112,7 @@ import { useBookmark } from './hook/bookmark'
 import Setting from './components/Setting.vue'
 import BookmarkEditModal from '@/views/bookmark/components/BookmarkEditModal.vue'
 import Bookmark from '@/views/bookmark/components/Bookmark.vue'
-import { PlusOutlined,SearchOutlined,BlockOutlined } from '@ant-design/icons-vue'
+import { PlusOutlined,SearchOutlined } from '@ant-design/icons-vue'
 import { apiJson } from '@/api'
 import { useRoute } from 'vue-router'
 import Search from '@/views/bookmark/components/Search.vue'
@@ -134,10 +129,6 @@ const {
   curSubCateBookmark
 } = useBookmark()
 
-const emit = defineEmits(["toggleTo"])
-function toggleTo(e){
-  emit("toggleTo",e)
-}
 
 const curCateInfo = ref({})
 
@@ -188,15 +179,12 @@ function loadLatest () {
 }
 
 function foundCurCateInfo (keys: string[], tree: any[], parents: any[]) {
-  console.log("tree",tree)
   for (const treeElement of tree) {
     if (treeElement.cateId === keys[keys.length - 1]) {
       curCateInfo.value = {
         ...treeElement,
         parents
       }
-
-      console.log(curCateInfo.value,"curCateInfo")
 
       if (treeElement.children && treeElement.children.length > 0) {
         clickSubCate(treeElement.children[0].cateId)
@@ -212,9 +200,6 @@ function foundCurCateInfo (keys: string[], tree: any[], parents: any[]) {
 
 function handleMenuClick (keyPath: string[]) {
   const keys = keyPath
-
-
-  console.log("keys",keys)
 
   curCateInfo.value = {}
   curSubCateBookmark.value = []

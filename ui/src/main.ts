@@ -28,14 +28,10 @@ import {
 } from 'ant-design-vue'
 import 'ant-design-vue/dist/reset.css'
 
-// @ts-ignore
-import contextmenu from 'v-contextmenu'
-import 'v-contextmenu/dist/themes/default.css'
-
 import lazyPlugin from 'vue3-lazy'
 
 const app = createApp(App)
-app.use(contextmenu)
+
 app.use(lazyPlugin, {})
 app.use(router)
 app.use(pinia)

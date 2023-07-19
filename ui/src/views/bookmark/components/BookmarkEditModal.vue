@@ -129,8 +129,9 @@ import { useBookmark } from '@/views/bookmark/hook/bookmark'
 import { useForm } from 'ant-design-vue/es/form/index'
 import { message, Modal } from 'ant-design-vue'
 import { ExclamationCircleOutlined, DownOutlined } from '@ant-design/icons-vue'
-import { colorByURL } from '../../../utils/str-utils'
-import { useUser } from '@/views/bookmark/hook/user'
+import { colorByURL } from '@/utils/str-utils'
+import useUserStore from '@/store/modules/user'
+
 
 const visible = ref(false)
 const addVisible = ref(false)
@@ -332,9 +333,9 @@ function loadCate () {
   })
 }
 
-const user = useUser()
+const user = useUserStore()
 const uploadHeader = {
-  Authorization: user.token.value
+  Authorization: user.token
 }
 
 function onFileChange (e) {
