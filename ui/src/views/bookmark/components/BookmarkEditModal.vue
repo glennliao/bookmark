@@ -34,8 +34,8 @@
           </div>
         </div>
         <div v-else>
-          <a-form-item label="目录" v-bind="validateInfos.parentId">
-            <a-tree-select block v-model:value="info.parentId" :tree-data="parentIdTreeData"/>
+          <a-form-item label="目录" v-bind="validateInfos.cateId">
+            <a-tree-select block v-model:value="info.cateId" :tree-data="parentIdTreeData"/>
           </a-form-item>
           <a-alert show-icon v-if="info.title && info.title.length > 20"
                    style="width:60%;text-align: center;margin-left: 10%;margin-bottom: 4px">
@@ -138,7 +138,7 @@ const treeData = ref([])
 const parentIdTreeData = ref([])
 const bookmark = useBookmark()
 const info = ref({
-  parentId: '',
+  cateId: '',
   title: '',
   groupId: '',
   url: ''
@@ -156,7 +156,7 @@ const {
 } = useForm(
   info,
   reactive({
-    parentId: [
+    cateId: [
       {
         required: true
       }
@@ -190,11 +190,8 @@ function onSearch () {
       Bookmark: {
         url // or suffix /
       },
-      GroupBookmark: {
-        'bmId@': '/Bookmark/bmId'
-      },
       BookmarkCate: {
-        'cateId@': '/GroupBookmark/cateId'
+        'cateId@': '/Bookmark/cateId'
       }
     }
   }
@@ -220,10 +217,10 @@ function onSearch () {
     }
 
     if (bookmark.curSubCateId.value) {
-      info.value.parentId = bookmark.curSubCateId.value || ''
+      info.value.cateId = bookmark.curSubCateId.value || ''
     } else {
       if (bookmark.curCate.value.length) {
-        info.value.parentId = bookmark.curCate.value[bookmark.curCate.value.length - 1] || ''
+        info.value.cateId = bookmark.curCate.value[bookmark.curCate.value.length - 1] || ''
       }
     }
     info.value.url = data.meta.url
@@ -254,7 +251,7 @@ function handleAdd (next) {
   addLoading.value = true
   const _info = toRaw(info.value)
 
-  if (!_info.parentId){
+  if (!_info.cateId) {
     message.warn('请选择分类')
     addLoading.value = false
     return
@@ -262,12 +259,9 @@ function handleAdd (next) {
 
   validate().then(data => {
     let api = apiJson.post
-    const GroupBookmark = {
-      cateId: _info.parentId,
-      groupId: bookmark.curGroupId.value
-    }
+    _info.groupId = bookmark.curGroupId.value
 
-    if (!GroupBookmark.groupId){
+    if (!_info.groupId) {
       message.warn('groupId丢失，请刷新页面')
       addLoading.value = false
       return
@@ -275,14 +269,9 @@ function handleAdd (next) {
 
     if (_info.bmId) {
       api = apiJson.put
-      GroupBookmark.id = groupBookmarkId.value
-    } else {
-      GroupBookmark['bmId@'] = 'Bookmark/bmId'
     }
-
     api({
       Bookmark: _info,
-      GroupBookmark,
       tag: 'Bookmark'
     }).then(data => {
       console.log(data)
@@ -302,8 +291,6 @@ function handleAdd (next) {
   })
 }
 
-const groupBookmarkId = ref('')
-
 function open (_info = {}) {
   resetFields()
   equalBm.value = {}
@@ -318,21 +305,6 @@ function open (_info = {}) {
     }, 512)
   }
 
-  if (_info.bmId) {
-    apiJson.get({
-      GroupBookmark: {
-        groupId: bookmark.curGroupId.value,
-        bmId: _info.bmId
-      }
-    }).then(data => {
-      groupBookmarkId.value = data.GroupBookmark.id
-      info.value = {
-        ...info.value,
-        parentId: data.GroupBookmark.cateId
-      }
-      console.log(data)
-    })
-  }
   hasFetchURL.value = _info.bmId
   loadCate()
 }

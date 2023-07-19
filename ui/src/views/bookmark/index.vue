@@ -1,6 +1,6 @@
 <template>
 
-  <div class="py-2 bookmark-area z-10 " v-contextmenu:contextmenu>
+  <div class="bookmark-area z-10 ">
 
     <div class="p-2 z-10">
       <ul class="rounded-box bg-base-100 menu category menu-horizontal bg-base-100 shadow z-10" style="width: auto">
@@ -107,13 +107,6 @@
     </a-float-button-group>
 
   </div>
-
-
-  <v-contextmenu ref="contextmenu">
-    <v-contextmenu-item @click="openBookmarkModal({})">➕ 新增书签</v-contextmenu-item>
-    <v-contextmenu-item @click="cateContextmenu({})">⚙️ 管理分类</v-contextmenu-item>
-    <v-contextmenu-item @click="logout({})">🔘 退出登录</v-contextmenu-item>
-  </v-contextmenu>
 </template>
 
 <script lang="ts" setup>

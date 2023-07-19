@@ -2,7 +2,7 @@
   <div>
     <div class="bookmark cursor-pointer  rounded shadow p-1 items-baseline" :class="{'simple':simple}"
          :style="{'width':width}"
-         @click="toURL(item)" v-contextmenu:contextmenu @contextmenu.stop="">
+         @click="toURL(item)">
       <div class="flex">
         <div>
           <img v-lazy="item.icon" v-if="item.icon && item.icon !== ''" class="logo"/>
@@ -31,8 +31,8 @@
               <div class="bg-gray-100 p-1 rounded" style="font-size: 12px">{{ item.description }}</div>
             </div>
             <div class="flex mt-2 justify-end ">
-              <a-button type="primary" @click="edit">Edit</a-button>
-              <a-button class="ml-2" danger @click="drop">Del</a-button>
+              <a-button size="small" ghost type="primary" @click="edit">Edit</a-button>
+              <a-button size="small" ghost class="ml-2" danger @click="drop">Del</a-button>
             </div>
           </template>
           <div>
@@ -41,11 +41,6 @@
         </a-popover>
       </div>
     </div>
-
-    <v-contextmenu ref="contextmenu">
-      <v-contextmenu-item @click="edit">🖊 编辑 (下个次版本移除，请使用书签详情的操作)</v-contextmenu-item>
-      <v-contextmenu-item @click="drop">❌ 删除 (这种操作不利于移动端)</v-contextmenu-item>
-    </v-contextmenu>
   </div>
 
 </template>
@@ -57,7 +52,7 @@ import { createVNode } from 'vue'
 import { Modal } from 'ant-design-vue'
 import dayjs from 'dayjs'
 import { useBookmark } from '@/views/bookmark/hook/bookmark'
-import { colorByURL } from '../../../utils/str-utils'
+import { colorByURL } from '@/utils/str-utils'
 
 const bookmark = useBookmark()
 

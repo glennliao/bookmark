@@ -37,7 +37,7 @@
           <PlusOutlined/>
         </template>
       </a-float-button>
-      <a-float-button tooltip="toggle to bookmark" @click="toggleTo('bookmark')">
+      <a-float-button tooltip="toggle to bookmark" @click="toggleTo('/bookmark')">
         <template #icon>
           <block-outlined />
         </template>
@@ -61,8 +61,9 @@ import Render from '@/views/note/components/Render.vue'
 import { useRoute, useRouter } from 'vue-router'
 
 const emit = defineEmits(["toggleTo"])
+const router = useRouter()
 function toggleTo(e){
-  emit("toggleTo",e)
+  router.push(e)
 }
 
 const list = ref([])
@@ -99,7 +100,6 @@ function loadTagList () {
   })
 }
 
-const router = useRouter()
 const activeTag = ref('')
 watch(() => router.currentRoute.value.query, (e) => {
   activeTag.value = e.tag

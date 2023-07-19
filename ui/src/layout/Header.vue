@@ -1,28 +1,23 @@
 <template>
-  <div class="navbar bg-base-100">
-    <div class="flex-1">
-      <a class="btn btn-ghost normal-case text-xl">daisyUI</a>
-    </div>
-    <div class="flex-none gap-2">
-      <div class="form-control">
-        <input type="text" placeholder="Search" class="input input-bordered" />
-      </div>
-      <div class="dropdown dropdown-end">
-        <label tabindex="0" class="btn btn-ghost btn-circle avatar">
-          <div class="w-10 rounded-full">
-            <img src="https://daisyui.com//images/stock/photo-1534528741775-53994a69daeb.jpg" />
-          </div>
-        </label>
-        <ul tabindex="0" class="mt-3 p-2 shadow menu menu-compact dropdown-content bg-base-100 rounded-box w-52">
-          <li>
-            <a class="justify-between">
-              Profile
-              <span class="badge">New</span>
-            </a>
-          </li>
-          <li><a>Settings</a></li>
-          <li><a>Logout</a></li>
-        </ul>
+  <div class="header ">
+    <div class="nav flex justify-around">
+      <router-link class="nav-item" to="/bookmark">Bookmark</router-link>
+      <router-link class="nav-item" to="/note">Note</router-link>
+      <div class="nav-item" style="width:40px">
+        <a-dropdown>
+          <a class="ant-dropdown-link" @click.prevent>
+            <a-avatar  :size="32">
+              <template #icon><UserOutlined /></template>
+            </a-avatar>
+          </a>
+          <template #overlay>
+            <a-menu>
+              <a-menu-item @click="logout">
+                <a href="javascript:;">logout</a>
+              </a-menu-item>
+            </a-menu>
+          </template>
+        </a-dropdown>
       </div>
     </div>
   </div>
@@ -33,6 +28,23 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+.nav{
+  width:240px;
+  margin: 0 auto;
+  border-radius: 0 0 25px 25px ;
+  height: 40px;
+  position: relative;
+  background: rgba(255, 255, 255, .7);
+}
 
+.nav-item {
+  color:darkseagreen;
+  text-decoration: none;
+  padding: 4px;
+  text-align: center;
+  //background: rgba(56, 56, 56, 0.66);
+  line-height: 30px;
+  cursor: pointer;
+}
 </style>

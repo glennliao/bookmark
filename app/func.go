@@ -2,74 +2,32 @@ package app
 
 import (
 	"context"
-	"github.com/gogf/gf/v2/container/gset"
-	"github.com/panjf2000/ants/v2"
-	url2 "net/url"
-	"strconv"
-	"strings"
-	"time"
-
-	"github.com/gogf/gf/v2/encoding/gjson"
-	"github.com/gogf/gf/v2/net/gclient"
-	"github.com/gogf/gf/v2/os/gcache"
-
 	"github.com/glennliao/apijson-go"
 	"github.com/glennliao/apijson-go/config"
 	"github.com/glennliao/apijson-go/model"
 	"github.com/glennliao/bookmark/app/util/fetchurl"
 	"github.com/glennliao/bookmark/app/util/htmlbookmark"
+	"github.com/gogf/gf/v2/container/gset"
 	"github.com/gogf/gf/v2/database/gdb"
+	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/net/gclient"
 	"github.com/gogf/gf/v2/util/gconv"
+	"github.com/panjf2000/ants/v2"
 	"github.com/yitter/idgenerator-go/idgen"
+	url2 "net/url"
+	"strconv"
+	"strings"
 )
 
 func initFunc(a *apijson.ApiJson) {
 	a.Config().Functions.Bind("fetchURL", fetchURL)
 	a.Config().Functions.Bind("import", importBookmark)
-	a.Config().Functions.Bind("cateIdByBmId", cateIdByBmId())
+
 	a.Config().Functions.Bind("latestVersion", latestVersion())
 	a.Config().Functions.Bind("noteTags", noteTags())
 	a.Config().Functions.Bind("cateBmNum", cateBmNum())
 	a.Config().Functions.Bind("fetchMetaBatch", fetchMetaBatchFunc())
-}
-
-var cateIdByBmId = func() config.Func {
-
-	var cache = gcache.NewAdapterMemory()
-	return config.Func{
-		ParamList: []config.ParamItem{
-			{
-				Name: "bmId",
-				Type: "string",
-				Desc: "",
-			},
-			{
-				Name: "groupId",
-				Type: "string",
-				Desc: "",
-			},
-		},
-		Handler: func(ctx context.Context, param model.Map) (res any, err error) {
-
-			groupId := gconv.String(param["groupId"])
-			if groupId == "" {
-				groupId = ctx.Value(UserIdKey).(*CurrentUser).UserId
-			}
-			val, err := cache.GetOrSetFuncLock(ctx, groupId, func(ctx context.Context) (value interface{}, err error) {
-				values, err := g.DB().Model("group_bookmark").Where("group_id", groupId).Fields("cate_id,bm_id").All()
-				m := map[string]string{}
-				for _, v := range values {
-					item := gconv.MapStrStr(v)
-					m[item["bm_id"]] = item["cate_id"]
-				}
-				return m, err
-			}, time.Second*5)
-
-			bmId := gconv.String(param["bmId"])
-			return val.MapStrStr()[bmId], err
-		},
-	}
 }
 
 var fetchURL = config.Func{
@@ -289,7 +247,7 @@ func cateBmNum() config.Func {
 			if groupId == "" {
 				groupId = ctx.Value(UserIdKey).(*CurrentUser).UserId
 			}
-			values, err := g.DB().Model("group_bookmark").Where("group_id", groupId).WhereNull("drop_at").Group("cate_id").Fields("cate_id cateId, count(1) cnt").All()
+			values, err := g.DB().Model("bookmark").Where("group_id", groupId).WhereNull("drop_at").Group("cate_id").Fields("cate_id cateId, count(1) cnt").All()
 
 			return values.List(), err
 		},

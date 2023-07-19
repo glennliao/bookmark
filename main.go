@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	_ "embed"
+	"github.com/samber/lo"
 	"strings"
 
 	"github.com/glennliao/apijson-go"
@@ -30,6 +31,12 @@ var (
 		Description: "",
 		Func: func(ctx context.Context, parser *gcmd.Parser) (err error) {
 
+			// 数据库同步前判断
+			tables, err := g.DB().Tables(ctx)
+			if err != nil {
+				g.Log().Fatal(ctx, err)
+			}
+
 			a := apijson.Load(app.App)
 
 			w := web.New(a)
@@ -51,6 +58,10 @@ var (
 			if g.Res().Contains("dist") {
 				s.AddStaticPath("/", "dist")
 				s.AddStaticPath("/assets", "dist/assets")
+			}
+
+			if !lo.Contains(tables, "config") && lo.Contains(tables, "group_bookmark") {
+				app.ToV0Dot11(ctx)
 			}
 
 			s.Run()

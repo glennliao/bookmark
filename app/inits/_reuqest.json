@@ -100,7 +100,7 @@
     "Executor": {}
   },
   {
-    "tag": "GroupBookmark",
+    "tag": "Config",
     "version": "1",
     "method": "POST",
     "structure": {
@@ -108,7 +108,7 @@
     "Executor": {}
   },
   {
-    "tag": "GroupBookmark",
+    "tag": "Config",
     "version": "1",
     "method": "PUT",
     "structure": {
@@ -116,7 +116,7 @@
     "Executor": {}
   },
   {
-    "tag": "GroupBookmark",
+    "tag": "Config",
     "version": "1",
     "method": "DELETE",
     "structure": {

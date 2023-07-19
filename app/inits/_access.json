@@ -15,12 +15,14 @@
         "in": {
           "cate_id": ["*"],
           "url": ["%$%","="],
-          "q": ["="]
+          "q": ["="],
+          "group_id": ["="],
+          "bm_id": ["="]
         },
         "out": {
           "bm_id": "",
           "created_at": "",
-          "created_by": "",
+          "cate_id": "",
           "url": "",
           "title": "",
           "remark": "",
@@ -133,31 +135,6 @@
     "executor": "default"
   },
   {
-    "name": "group_bookmark",
-    "alias": "GroupBookmark",
-    "get": ["UNKNOWN","LOGIN","OWNER","GroupUser","GroupAdmin"],
-    "head":["LOGIN","OWNER","GroupUser","GroupAdmin"],
-    "gets":["LOGIN","OWNER","GroupUser","GroupAdmin"],
-    "heads":["LOGIN","OWNER","GroupUser","GroupAdmin"],
-    "post":["LOGIN","OWNER","GroupUser","GroupAdmin"],
-    "put":["LOGIN","OWNER","GroupUser","GroupAdmin"],
-    "delete":["LOGIN","OWNER","GroupUser","GroupAdmin"],
-    "rowKey": "id",
-    "fieldsGet": {
-      "default": {
-        "in": {
-          "bm_id": ["*"],
-          "group_id": ["*"]
-        },
-        "out": {
-
-        }
-      }
-    },
-    "rowKeyGen": "",
-    "executor": "default"
-  },
-  {
     "name": "user",
     "alias": "User",
     "get": ["UNKNOWN","LOGIN","OWNER","GroupUser","GroupAdmin"],
@@ -214,6 +191,28 @@
     "put":["LOGIN","OWNER","GroupUser","GroupAdmin"],
     "delete":["LOGIN","OWNER","GroupUser","GroupAdmin"],
     "rowKey": "tag",
+    "fieldsGet": {
+      "default": {
+        "in": {},
+        "out": {
+
+        }
+      }
+    },
+    "rowKeyGen": "",
+    "executor": "default"
+  },
+  {
+    "name": "config",
+    "alias": "Config",
+    "get": ["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "head":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "gets":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "heads":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "post":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "put":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "delete":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "rowKey": "id",
     "fieldsGet": {
       "default": {
         "in": {},

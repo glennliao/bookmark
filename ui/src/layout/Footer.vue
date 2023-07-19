@@ -4,7 +4,7 @@ import { RightOutlined } from '@ant-design/icons-vue'
 import { apiJson } from '../api'
 import { compareVersion } from '@/utils/str-utils'
 
-const version =  import.meta.env.VITE_app_version.trim()
+const version = import.meta.env.VITE_app_version.trim()
 const latestVersion = ref('v0.0.0')
 
 function checkNewVersion () {

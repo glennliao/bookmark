@@ -8,8 +8,6 @@ const curGroupId = ref('')
 const cateBookmarkNumMap = ref({})
 const cateTree = computed(() => {
   let treeList = toCateTree(cateList.value)
-
-
   treeEach(treeList, (item) => {
     item.count = cateBookmarkNumMap.value[item.cateId] || 0
     if(item.children){
@@ -75,8 +73,8 @@ function loadBookmarkList () {
     'Bookmark[]': {
       cateId: curCate.value[curCate.value.length - 1],
       count: 0,
-      '@order': 'createdAt desc',
-      'cateId()': 'cateIdByBmId(bmId,groupId)'
+      '@order': 'createdAt desc'
+      // 'cateId()': 'cateIdByBmId(bmId,groupId)'
     }
   }).then(data => {
     bookmarkList.value = data['Bookmark[]']
@@ -90,8 +88,7 @@ function loadSubCateBookmark () {
     'Bookmark[]': {
       count: 0,
       cateId: curSubCateId.value,
-      '@order': 'createdAt desc',
-      'cateId()': 'cateIdByBmId(bmId,groupId)'
+      '@order': 'createdAt desc'
     }
   }).then(data => {
     curSubCateBookmark.value = data['Bookmark[]']
