@@ -24,7 +24,8 @@ import {
   Upload,
   Breadcrumb,
   Badge,
-  Tag , Avatar
+  Tag , Avatar,Segmented,
+  Layout
 } from 'ant-design-vue'
 import 'ant-design-vue/dist/reset.css'
 
@@ -41,5 +42,5 @@ app.use(Drawer).use(Button).use(Tree)
   .use(Form).use(Alert).use(Input)
   .use(Card).use(TreeSelect).use(Popover)
   .use(Tabs).use(FloatButton).use(Empty).use(Upload).use(Breadcrumb)
-  .use(Badge).use(Tag).use(Avatar)
+  .use(Badge).use(Tag).use(Avatar).use(Layout).use(Segmented)
 app.mount('#app')

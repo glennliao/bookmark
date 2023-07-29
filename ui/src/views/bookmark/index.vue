@@ -3,47 +3,10 @@
   <div class="bookmark-area z-10 ">
 
     <div class="p-2 z-10">
-      <ul class="rounded-box bg-base-100 menu category menu-horizontal shadow z-10" style="width: auto">
-        <li :class="{'active':isHome}">
-          <span @click="toHome">
-            ⭐
-          </span>
-        </li>
-        <li v-for="item in cateTree.children" :key="item.cateId"
-            :class="{'active':!isHome && curCate.includes(item.cateId)}">
-          <a-dropdown trigger="hover">
-            <template #overlay>
-              <a-menu v-if="item.children" >
-                <template v-for="subItem in item.children" :key="subItem.cateId">
-                  <template v-if="!subItem.children">
-                    <a-menu-item :key="item.cateId +'/'+subItem.cateId">
 
-                      <div  @click="handleMenuClick([item.cateId,subItem.cateId])">{{ subItem.title }}</div>
-                    </a-menu-item>
-                  </template>
-                  <template v-else>
-                    <SubMemu @click="e=>handleMenuClick([subItem.parentId,...e])" :key="subItem.cateId" :menu-info="subItem"/>
-                  </template>
-                </template>
-              </a-menu>
-            </template>
-
-            <div @click="handleMenuClick([item.cateId])">
-              <div class="flex items-center">
-                <span>{{ item.title }}</span>
-                <span v-if="item.count > 0" style="font-size: 12px;margin-left: 3px;color:#8b8b8b">({{item.count}})</span>
-              </div>
-
-            </div>
-          </a-dropdown>
-        </li>
-        <li @click="cateContextmenu">
-          <span>⚙️</span>
-        </li>
-      </ul>
-
+      <a-menu class="mb-2" :open-keys="openKeys" :selectedKeys="openKeys" mode="horizontal" selectable @select="onCateClick" @click="onCateClick" :items="cateItems" style="border-radius: 24px"/>
       <!-- content-->
-      <div v-if="isHome">
+      <div class="mt-4" v-if="isHome">
         <div>🕐 最近访问</div>
         <div class="flex mt-1">
           <transition-group appear name="slide-fade" tag="div" class="flex flex-wrap justify-start">
@@ -59,18 +22,16 @@
         </a-breadcrumb>
 
 
+
         <div class="flex">
           <transition-group appear name="slide-fade" tag="div" class="flex flex-wrap justify-start">
             <bookmark v-for="item in bookmarkList" :key="item.bmId" :item="item" @edit="edit(item)"/>
           </transition-group>
         </div>
 
-        <div class="mt-4">
-          <div className="tabs">
-            <a :className="'tab tab-sm tab-lifted '+(curSubCateId === item.cateId?'tab-active':'')"
-               v-for="item in curCateInfo.children" :key="item.cateId"
-               @click="clickSubCate(item.cateId)">{{ item.title }}</a>
-          </div>
+        <div class="mt-2">
+          <a-segmented class="mt-2" v-model:value="curSubCateId" :options="subCateList" style="background: #63636517;border-radius: 5px"/>
+
           <div class="flex mt-2">
             <transition-group appear name="slide-fade" tag="div" class="flex flex-wrap justify-start">
               <bookmark v-for="item in curSubCateBookmark" :key="item.bmId" :item="item" @edit="edit(item)"></bookmark>
@@ -85,7 +46,6 @@
     <Setting ref="settingRef"/>
     <bookmark-edit-modal ref="BookmarkModalRef"/>
     <search ref="BookmarkSearchModalRef" @edit="edit"/>
-
 
     <a-float-button-group shape="square" :style="{ right: '24px' }">
       <a-float-button @click="searchBookmark({})">
@@ -105,14 +65,14 @@
 </template>
 
 <script lang="ts" setup>
+import { treeEach } from '@/utils/tree'
 
-import { ref, onMounted } from 'vue'
-import SubMemu from '@/views/bookmark/components/SubMemu.vue'
+import { ref, onMounted, h, computed, toRaw,reactive } from 'vue'
 import { useBookmark } from './hook/bookmark'
 import Setting from './components/Setting.vue'
 import BookmarkEditModal from '@/views/bookmark/components/BookmarkEditModal.vue'
 import Bookmark from '@/views/bookmark/components/Bookmark.vue'
-import { PlusOutlined,SearchOutlined } from '@ant-design/icons-vue'
+import { PlusOutlined, SearchOutlined } from '@ant-design/icons-vue'
 import { apiJson } from '@/api'
 import { useRoute } from 'vue-router'
 import Search from '@/views/bookmark/components/Search.vue'
@@ -129,8 +89,99 @@ const {
   curSubCateBookmark
 } = useBookmark()
 
-
+const data = reactive(['Daily', 'Weekly', 'Monthly', 'Quarterly', 'Yearly']);
+const value = ref(data[0]);
 const curCateInfo = ref({})
+const openKeys = ref([])
+
+const subCateList = computed(()=>{
+  return (curCateInfo.value.children||[]).map(item=>{
+    return {
+      label:item.title,
+      value:item.cateId
+    }
+  })
+})
+
+const cateItems = computed(() => {
+  const list = [
+    {
+      key: '@home',
+      label: ' ⭐ ',
+      title: '⭐'
+    }
+  ]
+
+  const tree = toRaw(cateTree.value.children || [])
+
+  const parentMap:Record<string, string> = {}
+
+  treeEach(tree, (item) => {
+    parentMap[item.cateId] = item.parentId
+  })
+  treeEach(tree, (item) => {
+    const labelChildren = [
+      h('span', item.title)
+    ]
+    if (item.count > 0) {
+      labelChildren.push(h('span', {
+        style: {
+          'font-size': '12px',
+          'margin-left': '4px',
+          color: '#acacac'
+        }
+      }, `(${item.count})`))
+    }
+    item.label = h('div', {
+      onClick: () => {
+
+        const keys = [item.cateId]
+        let curCateId = item.cateId
+        while (parentMap[curCateId] && parentMap[curCateId] !== "root") {
+          keys.unshift(parentMap[curCateId])
+          curCateId = parentMap[curCateId]
+        }
+        openKeys.value = keys
+
+        curCateInfo.value = {}
+        curSubCateBookmark.value = []
+        curSubCateId.value = ''
+        foundCurCateInfo(keys, cateTree.value.children, [])
+        clickCate(keys)
+        isHome.value = false
+
+      },
+      onTap: () => {
+        console.log('tap', item.cateId)
+      }
+    }, labelChildren)
+    item.key = item.cateId
+  })
+
+  tree.forEach(item => {
+    list.push(item)
+  })
+
+  list.push({
+    key: '@setting',
+    label: ' ⚙️ ',
+    title: '⚙️'
+  })
+  return list
+})
+
+function onCateClick (e) {
+  switch (e.key){
+    case "@home":
+      isHome.value = true
+      loadLatest()
+      break
+    case "@setting":
+      settingRef.value && settingRef.value.open()
+      break
+  }
+}
+
 
 function clickSubCate (cateId: string) {
   curSubCateId.value = cateId
@@ -142,20 +193,13 @@ loadGroup().then(() => {
   loadCate()
 })
 
-
 const settingRef = ref(null)
-
-function cateContextmenu () {
-  settingRef.value && settingRef.value.open()
-}
-
 
 // 当前是否⭐页面
 const isHome = ref(true)
 
 function toHome () {
-  isHome.value = true
-  loadLatest()
+
 }
 
 const latestVisitList = ref([])
@@ -216,11 +260,9 @@ function openBookmarkModal (item) {
   BookmarkModalRef.value.open(item)
 }
 
-function searchBookmark(item){
+function searchBookmark (item) {
   BookmarkSearchModalRef.value.open(item)
 }
-
-
 
 function edit (item) {
   BookmarkModalRef.value.open(item)
@@ -261,5 +303,10 @@ if (route.query.url) {
   opacity: .1;
 }
 
+:deep(.ant-menu-horizontal >.ant-menu-item){
+  min-width: 66px;
+  text-align: center;
+  padding-inline: 2px;
+}
 
 </style>

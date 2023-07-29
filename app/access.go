@@ -113,9 +113,9 @@ func AccessCondition(ctx context.Context, req config.ConditionReq, where *config
 					if i > 0 {
 						sql += " and "
 					}
-					sql += fmt.Sprintf("(lower(title) like ? or lower(url) like ?)")
+					sql += fmt.Sprintf("(lower(title) like ? or lower(url) like ? or lower(remark) like ?)")
 					word = strings.ToLower(word)
-					params = append(params, "%"+word+"%", "%"+word+"%")
+					params = append(params, "%"+word+"%", "%"+word+"%", "%"+word+"%")
 				}
 
 				if len(params) > 0 {
