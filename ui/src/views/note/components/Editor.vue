@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'
-import Vditor from 'vditor'
-import 'vditor/dist/index.css'
+import { MdEditor } from 'md-editor-v3';
+import 'md-editor-v3/lib/style.css';
+import sanitizeHtml from 'sanitize-html';
 
-const vditor = ref<Vditor | null>(null)
+const sanitize = (html) => sanitizeHtml(html);
+const text = ref('Hello Editor!');
 
 const emit = defineEmits(['update:modelValue'])
 const props = defineProps({
@@ -18,40 +20,18 @@ const value = ref('')
 
 
 onMounted(() => {
-  vditor.value = new Vditor('vditor', {
-    // cdn:'https://cdn.jsdelivr.net/npm/vditor',
-    preview:{
-      hljs:{
-        enable:false,
-        style:'solarized-dark',
-        lineNumber:true,
-      }
-    },
-    mode: 'ir',
-    height: '400px',
-    toolbar: [],
-    "tab": "\t",
-    placeholder: 'write something',
-    after: () => {
-      vditor.value!.setValue(props.modelValue)
-    },
-    input (e) {
-      value.value = e
-      emit('update:modelValue', e)
-    }
-  })
+
 })
 
 watch(()=>props.modelValue, (e)=>{
   if (e !== value.value){
-    vditor.value!.setValue(e)
-    value.value = e
+    text.value = e
   }
-})
+},{immediate:true})
 
 defineExpose({
   getContent:()=>{
-    return vditor.value.getValue()
+    return text.value
   }
 })
 
@@ -59,7 +39,39 @@ defineExpose({
 </script>
 
 <template>
-  <div id="vditor"/>
+  <MdEditor v-model="text" :sanitize="sanitize" autoFocus :toolbars="[
+    // 'bold',
+  // 'underline',
+  // 'italic',
+  // '-',
+  // 'title',
+  // 'strikeThrough',
+  // 'sub',
+  // 'sup',
+  // 'quote',
+  // 'unorderedList',
+  // 'orderedList',
+  // 'task',
+  // '-',
+  // 'codeRow',
+  // 'code',
+  // 'link',
+  // 'image',
+  // 'table',
+  // 'mermaid',
+  // 'katex',
+  // '-',
+  // 'revoke',
+  // 'next',
+  // 'save',
+  // '=',
+  // 'pageFullscreen',
+  // 'fullscreen',
+  'preview',
+  // 'htmlPreview',
+  // 'catalog',
+  // 'github'
+  ]"/>
   <div style="font-size: 13px;color:rgba(159,159,159,0.78)">
     markdown
   </div>

@@ -3,7 +3,9 @@
 
   <a-layout style="min-height:100vh;">
     <a-layout-sider v-model:collapsed="collapsed"
-                    :style="{ overflow: 'auto', height: '100vh', position: 'fixed', left: 0, top: 0, bottom: 0 }"
+                    :breakpoint="smallerThanSm?'sm':undefined"
+                    :collapsed-width="smallerThanSm?0:undefined"
+                    :class="{'side-fixed':!smallerThanSm}"
     >
       <div class="logo" />
       <a-menu @click="to" :selectedKeys="selectedKeys" theme="dark" mode="inline">
@@ -15,22 +17,20 @@
           <form-outlined />
           <span>Note</span>
         </a-menu-item>
-<!--        <a-sub-menu key="sub1">-->
-<!--          <template #title>-->
-<!--            <span>-->
-<!--              <user-outlined />-->
-<!--              <span>User</span>-->
-<!--            </span>-->
-<!--          </template>-->
-<!--          <a-menu-item key="3">Tom</a-menu-item>-->
-<!--          <a-menu-item key="4">Bill</a-menu-item>-->
-<!--          <a-menu-item key="5">Alex</a-menu-item>-->
-<!--        </a-sub-menu>-->
+        <a-sub-menu key="sub1" style="position: absolute;bottom:12px;width:100%">
+          <template #title>
+            <span>
+              <user-outlined />
+              <span>User</span>
+            </span>
+          </template>
+          <a-menu-item key="@logout">Logout</a-menu-item>
+        </a-sub-menu>
       </a-menu>
     </a-layout-sider>
     <a-layout>
-      <a-layout-content style="margin: 2px 4px 2px 82px">
-        <div :style="{ padding: '12px', minHeight: '360px' }">
+      <a-layout-content style="margin: 2px 4px 2px 2px" :style="{'margin-left':smallerThanSm?'2px':'86px'}">
+        <div :style="{ padding: '2px', minHeight: '360px' }">
           <div class="body z-10 w-full">
             <router-view/>
           </div>
@@ -48,15 +48,18 @@
 <script setup lang="ts">
 import Footer from '@/layout/Footer.vue'
 import { ref, watch } from 'vue'
+import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
+
 import {
-  PieChartOutlined,
-  DesktopOutlined,
   FormOutlined,
   BookOutlined,
-  TeamOutlined,
-  FileOutlined,
-  UserOutlined, VideoCameraOutlined, UploadOutlined,MenuFoldOutlined,MenuUnfoldOutlined } from '@ant-design/icons-vue';
+  UserOutlined
+   } from '@ant-design/icons-vue';
 import { useRoute, useRouter } from 'vue-router'
+import useUserStore from '@/store/modules/user'
+
+const breakpoints = useBreakpoints(breakpointsTailwind)
+const smallerThanSm = breakpoints.smallerOrEqual('sm')
 
 
 const router = useRouter()
@@ -67,22 +70,24 @@ const selectedKeys = ref<string[]>([key]);
 const route = useRoute()
 
 watch(() => route.path,(v)=>{
-  console.log(v)
   let path = v
   if (path === "/"){
     path = "/bookmark"
   }
-  console.log(path)
   selectedKeys.value = [path]
 })
 
-console.log(router.currentRoute.value.path,key,router.currentRoute.value)
 if (key == "/") {
   key = "/bookmark"
 }
 
+const userStore = useUserStore()
 function to(e){
-  router.push(e.key)
+  if(e.key.startsWith("@")){
+    userStore.logout()
+  }else{
+    router.push(e.key)
+  }
 }
 </script>
 
@@ -91,6 +96,21 @@ function to(e){
   min-height: calc(100vh - 26px - 40px);
   font-size: 14px;
   position: relative;
+}
+
+.side-fixed{
+  overflow: auto !important;
+  height: 100vh !important;
+  position: fixed !important;
+  left: 0;
+  top: 0;
+  bottom: 0
+}
+
+
+.ant-layout-sider-zero-width-trigger-left{
+  top:44px !important;
+  z-index: 1000 !important;
 }
 
 </style>

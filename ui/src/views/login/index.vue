@@ -61,17 +61,16 @@
 import { reactive, ref } from 'vue'
 import { auth, register, registerLayout } from '../../api/index'
 import { useRouter } from 'vue-router'
-import { useUser } from '@/views/bookmark/hook/user'
 import { message } from 'ant-design-vue'
+import useUserStore from '@/store/modules/user'
 
 const form = ref({})
 
 const router = useRouter()
-const user = useUser()
-
+const userStore = useUserStore()
 function handleOk () {
   auth(form.value).then(data => {
-    user.token.value = data.token
+    userStore.token = data.token
     localStorage.setItem('bm_token', data.token)
     router.push('/')
   })

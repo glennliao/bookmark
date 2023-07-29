@@ -2,9 +2,13 @@
 
   <div class="bookmark-area z-10 ">
 
-    <div class="p-2 z-10">
+    <div class="z-10">
 
-      <a-menu class="mb-2" :open-keys="openKeys" :selectedKeys="openKeys" mode="horizontal" selectable @select="onCateClick" @click="onCateClick" :items="cateItems" style="border-radius: 24px"/>
+      <div class="p-2">
+        <a-menu class="mb-2" :open-keys="openKeys" :selectedKeys="openKeys" mode="horizontal" selectable @select="onCateClick" @click="onCateClick" :items="cateItems" style="border-radius: 24px"/>
+        <span v-if="smallerThanSm">如果点击某个父级目录，移动端下请点击点两次</span>
+      </div>
+
       <!-- content-->
       <div class="mt-4" v-if="isHome">
         <div>🕐 最近访问</div>
@@ -16,7 +20,7 @@
       </div>
       <div v-else>
 
-        <a-breadcrumb class="mb-2" v-if="curCateInfo.parents && curCateInfo.parents.length > 0">
+        <a-breadcrumb class="mb-2 px-2" v-if="curCateInfo.parents && curCateInfo.parents.length > 0">
           <a-breadcrumb-item v-for="item in curCateInfo.parents" :key="item.cateId">{{ item.title }}</a-breadcrumb-item>
           <a-breadcrumb-item :key="curCateInfo.cateId">{{ curCateInfo.title }} ({{curCateInfo.count}})</a-breadcrumb-item>
         </a-breadcrumb>
@@ -30,7 +34,7 @@
         </div>
 
         <div class="mt-2">
-          <a-segmented class="mt-2" v-model:value="curSubCateId" :options="subCateList" style="background: #63636517;border-radius: 5px"/>
+          <a-segmented class="mt-2" @change="clickSubCate" v-model:value="curSubCateId" :options="subCateList" style="background: #63636517;border-radius: 5px;max-width: 98vw;overflow-x: auto"/>
 
           <div class="flex mt-2">
             <transition-group appear name="slide-fade" tag="div" class="flex flex-wrap justify-start">
@@ -76,6 +80,7 @@ import { PlusOutlined, SearchOutlined } from '@ant-design/icons-vue'
 import { apiJson } from '@/api'
 import { useRoute } from 'vue-router'
 import Search from '@/views/bookmark/components/Search.vue'
+import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
 
 const {
   loadCate,
@@ -88,6 +93,10 @@ const {
   loadSubCateBookmark,
   curSubCateBookmark
 } = useBookmark()
+
+const breakpoints = useBreakpoints(breakpointsTailwind)
+
+const smallerThanSm = breakpoints.smallerOrEqual('sm')
 
 const data = reactive(['Daily', 'Weekly', 'Monthly', 'Quarterly', 'Yearly']);
 const value = ref(data[0]);

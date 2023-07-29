@@ -17,15 +17,19 @@ func initRowKeyGen(a *apijson.ApiJson) {
 	options.BaseTime = 1591545600000 // 2020-06-08
 	idgen.SetIdGenerator(options)
 
-	a.Config().RowKeyGenFunc(RowKeyIdGen, func(ctx context.Context, req *config.RowKeyGenReq, ret *config.RowKeyGenRet) error {
+	a.Config().RowKeyGenFunc(config.RowKeyGenerator{
+		Name:      RowKeyIdGen,
+		ParamList: nil,
+		Handler: func(ctx context.Context, req *config.RowKeyGenReq, ret *config.RowKeyGenRet) error {
 
-		if req.AccessName == TableGroups {
-			if req.Data["group_id"] != nil {
-				return nil
+			if req.AccessName == TableGroups {
+				if req.Data["group_id"] != nil {
+					return nil
+				}
 			}
-		}
 
-		ret.RowKey(strconv.FormatInt(idgen.NextId(), 10))
-		return nil
+			ret.RowKey(strconv.FormatInt(idgen.NextId(), 10))
+			return nil
+		},
 	})
 }

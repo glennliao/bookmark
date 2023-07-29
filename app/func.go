@@ -38,8 +38,8 @@ var fetchURL = config.Func{
 			Desc: "url地址",
 		},
 	},
-	Handler: func(ctx context.Context, param model.Map) (res any, err error) {
-		url := gconv.String(param["url"])
+	Handler: func(ctx context.Context, param model.FuncParam) (res any, err error) {
+		url := param["url"].String()
 
 		var meta *fetchurl.UrlMeta
 		if !strings.HasPrefix(strings.ToLower(url), "http") {
@@ -71,9 +71,9 @@ var importBookmark = config.Func{
 			Type: "string",
 		},
 	},
-	Handler: func(ctx context.Context, param model.Map) (res any, err error) {
+	Handler: func(ctx context.Context, param model.FuncParam) (res any, err error) {
 
-		data := param["data"].(string)
+		data := param["data"].String()
 
 		bookmarks, err := htmlbookmark.Parse(ctx, data)
 		if err != nil {
@@ -187,7 +187,7 @@ func process(ctx context.Context, bookmarks *htmlbookmark.Bookmarks, parentId st
 
 func latestVersion() config.Func {
 	return config.Func{
-		Handler: func(ctx context.Context, param model.Map) (res any, err error) {
+		Handler: func(ctx context.Context, param model.FuncParam) (res any, err error) {
 			url := "https://api.github.com/repos/glennliao/bookmark/releases/latest"
 			resp, err := gclient.New().Get(ctx, url)
 			if err != nil {
@@ -206,7 +206,7 @@ func noteTags() config.Func {
 	return config.Func{
 		ParamList: nil,
 		Batch:     false,
-		Handler: func(ctx context.Context, param model.Map) (res any, err error) {
+		Handler: func(ctx context.Context, param model.FuncParam) (res any, err error) {
 			user, _ := ctx.Value(UserIdKey).(*CurrentUser)
 
 			type TagRecord struct {
@@ -242,10 +242,12 @@ func cateBmNum() config.Func {
 	return config.Func{
 		ParamList: nil,
 		Batch:     false,
-		Handler: func(ctx context.Context, param model.Map) (res any, err error) {
-			groupId := gconv.String(param["groupId"])
-			if groupId == "" {
+		Handler: func(ctx context.Context, param model.FuncParam) (res any, err error) {
+			groupId := ""
+			if param["groupId"] == nil {
 				groupId = ctx.Value(UserIdKey).(*CurrentUser).UserId
+			} else {
+				groupId = param["groupId"].String()
 			}
 			values, err := g.DB().Model("bookmark").Where("group_id", groupId).WhereNull("drop_at").Group("cate_id").Fields("cate_id cateId, count(1) cnt").All()
 
@@ -256,7 +258,7 @@ func cateBmNum() config.Func {
 
 func fetchMetaBatchFunc() config.Func {
 	return config.Func{
-		Handler: func(ctx context.Context, param model.Map) (res any, err error) {
+		Handler: func(ctx context.Context, param model.FuncParam) (res any, err error) {
 			all, err := g.DB().Ctx(ctx).Model("bookmark").Where("description", "@import ").All()
 			if err != nil {
 				return nil, err

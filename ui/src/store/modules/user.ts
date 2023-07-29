@@ -12,7 +12,6 @@ const useUserStore = defineStore('user', () => {
     token.value = ''
     window.location.reload()
   }
-
   return {
     token,
     logout,
