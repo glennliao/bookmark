@@ -34,7 +34,12 @@
         </div>
 
         <div class="mt-2">
-          <a-segmented class="mt-2" @change="clickSubCate" v-model:value="curSubCateId" :options="subCateList" style="background: #63636517;border-radius: 5px;max-width: 98vw;overflow-x: auto"/>
+
+          <a-segmented class="mt-2" @change="clickSubCate" v-model:value="curSubCateId" :options="subCateList" style="background: #63636517;border-radius: 5px;max-width: 98vw;overflow-x: auto">
+            <template #label="{ payload,title }">
+              {{ title }} <span v-if="payload.count" style="font-size: 12px;margin-left: 2px">({{payload.count}})</span>
+            </template>
+          </a-segmented>
 
           <div class="flex mt-2">
             <transition-group appear name="slide-fade" tag="div" class="flex flex-wrap justify-start">
@@ -81,7 +86,30 @@ import { apiJson } from '@/api'
 import { useRoute } from 'vue-router'
 import Search from '@/views/bookmark/components/Search.vue'
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
+const data = ref([
+  {
+    value: 'user1',
+    payload: {
+      src: 'https://joeschmoe.io/api/v1/random',
+      style: { backgroundColor: '#f56a00' },
+    },
+  },
+  {
+    value: 'user2',
+    payload: {
+      style: { backgroundColor: '#f56a00' },
+      content: 'K',
+    },
+  },
+  {
+    value: 'user3',
+    payload: {
+      style: { backgroundColor: '#f56a00' },
+    },
+  },
+]);
 
+const value = ref('user1');
 const {
   loadCate,
   curCate,
@@ -98,16 +126,17 @@ const breakpoints = useBreakpoints(breakpointsTailwind)
 
 const smallerThanSm = breakpoints.smallerOrEqual('sm')
 
-const data = reactive(['Daily', 'Weekly', 'Monthly', 'Quarterly', 'Yearly']);
-const value = ref(data[0]);
 const curCateInfo = ref({})
 const openKeys = ref([])
 
 const subCateList = computed(()=>{
   return (curCateInfo.value.children||[]).map(item=>{
     return {
-      label:item.title,
-      value:item.cateId
+      title:`${item.title}`,
+      value:item.cateId,
+      payload:{
+        count:item.count
+      }
     }
   })
 })
