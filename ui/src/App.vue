@@ -42,8 +42,6 @@
     </a-layout>
   </a-layout>
 
-
-
 </template>
 <script setup lang="ts">
 import Footer from '@/layout/Footer.vue'
@@ -54,38 +52,37 @@ import {
   FormOutlined,
   BookOutlined,
   UserOutlined
-   } from '@ant-design/icons-vue';
+} from '@ant-design/icons-vue'
 import { useRoute, useRouter } from 'vue-router'
 import useUserStore from '@/store/modules/user'
 
 const breakpoints = useBreakpoints(breakpointsTailwind)
 const smallerThanSm = breakpoints.smallerOrEqual('sm')
 
-
 const router = useRouter()
-const collapsed = ref<boolean>(true);
+const collapsed = ref<boolean>(true)
 let key = router.currentRoute.value.path
 
-const selectedKeys = ref<string[]>([key]);
+const selectedKeys = ref<string[]>([key])
 const route = useRoute()
 
-watch(() => route.path,(v)=>{
+watch(() => route.path, (v) => {
   let path = v
-  if (path === "/"){
-    path = "/bookmark"
+  if (path === '/') {
+    path = '/bookmark'
   }
   selectedKeys.value = [path]
 })
 
-if (key == "/") {
-  key = "/bookmark"
+if (key == '/') {
+  key = '/bookmark'
 }
 
 const userStore = useUserStore()
-function to(e){
-  if(e.key.startsWith("@")){
+function to (e) {
+  if (e.key.startsWith('@')) {
     userStore.logout()
-  }else{
+  } else {
     router.push(e.key)
   }
 }
@@ -106,7 +103,6 @@ function to(e){
   top: 0;
   bottom: 0
 }
-
 
 .ant-layout-sider-zero-width-trigger-left{
   top:44px !important;

@@ -12,6 +12,7 @@ import (
 	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/gclient"
+	"github.com/gogf/gf/v2/os/gctx"
 	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/panjf2000/ants/v2"
 	"github.com/yitter/idgenerator-go/idgen"
@@ -265,6 +266,9 @@ func fetchMetaBatchFunc() config.Func {
 			}
 
 			task := func(data interface{}) {
+
+				ctx := gctx.NeverDone(ctx)
+
 				item := data.(g.Map)
 				url := gconv.String(item["url"])
 				bmId := gconv.String(item["bm_id"])

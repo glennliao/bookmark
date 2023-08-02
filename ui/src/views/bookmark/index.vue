@@ -5,7 +5,7 @@
     <div class="z-10">
 
       <div class="p-2">
-        <a-menu class="mb-2" :open-keys="openKeys" :selectedKeys="openKeys" mode="horizontal" selectable @select="onCateClick" @click="onCateClick" :items="cateItems" style="border-radius: 24px"/>
+        <a-menu class="mb-2" :selected-keys="openKeys"  mode="horizontal" selectable @select="onCateClick" @click="onCateClick" :items="cateItems" style="border-radius: 24px"/>
         <span v-if="smallerThanSm">如果点击某个父级目录，移动端下请点击点两次</span>
       </div>
 
@@ -24,8 +24,6 @@
           <a-breadcrumb-item v-for="item in curCateInfo.parents" :key="item.cateId">{{ item.title }}</a-breadcrumb-item>
           <a-breadcrumb-item :key="curCateInfo.cateId">{{ curCateInfo.title }} ({{curCateInfo.count}})</a-breadcrumb-item>
         </a-breadcrumb>
-
-
 
         <div class="flex">
           <transition-group appear name="slide-fade" tag="div" class="flex flex-wrap justify-start">
@@ -52,9 +50,10 @@
     </div>
 
 <!--    <cate-manage ref="cateManageRef"/>-->
+    <search ref="BookmarkSearchModalRef" @edit="edit"/>
+
     <Setting ref="settingRef"/>
     <bookmark-edit-modal ref="BookmarkModalRef"/>
-    <search ref="BookmarkSearchModalRef" @edit="edit"/>
 
     <a-float-button-group shape="square" :style="{ right: '24px' }">
       <a-float-button @click="searchBookmark({})">
@@ -76,7 +75,7 @@
 <script lang="ts" setup>
 import { treeEach } from '@/utils/tree'
 
-import { ref, onMounted, h, computed, toRaw,reactive } from 'vue'
+import { ref, onMounted, h, computed, toRaw, reactive } from 'vue'
 import { useBookmark } from './hook/bookmark'
 import Setting from './components/Setting.vue'
 import BookmarkEditModal from '@/views/bookmark/components/BookmarkEditModal.vue'
@@ -86,30 +85,6 @@ import { apiJson } from '@/api'
 import { useRoute } from 'vue-router'
 import Search from '@/views/bookmark/components/Search.vue'
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
-const data = ref([
-  {
-    value: 'user1',
-    payload: {
-      src: 'https://joeschmoe.io/api/v1/random',
-      style: { backgroundColor: '#f56a00' },
-    },
-  },
-  {
-    value: 'user2',
-    payload: {
-      style: { backgroundColor: '#f56a00' },
-      content: 'K',
-    },
-  },
-  {
-    value: 'user3',
-    payload: {
-      style: { backgroundColor: '#f56a00' },
-    },
-  },
-]);
-
-const value = ref('user1');
 const {
   loadCate,
   curCate,
@@ -127,15 +102,15 @@ const breakpoints = useBreakpoints(breakpointsTailwind)
 const smallerThanSm = breakpoints.smallerOrEqual('sm')
 
 const curCateInfo = ref({})
-const openKeys = ref([])
+const openKeys = ref(['@home'])
 
-const subCateList = computed(()=>{
-  return (curCateInfo.value.children||[]).map(item=>{
+const subCateList = computed(() => {
+  return (curCateInfo.value.children || []).map(item => {
     return {
-      title:`${item.title}`,
-      value:item.cateId,
-      payload:{
-        count:item.count
+      title: `${item.title}`,
+      value: item.cateId,
+      payload: {
+        count: item.count
       }
     }
   })
@@ -172,13 +147,13 @@ const cateItems = computed(() => {
     }
     item.label = h('div', {
       onClick: () => {
-
         const keys = [item.cateId]
         let curCateId = item.cateId
-        while (parentMap[curCateId] && parentMap[curCateId] !== "root") {
+        while (parentMap[curCateId] && parentMap[curCateId] !== 'root') {
           keys.unshift(parentMap[curCateId])
           curCateId = parentMap[curCateId]
         }
+
         openKeys.value = keys
 
         curCateInfo.value = {}
@@ -187,7 +162,6 @@ const cateItems = computed(() => {
         foundCurCateInfo(keys, cateTree.value.children, [])
         clickCate(keys)
         isHome.value = false
-
       },
       onTap: () => {
         console.log('tap', item.cateId)
@@ -209,17 +183,17 @@ const cateItems = computed(() => {
 })
 
 function onCateClick (e) {
-  switch (e.key){
-    case "@home":
+  switch (e.key) {
+    case '@home':
       isHome.value = true
+      openKeys.value = ['@home']
       loadLatest()
       break
-    case "@setting":
+    case '@setting':
       settingRef.value && settingRef.value.open()
       break
   }
 }
-
 
 function clickSubCate (cateId: string) {
   curSubCateId.value = cateId
@@ -235,10 +209,6 @@ const settingRef = ref(null)
 
 // 当前是否⭐页面
 const isHome = ref(true)
-
-function toHome () {
-
-}
 
 const latestVisitList = ref([])
 

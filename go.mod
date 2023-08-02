@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/PuerkitoBio/goquery v1.8.1
-	github.com/glennliao/apijson-go v0.2.0-beta13
+	github.com/glennliao/apijson-go v0.2.0-beta14
 	github.com/glennliao/getfavicon v0.1.0
 	github.com/glennliao/table-sync v0.3.0
 	github.com/gogf/gf/contrib/drivers/mysql/v2 v2.5.1
@@ -15,7 +15,7 @@ require (
 	github.com/samber/lo v1.38.1
 	github.com/yitter/idgenerator-go v1.3.3
 	golang.org/x/crypto v0.11.0
-	golang.org/x/net v0.12.0
+	golang.org/x/net v0.13.0
 )
 
 require (
@@ -45,7 +45,7 @@ require (
 	go.opentelemetry.io/otel/metric v1.16.0 // indirect
 	go.opentelemetry.io/otel/sdk v1.16.0 // indirect
 	go.opentelemetry.io/otel/trace v1.16.0 // indirect
-	golang.org/x/exp v0.0.0-20230725093048-515e97ebf090 // indirect
+	golang.org/x/exp v0.0.0-20230801115018-d63ba01acd4b // indirect
 	golang.org/x/sys v0.10.0 // indirect
 	golang.org/x/text v0.11.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect

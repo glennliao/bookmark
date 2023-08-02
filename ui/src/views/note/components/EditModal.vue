@@ -4,8 +4,8 @@
     v-model:open="visible"
     destroy-on-close
     :mask-closable="false"
-    width="100%"
-    :style="{'max-width':'780px'}"
+    width="90%"
+    :style="{'max-width':'10240px'}"
   >
     <div>
       <editor ref="editor" :model-value="info.content.markdown" />

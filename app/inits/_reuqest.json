@@ -7,7 +7,7 @@
       "Bookmark": {},
       "GroupBookmark": {}
     },
-    "execQueue": ["Bookmark","GroupBookmark"]
+    "execQueue": ["Bookmark"]
   },
   {
     "tag": "Bookmark",
@@ -17,7 +17,7 @@
       "Bookmark": {},
       "GroupBookmark": {}
     },
-    "execQueue": ["Bookmark","GroupBookmark"]
+    "execQueue": ["Bookmark"]
   },
   {
     "tag": "Bookmark",
@@ -169,19 +169,7 @@
     },
     "Executor": {}
   },
-  {
-    "tag": "Token",
-    "version": "1",
-    "method": "POST",
-    "structure": {
-      "Token": {
-        "MUST": ["email","password"]
-      }
-    },
-    "Executor": {
-      "Token": "custom"
-    }
-  },
+
   {
     "tag": "Note",
     "version": "1",

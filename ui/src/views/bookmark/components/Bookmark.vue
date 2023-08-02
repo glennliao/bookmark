@@ -95,8 +95,8 @@ function drop () {
         cateId = bookmark.curCate.value[bookmark.curCate.value.length - 1]
       }
       apiJson.put({
-        tag: 'GroupBookmark',
-        GroupBookmark: {
+        tag: 'Bookmark',
+        Bookmark: {
           bmId: props.item.bmId,
           groupId: bookmark.curGroupId.value,
           cateId:props.item.cateId,
