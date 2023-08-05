@@ -33,7 +33,7 @@
 
         <div class="mt-2">
 
-          <a-segmented class="mt-2" @change="clickSubCate" v-model:value="curSubCateId" :options="subCateList" style="background: #63636517;border-radius: 5px;max-width: 98vw;overflow-x: auto">
+          <a-segmented v-if="subCateList.length" class="mt-2" @change="clickSubCate" v-model:value="curSubCateId" :options="subCateList" style="background: #63636517;border-radius: 20px;max-width: 98%;overflow-x: auto;padding: 2px 10px">
             <template #label="{ payload,title }">
               {{ title }} <span v-if="payload.count" style="font-size: 12px;margin-left: 2px">({{payload.count}})</span>
             </template>
@@ -286,12 +286,6 @@ if (route.query.url) {
 </script>
 <style scoped lang="scss">
 
-.menu > li > div {
-  //padding: 12px;
-}
-.active {
-  border-bottom: 2px solid;
-}
 
 .slide-fade-enter-active {
   transition: all .4s ease;
@@ -314,7 +308,33 @@ if (route.query.url) {
 :deep(.ant-menu-horizontal >.ant-menu-item){
   min-width: 66px;
   text-align: center;
-  padding-inline: 2px;
+  padding-inline: 12px !important;
 }
+
+:deep(.ant-menu-horizontal .ant-menu-submenu){
+  padding-inline: 12px !important;
+}
+
+:deep(.ant-segmented .ant-segmented-group) {
+  padding: 2px;
+}
+
+:deep(.ant-segmented){
+  &::-webkit-scrollbar{
+    height: 6px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #ccc; // 滑块颜色
+    border-radius: 5px; // 滑块圆角
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: rgba(63, 170, 231, 0.73); // 鼠标移入滑块变红
+  }
+
+  .ant-segmented-item {
+    border-radius: 12px;
+  }
+}
+
 
 </style>
