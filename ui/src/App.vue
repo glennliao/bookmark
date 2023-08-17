@@ -74,7 +74,7 @@ watch(() => route.path, (v) => {
   selectedKeys.value = [path]
 })
 
-if (key == '/') {
+if (key === '/') {
   key = '/bookmark'
 }
 

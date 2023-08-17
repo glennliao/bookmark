@@ -1,21 +1,26 @@
 <template>
   <a-modal
-    title="书签搜索"
-    v-model:open="visible"
+      title="书签搜索"
+      v-model:open="visible"
   >
     <div>
       <a-input-search
-        v-model:value="info.q"
-        placeholder="url or title"
-        enter-button="Search"
-        size="default"
-        ref="input"
-        @search="onSearch"
-        :loading="fetchLoading"
+          v-model:value="info.q"
+          placeholder="url or title"
+          enter-button="Search"
+          size="default"
+          ref="input"
+          @search="onSearch"
+          :loading="fetchLoading"
       />
 
+      <div class="mt-1 p-1 bg-blue-100 rounded">
+        <a-checkable-tag :checked="selectTags.includes(tag.value)" :key="tag.value" v-for="tag in tagsOptions"
+                         @change="filterByTag(tag.value)">#{{ tag.value }}
+        </a-checkable-tag>
+      </div>
       <div v-if="hasSearch" class="mt-4 p-1 rounded" style="background: #efefef;overflow: auto;max-height: 72vh">
-        <a-empty v-if="list.length === 0" />
+        <a-empty v-if="list.length === 0"/>
         <div v-for="item in list" :key="item.bmId" class="m-2 mr-4">
           <Bookmark :item="item" width="100%" @drop="onSearch" @edit="edit"/>
         </div>
@@ -42,7 +47,7 @@
 
 import { apiJson } from '../../../api'
 import { message } from 'ant-design-vue'
-import { nextTick, ref } from 'vue'
+import { nextTick, ref, toRaw } from 'vue'
 import { useBookmark } from '@/views/bookmark/hook/bookmark'
 import Bookmark from '@/views/bookmark/components/Bookmark.vue'
 
@@ -59,10 +64,10 @@ const {
   cateList
 } = useBookmark()
 
-const emit = defineEmits(["edit"])
+const emit = defineEmits(['edit'])
 
-function edit(e){
-  emit("edit",e)
+function edit(e) {
+  emit('edit', e)
 }
 
 window.addEventListener('keydown', function (event) {
@@ -76,30 +81,69 @@ window.addEventListener('keydown', function (event) {
   }
 })
 
-function onSearch () {
-  const q = info.value.q.trim()
 
-  if (!q) {
-    message.warn('不能为空')
+const tagsOptions = ref([])
+const selectTags = ref([])
+
+function loadTagList() {
+  apiJson.get({
+    'tags()': 'bmTags()'
+  }).then(data => {
+    tagsOptions.value = data.tags.map(item => {
+      return {
+        value: item
+      }
+    })
+  })
+}
+
+function filterByTag(tag) {
+  // let list = toRaw(selectTags.value)
+  // if (list.includes(tag)) {
+  //   list.splice(selectTags.value.findIndex(tag))
+  // } else {
+  //   list.push(tag)
+  // }
+  let list = [tag]
+
+
+  selectTags.value = list
+
+  onSearch()
+}
+
+function onSearch() {
+  const q = info.value.q.trim()
+  let tags = toRaw(selectTags.value)
+
+  if (!q && tags.length === 0) {
+    message.warn('搜索不能为空')
     return
   }
 
   fetchLoading.value = true
   const beginAt = new Date().getTime()
 
+  const param = {
+    q,
+    '@alias': 'list',
+    '@order': 'createdAt desc',
+    // '@column': 'bmId,title,remark,url,icon,cateId'
+  }
+
+  if (tags.length) {
+    param['tags'] = tags[0]
+  }
+
   apiJson.get({
-    'Bookmark[]': {
-      q,
-      '@alias': 'list',
-      '@order': 'createdAt desc',
-      // '@column': 'bmId,title,remark,url,icon,cateId'
-    },
+    'Bookmark[]': param,
     groupId: curGroupId.value
 
   }).then(data => {
     list.value = data.list.map(item => {
       const cateInfo = getCateInfo(item.cateId)
       item.cateInfo = cateInfo
+      item.tags = JSON.parse(item.tags)
       return item
     })
     hasSearch.value = true
@@ -111,21 +155,23 @@ function onSearch () {
 }
 
 const input = ref(null)
-function open (_info = {}) {
+
+function open(_info = {}) {
 
   hasSearch.value = false
   list.value = []
   info.value = {
-    q:""
+    q: ''
   }
   visible.value = true
+  loadTagList()
 
   nextTick(() => {
     input.value.focus()
   })
 }
 
-function toURL (item) {
+function toURL(item) {
   apiJson.put({
     tag: 'BookmarkUse',
     BookmarkUse: {
@@ -135,7 +181,7 @@ function toURL (item) {
   window.open(item.url, '_blank')
 }
 
-function getCateInfo (cateId) {
+function getCateInfo(cateId) {
   const list = []
   let parentId = cateId
   let i = 10
@@ -150,8 +196,8 @@ function getCateInfo (cateId) {
       }
     })
     i--
-    if(i < 0){
-      console.log(parentId,cateId)
+    if (i < 0) {
+      console.log(parentId, cateId)
       break
     }
 
@@ -166,12 +212,12 @@ defineExpose({
 
 </script>
 
-<style  scoped>
-:deep(.ant-breadcrumb .ant-breadcrumb-separator){
+<style scoped>
+:deep(.ant-breadcrumb .ant-breadcrumb-separator) {
   margin-inline: 2px;
 }
 
-:deep(.ant-breadcrumb){
+:deep(.ant-breadcrumb) {
   font-size: 12px;
 }
 

@@ -17,7 +17,8 @@
           "url": ["%$%","="],
           "q": ["="],
           "group_id": ["="],
-          "bm_id": ["="]
+          "bm_id": ["="],
+          "tags": ["="]
         },
         "out": {
           "bm_id": "",
@@ -27,7 +28,8 @@
           "title": "",
           "remark": "",
           "description": "",
-          "icon": ""
+          "icon": "",
+          "tags": ""
         }
       }
     },

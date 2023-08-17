@@ -64,6 +64,7 @@ type (
 		Icon                string     `ddl:"size:256;comment:图标地址"`
 		Description         string     `ddl:"size:2048;comment:书签描述(来自网站)"`
 		Remark              string     `ddl:"size:1024;comment:书签描述(来自用户)"`
+		Tags                string     `ddl:"type:json;comment:标签"`
 		EncodeKey           string     `ddl:"size:128;comment:加密key"`
 		IsPublic            uint8      `ddl:"comment:是否公开"`
 		CateId              string     `ddl:"size:32;comment:分类id"`
@@ -71,6 +72,7 @@ type (
 		FromGroupId         string     `ddl:"size:32;comment:分享来源"`
 		DropAt              *time.Time `ddl:"comment:放置到回收站时间"`
 		Sorts               int32
+
 		Created
 		Updated
 		Deleted
@@ -102,27 +104,38 @@ type (
 type (
 	Note struct {
 		tablesync.TableMeta `charset:"utf8mb4" comment:"笔记"`
-		Id                  uint64 `ddl:"primaryKey"`
-		GroupId             string `ddl:"size:32;comment:groupId"`
-		NoteId              string `ddl:"size:32;comment:@rowKey noteId"`
-		Content             string `ddl:"type:json;comment:内容"`
-		Tags                string `ddl:"type:json;comment:标签"`
-		IsPublic            uint8  `ddl:"comment:是否公开"`
-		EncodeKey           string `ddl:"size:128;comment:加密key"`
+		Id                  uint64     `ddl:"primaryKey"`
+		GroupId             string     `ddl:"size:32;comment:groupId"`
+		NoteId              string     `ddl:"size:32;comment:@rowKey noteId"`
+		Content             string     `ddl:"type:json;comment:内容"`
+		Tags                string     `ddl:"type:json;comment:标签"`
+		IsPublic            uint8      `ddl:"comment:是否公开"`
+		EncodeKey           string     `ddl:"size:128;comment:加密key"`
+		DropAt              *time.Time `ddl:"comment:放置到回收站时间"`
 		Created
 		Updated
 		Deleted
 	}
 
+	NoteHistory struct {
+		tablesync.TableMeta `charset:"utf8mb4" comment:"笔记历史"`
+		Id                  uint64 `ddl:"primaryKey"`
+		NoteId              string `ddl:"size:32;comment:@rowKey noteId"`
+		Content             string `ddl:"type:json;comment:内容"`
+		IsPublic            uint8  `ddl:"comment:是否公开"`
+		EncodeKey           string `ddl:"size:128;comment:加密key"`
+		Created
+	}
+)
+
+type (
 	Tag struct {
 		tablesync.TableMeta `charset:"utf8mb4" comment:"标签"`
 		Id                  uint64 `ddl:"primaryKey"`
 		Tag                 string `ddl:"size:32;comment:标签内容"`
 		Created
 	}
-)
 
-type (
 	Config struct {
 		tablesync.TableMeta `charset:"utf8mb4" comment:"设置表"`
 		Id                  uint64 `ddl:"primaryKey"`
@@ -148,8 +161,9 @@ func Tables() []tablesync.Table {
 		User{},
 
 		Note{},
-		Tag{},
+		NoteHistory{},
 
+		Tag{},
 		Config{},
 	}
 }

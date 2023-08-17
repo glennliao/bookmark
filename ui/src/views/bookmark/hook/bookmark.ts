@@ -77,7 +77,10 @@ function loadBookmarkList () {
       // 'cateId()': 'cateIdByBmId(bmId,groupId)'
     }
   }).then(data => {
-    bookmarkList.value = data['Bookmark[]']
+    bookmarkList.value = data['Bookmark[]'].map(item=>{
+      item.tags = JSON.parse(item.tags || "[]")
+      return item
+    })
   })
 }
 
@@ -91,7 +94,10 @@ function loadSubCateBookmark () {
       '@order': 'createdAt desc'
     }
   }).then(data => {
-    curSubCateBookmark.value = data['Bookmark[]']
+    curSubCateBookmark.value =  data['Bookmark[]'].map(item=>{
+      item.tags = JSON.parse(item.tags || "[]")
+      return item
+    })
   })
 }
 

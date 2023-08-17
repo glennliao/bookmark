@@ -5,7 +5,8 @@
     <div class="z-10">
 
       <div class="p-2">
-        <a-menu class="mb-2" :selected-keys="openKeys"  mode="horizontal" selectable @select="onCateClick" @click="onCateClick" :items="cateItems" style="border-radius: 24px"/>
+        <a-menu class="mb-2" :selected-keys="openKeys" mode="horizontal" selectable @select="onCateClick"
+                @click="onCateClick" :items="cateItems" style="border-radius: 24px"/>
         <span v-if="smallerThanSm">如果点击某个父级目录，移动端下请点击点两次</span>
       </div>
 
@@ -23,7 +24,8 @@
 
         <a-breadcrumb class="mb-2 px-2" v-if="curCateInfo.parents && curCateInfo.parents.length > 0">
           <a-breadcrumb-item v-for="item in curCateInfo.parents" :key="item.cateId">{{ item.title }}</a-breadcrumb-item>
-          <a-breadcrumb-item :key="curCateInfo.cateId">{{ curCateInfo.title }} ({{curCateInfo.count}})</a-breadcrumb-item>
+          <a-breadcrumb-item :key="curCateInfo.cateId">{{ curCateInfo.title }} ({{ curCateInfo.count }})
+          </a-breadcrumb-item>
         </a-breadcrumb>
 
         <div class="flex">
@@ -34,9 +36,12 @@
 
         <div class="mt-2">
 
-          <a-segmented v-if="subCateList.length" class="mt-2" @change="clickSubCate" v-model:value="curSubCateId" :options="subCateList" style="background: #63636517;border-radius: 20px;max-width: 98%;overflow-x: auto;padding: 2px 10px">
+          <a-segmented v-if="subCateList.length" class="mt-2" @change="clickSubCate" v-model:value="curSubCateId"
+                       :options="subCateList"
+                       style="background: #63636517;border-radius: 20px;max-width: 98%;overflow-x: auto;padding: 2px 10px">
             <template #label="{ payload,title }">
-              {{ title }} <span v-if="payload.count" style="font-size: 12px;margin-left: 2px">({{payload.count}})</span>
+              {{ title }} <span v-if="payload.count"
+                                style="font-size: 12px;margin-left: 2px">({{ payload.count }})</span>
             </template>
           </a-segmented>
 
@@ -50,7 +55,7 @@
 
     </div>
 
-<!--    <cate-manage ref="cateManageRef"/>-->
+    <!--    <cate-manage ref="cateManageRef"/>-->
     <search ref="BookmarkSearchModalRef" @edit="edit"/>
 
     <Setting ref="settingRef"/>
@@ -59,13 +64,13 @@
     <a-float-button-group shape="square" :style="{ right: '24px' }">
       <a-float-button @click="searchBookmark({})">
         <template #icon>
-          <SearchOutlined />
+          <SearchOutlined/>
         </template>
       </a-float-button>
 
       <a-float-button type="primary" @click="openBookmarkModal({})">
         <template #icon>
-          <PlusOutlined  />
+          <PlusOutlined/>
         </template>
       </a-float-button>
     </a-float-button-group>
@@ -86,6 +91,7 @@ import { apiJson } from '@/api'
 import { useRoute } from 'vue-router'
 import Search from '@/views/bookmark/components/Search.vue'
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
+
 const {
   loadCate,
   curCate,
@@ -128,7 +134,7 @@ const cateItems = computed(() => {
 
   const tree = toRaw(cateTree.value.children || [])
 
-  const parentMap:Record<string, string> = {}
+  const parentMap: Record<string, string> = {}
 
   treeEach(tree, (item) => {
     parentMap[item.cateId] = item.parentId
@@ -183,7 +189,7 @@ const cateItems = computed(() => {
   return list
 })
 
-function onCateClick (e) {
+function onCateClick(e) {
   switch (e.key) {
     case '@home':
       isHome.value = true
@@ -196,7 +202,7 @@ function onCateClick (e) {
   }
 }
 
-function clickSubCate (cateId: string) {
+function clickSubCate(cateId: string) {
   curSubCateId.value = cateId
   loadSubCateBookmark()
 }
@@ -213,7 +219,7 @@ const isHome = ref(true)
 
 const latestVisitList = ref([])
 
-function loadLatest () {
+function loadLatest() {
   apiJson.get({
     '[]': {
       BookmarkUse: {
@@ -226,12 +232,13 @@ function loadLatest () {
     }
   }).then(data => {
     latestVisitList.value = data['[]'].filter((item: any) => item.Bookmark).map((item: { Bookmark: any; }) => {
+      item.Bookmark.tags = JSON.parse(item.Bookmark.tags || '[]')
       return item.Bookmark
     })
   })
 }
 
-function foundCurCateInfo (keys: string[], tree: any[], parents: any[]) {
+function foundCurCateInfo(keys: string[], tree: any[], parents: any[]) {
   for (const treeElement of tree) {
     if (treeElement.cateId === keys[keys.length - 1]) {
       curCateInfo.value = {
@@ -251,7 +258,7 @@ function foundCurCateInfo (keys: string[], tree: any[], parents: any[]) {
   }
 }
 
-function handleMenuClick (keyPath: string[]) {
+function handleMenuClick(keyPath: string[]) {
   const keys = keyPath
 
   curCateInfo.value = {}
@@ -265,15 +272,15 @@ function handleMenuClick (keyPath: string[]) {
 const BookmarkModalRef = ref()
 const BookmarkSearchModalRef = ref()
 
-function openBookmarkModal (item) {
+function openBookmarkModal(item) {
   BookmarkModalRef.value.open(item)
 }
 
-function searchBookmark (item) {
+function searchBookmark(item) {
   BookmarkSearchModalRef.value.open(item)
 }
 
-function edit (item) {
+function edit(item) {
   BookmarkModalRef.value.open(item)
 }
 
@@ -306,13 +313,13 @@ if (route.query.url) {
   opacity: .1;
 }
 
-:deep(.ant-menu-horizontal >.ant-menu-item){
+:deep(.ant-menu-horizontal >.ant-menu-item) {
   min-width: 66px;
   text-align: center;
   padding-inline: 12px !important;
 }
 
-:deep(.ant-menu-horizontal .ant-menu-submenu){
+:deep(.ant-menu-horizontal .ant-menu-submenu) {
   padding-inline: 12px !important;
 }
 
@@ -320,14 +327,16 @@ if (route.query.url) {
   padding: 2px;
 }
 
-:deep(.ant-segmented){
-  &::-webkit-scrollbar{
+:deep(.ant-segmented) {
+  &::-webkit-scrollbar {
     height: 6px;
   }
+
   &::-webkit-scrollbar-thumb {
     background: #ccc; // 滑块颜色
     border-radius: 5px; // 滑块圆角
   }
+
   &::-webkit-scrollbar-thumb:hover {
     background: rgba(63, 170, 231, 0.73); // 鼠标移入滑块变红
   }

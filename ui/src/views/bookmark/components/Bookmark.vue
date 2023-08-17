@@ -1,46 +1,53 @@
 <template>
   <div>
-    <div class="bookmark cursor-pointer  rounded shadow p-1 items-baseline" :class="{'simple':simple}"
-         :style="{'width':width}"
-         @click="toURL(item)">
-      <div class="flex">
-        <div>
-          <img v-lazy="item.icon" v-if="item.icon && item.icon !== ''" class="logo"/>
-          <div v-else class="logo text-center text-white" :style="{'background': colorByURL(item.url)}">{{
-              item.title[0]
-            }}
+    <a-popover >
+      <template #content>
+        <div style="width:300px">
+          <div class="font-bold truncate ...">
+            {{item.title}}
+          </div>
+          <div style="font-size: 13px;overflow-wrap: anywhere" class="bg-blue-100 rounded p-1 my-2" >
+            {{item.url}}
+          </div>
+          <div class="bg-gray-100 p-1 rounded" style="font-size: 12px">{{ item.description }}</div>
+
+          <div class="py-2">
+            <a-tag v-for="tag in item.tags" :key="tag" >{{tag}}</a-tag>
           </div>
         </div>
-        <div class="ml-1 title truncate ...">
-          {{ item.title }}
+        <div class="flex mt-2 justify-end ">
+          <a-button size="small" ghost type="primary" @click="edit">Edit</a-button>
+          <a-button size="small" ghost class="ml-2" danger @click="drop">Del</a-button>
         </div>
-      </div>
-      <div v-if="!simple" class="remark ..." style="height: 58px; margin-top: 4px">
-        {{ item.remark || item.description }}
-      </div>
-      <div v-if="!simple" class="flex justify-end" style="height: 12px;line-height: 12px;color:#777" @click.stop="void">
-        <a-popover >
-          <template #content>
-            <div style="width:300px">
-              <div class="font-bold truncate ...">
-                {{item.title}}
+      </template>
+      <div>
+        <div class="bookmark cursor-pointer  rounded shadow p-1 items-baseline" :class="{'simple':simple}"
+             :style="{'width':width}"
+             @click="toURL(item)">
+          <div class="flex">
+            <div>
+              <img v-lazy="item.icon" v-if="item.icon && item.icon !== ''" class="logo"/>
+              <div v-else class="logo text-center text-white" :style="{'background': colorByURL(item.url)}">{{
+                  item.title[0]
+                }}
               </div>
-              <div style="font-size: 13px;overflow-wrap: anywhere" class="bg-blue-100 rounded p-1 my-2" >
-                {{item.url}}
-              </div>
-              <div class="bg-gray-100 p-1 rounded" style="font-size: 12px">{{ item.description }}</div>
             </div>
-            <div class="flex mt-2 justify-end ">
-              <a-button size="small" ghost type="primary" @click="edit">Edit</a-button>
-              <a-button size="small" ghost class="ml-2" danger @click="drop">Del</a-button>
+            <div class="ml-1 title truncate ...">
+              {{ item.title }}
             </div>
-          </template>
-          <div>
+          </div>
+          <div v-if="!simple" class="remark ..." style="height: 58px; margin-top: 4px">
+            {{ item.remark || item.description }}
+          </div>
+          <div v-if="!simple" class="flex justify-end" style="height: 12px;line-height: 12px;color:#777" @click.stop="void">
             ...
           </div>
-        </a-popover>
+        </div>
+
       </div>
-    </div>
+    </a-popover>
+
+
   </div>
 
 </template>

@@ -75,6 +75,16 @@
           <a-form-item label="备注" v-bind="validateInfos.remark">
             <a-textarea :rows="3" v-model:value="info.remark" type="textarea"/>
           </a-form-item>
+          <a-form-item label="标签" v-bind="validateInfos.tags">
+            <a-select
+                v-model:value="info.tags"
+                mode="tags"
+                style="width: 100%"
+                placeholder="Tags"
+                :options="tagsOptions"
+                @change="handleChange"
+            ></a-select>
+          </a-form-item>
         </div>
       </a-form>
     </div>
@@ -142,7 +152,8 @@ const info = ref({
   cateId: '',
   title: '',
   groupId: '',
-  url: ''
+  url: '',
+  tags:[]
 })
 
 const hasFetchURL = ref(false)
@@ -228,6 +239,7 @@ function onSearch () {
     info.value.title = data.meta.title
     info.value.icon = data.meta.icon
     info.value.description = data.meta.description
+    info.value.tags = []
   }).catch(() => {
     Modal.confirm({
       title: '操作确认',
@@ -308,6 +320,7 @@ function open (_info = {}) {
 
   hasFetchURL.value = _info.bmId
   loadCate()
+  loadTagList()
 }
 
 function loadCate () {
@@ -355,6 +368,26 @@ function add () {
 }
 
 const saveBookJS = `javascript:window.open('${window.location.href.split('#')[0]}#/?url='+window.location,'_blank')`
+
+
+const tagsOptions = ref([])
+
+function loadTagList() {
+  apiJson.get({
+    'tags()': 'bmTags()'
+  }).then(data => {
+    tagsOptions.value = data.tags.map(item=>{
+      return {
+        value:item
+      }
+    })
+  })
+}
+
+function handleChange(e){
+  console.log(e)
+}
+
 
 defineExpose({
   open

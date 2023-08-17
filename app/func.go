@@ -27,6 +27,7 @@ func initFunc(a *apijson.ApiJson) {
 
 	a.Config().Functions.Bind("latestVersion", latestVersion())
 	a.Config().Functions.Bind("noteTags", noteTags())
+	a.Config().Functions.Bind("bmTags", bmTags())
 	a.Config().Functions.Bind("cateBmNum", cateBmNum())
 	a.Config().Functions.Bind("fetchMetaBatch", fetchMetaBatchFunc())
 }
@@ -219,6 +220,42 @@ func noteTags() config.Func {
 			var tagSet gset.StrSet
 
 			err = g.DB().Model("note").Where("group_id", user.UserId).Scan(&list)
+			if err != nil {
+				return nil, err
+			}
+
+			if len(list) == 0 {
+				return []string{}, nil
+			}
+
+			for _, record := range list {
+				for _, tag := range record.Tags {
+					tagSet.Add(tag)
+				}
+
+			}
+
+			return tagSet.Slice(), err
+		},
+	}
+}
+
+func bmTags() config.Func {
+	return config.Func{
+		ParamList: nil,
+		Batch:     false,
+		Handler: func(ctx context.Context, param model.FuncParam) (res any, err error) {
+			user, _ := ctx.Value(UserIdKey).(*CurrentUser)
+
+			type TagRecord struct {
+				Tags []string
+			}
+
+			var list []TagRecord
+
+			var tagSet gset.StrSet
+
+			err = g.DB().Model("bookmark").Where("group_id", user.UserId).Scan(&list)
 			if err != nil {
 				return nil, err
 			}

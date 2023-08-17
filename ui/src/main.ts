@@ -25,7 +25,7 @@ import {
   Breadcrumb,
   Badge,
   Tag, Avatar, Segmented,
-  Layout, Row, Col,Pagination
+  Layout, Row, Col,Pagination,Select,
 } from 'ant-design-vue'
 import 'ant-design-vue/dist/reset.css'
 
@@ -43,5 +43,5 @@ app.use(Drawer).use(Button).use(Tree)
   .use(Card).use(TreeSelect).use(Popover)
   .use(Tabs).use(FloatButton).use(Empty).use(Upload).use(Breadcrumb)
   .use(Badge).use(Tag).use(Avatar).use(Layout).use(Segmented)
-  .use(Row).use(Col).use(Pagination)
+  .use(Row).use(Col).use(Pagination).use(Select)
 app.mount('#app')

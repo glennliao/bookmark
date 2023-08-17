@@ -119,6 +119,11 @@ func AccessCondition(ctx context.Context, req config.ConditionReq, where *config
 
 			}
 
+			if _, exists := req.NodeReq["tags"]; exists {
+				where.AddRaw("json_extract(tags,'$') like ?", "%"+gconv.String(req.NodeReq["tags"])+"%")
+				delete(req.NodeReq, "tags")
+			}
+
 			where.AddRaw("drop_at is null and group_id in (select group_id from group_user where user_id = ? )", []string{user.UserId})
 		} else {
 			where.AddRaw("drop_at is null and group_id in (select group_id from group_user where user_id = ? )", []string{user.UserId})

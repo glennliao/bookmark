@@ -7,6 +7,7 @@ import vueSetupExtend from 'vite-plugin-vue-setup-extend'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import Components from 'unplugin-vue-components/vite'
 
+
 import { execSync } from 'child_process'
 
 let tag = 'dev'
@@ -15,6 +16,7 @@ try {
 } catch (e) {
   console.log(e.toString())
 }
+
 // @ts-ignore
 process.env.VITE_app_version = tag
 
@@ -34,8 +36,7 @@ export default defineConfig({
     }),
     Components({
       resolvers: [
-        // AntDesignVueResolver(),
-        // NaiveUiResolver()
+
       ]
     })
   ],
