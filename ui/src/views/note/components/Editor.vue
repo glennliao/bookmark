@@ -5,7 +5,7 @@ import 'md-editor-v3/lib/style.css';
 import sanitizeHtml from 'sanitize-html';
 
 const sanitize = (html) => sanitizeHtml(html);
-const text = ref('Hello Editor!');
+const text = ref('');
 
 const emit = defineEmits(['update:modelValue'])
 const props = defineProps({
@@ -39,7 +39,7 @@ defineExpose({
 </script>
 
 <template>
-  <MdEditor v-model="text" :sanitize="sanitize" autoFocus :toolbars="[
+  <MdEditor placeholder="Hello Editor!" v-model="text" :sanitize="sanitize" autoFocus :toolbars="[
     // 'bold',
   // 'underline',
   // 'italic',

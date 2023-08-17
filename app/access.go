@@ -92,6 +92,7 @@ func AccessCondition(ctx context.Context, req config.ConditionReq, where *config
 	case TableBookmarkCate:
 		where.AddRaw("group_id in (select group_id from group_user where user_id = ?)", user.UserId)
 	case TableBookmark:
+		where.Add("group_id", user.UserId)
 		if req.Method == http.MethodGet {
 			if v, exists := req.NodeReq["q"]; exists {
 				delete(req.NodeReq, "q")
@@ -130,6 +131,11 @@ func AccessCondition(ctx context.Context, req config.ConditionReq, where *config
 			if _, exists := req.NodeReq["tag"]; exists {
 				where.AddRaw("json_extract(tags,'$') like ?", "%"+gconv.String(req.NodeReq["tag"])+"%")
 				delete(req.NodeReq, "tag")
+			}
+
+			if _, exists := req.NodeReq["q"]; exists {
+				where.AddRaw("json_extract(content,'$.markdown') like ?", "%"+gconv.String(req.NodeReq["q"])+"%")
+				delete(req.NodeReq, "q")
 			}
 		}
 

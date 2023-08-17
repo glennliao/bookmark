@@ -187,6 +187,15 @@
       "Note": {}
     },
     "Executor": {}
+  },
+  {
+    "tag": "Note",
+    "version": "1",
+    "method": "DELETE",
+    "structure": {
+      "Note": {}
+    },
+    "Executor": {}
   }
 
 ]

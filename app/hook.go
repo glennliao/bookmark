@@ -21,7 +21,29 @@ func initHook(a *apijson.ApiJson) {
 			for i, _ := range req.Node.Data {
 				req.Node.Data[i]["group_id"] = user.UserId
 			}
-			return req.Next()
+
+			err := req.Next()
+
+			for i, _ := range req.Node.Data {
+
+				noteId := req.Node.Data[i]["note_id"]
+				if req.IsPut() {
+					noteId = req.Node.Where[i]["note_id"]
+				}
+
+				_, err = g.Model("note_history").Ctx(ctx).Insert(g.Map{
+					"note_id":    noteId,
+					"content":    req.Node.Data[i]["content"],
+					"created_by": user.UserId,
+					"is_public":  req.Node.Data[i]["is_public"],
+					"encode_key": req.Node.Data[i]["encode_key"],
+				})
+				if err != nil {
+					return err
+				}
+			}
+
+			return err
 		},
 	})
 

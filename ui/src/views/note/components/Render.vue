@@ -66,7 +66,7 @@ watch(() => [props.content, props.tags], (e) => {
 <template>
   <view>
     <MdPreview showCodeRowNumber :editorId="id" :modelValue="text" />
-    <MdCatalog :editorId="id" :scrollElement="scrollElement" />
+<!--    <MdCatalog :editorId="id" :scrollElement="scrollElement" />-->
   </view>
 </template>
 
