@@ -11,7 +11,8 @@
 
       <!-- content-->
       <div class="mt-4" v-if="isHome">
-        <div>🕐 最近访问</div>
+
+        <div class="ml-2 mb-2 mt-4 " style="font-weight: 500">🕐 最近访问</div>
         <div class="flex mt-1">
           <transition-group appear name="slide-fade" tag="div" class="flex flex-wrap justify-start">
             <bookmark :simple="true" v-for="item in latestVisitList" :key="item.bmId" :item="item" @edit="edit(item)"/>

@@ -92,7 +92,7 @@ function onSearch () {
       q,
       '@alias': 'list',
       '@order': 'createdAt desc',
-      '@column': 'bmId,title,remark,url,icon'
+      // '@column': 'bmId,title,remark,url,icon,cateId'
     },
     groupId: curGroupId.value
 
