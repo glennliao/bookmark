@@ -48,6 +48,38 @@ func initHook(a *apijson.ApiJson) {
 	})
 
 	a.RegActionHook(action.Hook{
+		For: []string{"Config"},
+		HandlerInTransaction: func(ctx context.Context, req *action.HookReq) error {
+			user, _ := ctx.Value(UserIdKey).(*CurrentUser)
+
+			for i, _ := range req.Node.Data {
+
+				key := req.Node.Data[i]["key"]
+
+				one, err := g.Model("config").Ctx(ctx).One(g.Map{
+					"for_id": user.UserId,
+					"key":    key,
+					"for":    "user",
+				})
+				if err != nil {
+					return err
+				}
+
+				if one.IsEmpty() {
+					g.Model("config").Ctx(ctx).Insert(g.Map{
+						"for":    "user",
+						"for_id": user.UserId,
+						"key":    key,
+					})
+				}
+			}
+
+			err := req.Next()
+			return err
+		},
+	})
+
+	a.RegActionHook(action.Hook{
 		For:     []string{"*"},
 		Handler: nil,
 		HandlerInTransaction: func(ctx context.Context, req *action.HookReq) error {

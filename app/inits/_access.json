@@ -217,7 +217,9 @@
     "rowKey": "id",
     "fieldsGet": {
       "default": {
-        "in": {},
+        "in": {
+          "key": ["="]
+        },
         "out": {
 
         }

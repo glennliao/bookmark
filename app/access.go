@@ -144,6 +144,10 @@ func AccessCondition(ctx context.Context, req config.ConditionReq, where *config
 			}
 		}
 
+	case "Config":
+		where.Add("for_id", user.UserId)
+		where.Add("for", "user")
+
 	case TableGroups:
 		if req.Method == http.MethodGet {
 			where.AddRaw("group_id in (select group_id from group_user where user_id = ? )", []string{user.UserId})
