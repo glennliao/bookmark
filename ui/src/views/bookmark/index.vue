@@ -19,9 +19,30 @@
             <bookmark :simple="true" v-for="item in latestVisitList" :key="item.bmId" :item="item" @edit="edit(item)"/>
           </transition-group>
         </div>
+
+        <template v-for="(tag,index) in tagInHome" :key="index">
+          <a-popover v-model:open="popupOpen" title="Tag" trigger="click" @click="getTagOptions(tag.tag)">
+            <template #content>
+              <a-select
+                  v-model:value="selectedTag"
+                  style="width: 200px"
+                  :options="tagsOptions"
+                  allow-clear
+              ></a-select>
+              <a-button @click="submitTag" class="ml-2">确定</a-button>
+            </template>
+            <div class="ml-2 mb-2 mt-8 cursor-pointer" style="font-weight: 500">⭐ #{{tag.tag}}</div>
+          </a-popover>
+
+          <div class="flex mt-2">
+            <transition-group appear name="slide-fade" tag="div" class="flex flex-wrap justify-start">
+              <bookmark :simple="true" v-for="item in tag.bookmarkList" :key="item.bmId" :item="item"
+                        @edit="edit(item)"/>
+            </transition-group>
+          </div>
+        </template>
       </div>
       <div v-else>
-
         <a-breadcrumb class="mb-2 px-2" v-if="curCateInfo.parents && curCateInfo.parents.length > 0">
           <a-breadcrumb-item v-for="item in curCateInfo.parents" :key="item.cateId">{{ item.title }}</a-breadcrumb-item>
           <a-breadcrumb-item :key="curCateInfo.cateId">{{ curCateInfo.title }} ({{ curCateInfo.count }})
@@ -81,7 +102,7 @@
 <script lang="ts" setup>
 import { treeEach } from '@/utils/tree'
 
-import { ref, onMounted, h, computed, toRaw, reactive } from 'vue'
+import { ref, onMounted, h, computed, toRaw, reactive, getCurrentInstance } from 'vue'
 import { useBookmark } from './hook/bookmark'
 import Setting from './components/Setting.vue'
 import BookmarkEditModal from '@/views/bookmark/components/BookmarkEditModal.vue'
@@ -94,7 +115,6 @@ import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
 
 const {
   loadCate,
-  curCate,
   clickCate,
   cateTree,
   bookmarkList,
@@ -105,7 +125,6 @@ const {
 } = useBookmark()
 
 const breakpoints = useBreakpoints(breakpointsTailwind)
-
 const smallerThanSm = breakpoints.smallerOrEqual('sm')
 
 const curCateInfo = ref({})
@@ -258,16 +277,16 @@ function foundCurCateInfo(keys: string[], tree: any[], parents: any[]) {
   }
 }
 
-function handleMenuClick(keyPath: string[]) {
-  const keys = keyPath
-
-  curCateInfo.value = {}
-  curSubCateBookmark.value = []
-  curSubCateId.value = ''
-  foundCurCateInfo(keys, cateTree.value.children, [])
-  clickCate(keys)
-  isHome.value = false
-}
+// function handleMenuClick(keyPath: string[]) {
+//   const keys = keyPath
+//
+//   curCateInfo.value = {}
+//   curSubCateBookmark.value = []
+//   curSubCateId.value = ''
+//   foundCurCateInfo(keys, cateTree.value.children, [])
+//   clickCate(keys)
+//   isHome.value = false
+// }
 
 const BookmarkModalRef = ref()
 const BookmarkSearchModalRef = ref()
@@ -291,6 +310,88 @@ if (route.query.url) {
     openBookmarkModal({ url: route.query.url })
   })
 }
+
+const popupOpen = ref(false)
+const tagInHome = ref([])
+const tagsOptions = ref([])
+const selectedTag = ref('')
+
+function getTagOptions(tag:string) {
+  selectedTag.value = tag
+  apiJson.get({
+    'tags()': 'bmTags()'
+  }).then(data => {
+    tagsOptions.value = data.tags.map(item => {
+      return {
+        value: item
+      }
+    })
+  })
+}
+
+let currentInstance = getCurrentInstance()
+
+function loadTagInHome() {
+  apiJson.get({
+    'Config': {
+      'key': 'tagInHome'
+    }
+  }).then(data => {
+    console.log(data)
+    tagInHome.value = JSON.parse(data.Config.value||"[]")
+    if(tagInHome.value.length === 0){
+      tagInHome.value = [
+        {tag:"选择书签标签用以首页显示",placeholder:true}
+      ]
+    }else{
+      tagInHome.value = tagInHome.value.map(item=>{
+        item.bookmarkList = ref([])
+
+        apiJson.get({
+          "Bookmark[]":{
+            "@alias":"list",
+            "@order":"createdAt desc",
+            "tags":item.tag,
+          }
+        }).then(data=>{
+          item.bookmarkList = data.list.map(item=>{
+            item.tags = JSON.parse(item.tags)
+            return item
+          })
+          currentInstance?.proxy.$forceUpdate()
+        })
+        return item
+      })
+    }
+  })
+}
+
+loadTagInHome()
+
+function submitTag() {
+
+  let value = [
+    {
+      tag: selectedTag.value
+    }
+  ]
+
+  if (!selectedTag.value) {
+    value = []
+  }
+
+  apiJson.put({
+    'Config': {
+      'key': 'tagInHome',
+      'value': value
+    },
+    'tag': 'Config'
+  }).then(data => {
+    popupOpen.value = false
+    loadTagInHome()
+  })
+}
+
 </script>
 <style scoped lang="scss">
 

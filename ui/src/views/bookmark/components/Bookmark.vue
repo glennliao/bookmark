@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a-popover >
+    <a-popover :mouseEnterDelay="simple ? 0.8 : 0.1">
       <template #content>
         <div style="width:300px">
           <div class="font-bold truncate ...">
