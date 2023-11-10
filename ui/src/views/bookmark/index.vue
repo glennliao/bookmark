@@ -5,7 +5,9 @@
     <div class="z-10">
 
       <div class="p-2">
-        <a-menu class="mb-2" :selected-keys="openKeys" mode="horizontal" selectable @select="onCateClick"
+
+        <a-menu inlineCollapsed class="mb-2" :selected-keys="openKeys" mode="horizontal" selectable
+                @select="onCateClick"
                 @click="onCateClick" :items="cateItems" style="border-radius: 24px"/>
         <span v-if="smallerThanSm">如果点击某个父级目录，移动端下请点击点两次</span>
       </div>
@@ -21,7 +23,8 @@
         </div>
 
         <template v-for="(tag,index) in tagInHome" :key="index">
-          <a-popover v-model:open="popupOpen" title="Tag" trigger="click" @click="getTagOptions(tag.tag)">
+          <a-popover :open="popupOpen && selectedTagIndex === index" title="Tag" trigger="click"
+                     @click="getTagOptions(tag.tag, index)">
             <template #content>
               <a-select
                   v-model:value="selectedTag"
@@ -31,7 +34,7 @@
               ></a-select>
               <a-button @click="submitTag" class="ml-2">确定</a-button>
             </template>
-            <div class="ml-2 mb-2 mt-8 cursor-pointer" style="font-weight: 500">⭐ #{{tag.tag}}</div>
+            <div class="ml-2 mb-2 mt-8 cursor-pointer" style="font-weight: 500">⭐ #{{ tag.tag }}</div>
           </a-popover>
 
           <div class="flex mt-2">
@@ -41,7 +44,25 @@
             </transition-group>
           </div>
         </template>
+
+        <div class="mt-2 cursor-pointer" style="color:#ccc">
+          <a-popover :open="popupOpen && selectedTagIndex === -1" title="Tag" trigger="click"
+                     @click="getTagOptions('', -1)">
+            <template #content>
+              <a-select
+                  v-model:value="selectedTag"
+                  style="width: 200px"
+                  :options="tagsOptions"
+                  allow-clear
+              ></a-select>
+              <a-button @click="submitTag" class="ml-2">确定</a-button>
+            </template>
+            <div class="ml-2 mb-2 mt-8 cursor-pointer" style=""> + add new tag</div>
+          </a-popover>
+
+        </div>
       </div>
+
       <div v-else>
         <a-breadcrumb class="mb-2 px-2" v-if="curCateInfo.parents && curCateInfo.parents.length > 0">
           <a-breadcrumb-item v-for="item in curCateInfo.parents" :key="item.cateId">{{ item.title }}</a-breadcrumb-item>
@@ -57,9 +78,9 @@
 
         <div class="mt-2">
 
-          <a-segmented v-if="subCateList.length" class="mt-2" @change="clickSubCate" v-model:value="curSubCateId"
+          <a-segmented v-if="subCateList.length" class="mt-2 mx-2" @change="clickSubCate" v-model:value="curSubCateId"
                        :options="subCateList"
-                       style="background: #63636517;border-radius: 20px;max-width: 98%;overflow-x: auto;padding: 2px 10px">
+                       style="background: #63636517;border-radius: 20px;max-width: 98%;overflow-x: auto;padding: 2px 0.5rem">
             <template #label="{ payload,title }">
               {{ title }} <span v-if="payload.count"
                                 style="font-size: 12px;margin-left: 2px">({{ payload.count }})</span>
@@ -102,7 +123,7 @@
 <script lang="ts" setup>
 import { treeEach } from '@/utils/tree'
 
-import { ref, onMounted, h, computed, toRaw, reactive, getCurrentInstance } from 'vue'
+import { ref, onMounted, h, computed, toRaw, getCurrentInstance, watch } from 'vue'
 import { useBookmark } from './hook/bookmark'
 import Setting from './components/Setting.vue'
 import BookmarkEditModal from '@/views/bookmark/components/BookmarkEditModal.vue'
@@ -171,7 +192,9 @@ const cateItems = computed(() => {
         }
       }, `(${item.count})`))
     }
+
     item.label = h('div', {
+      // class: item.cateId === openKeys.value[0] ? 'menu-active' : '',
       onClick: () => {
         const keys = [item.cateId]
         let curCateId = item.cateId
@@ -197,6 +220,7 @@ const cateItems = computed(() => {
   })
 
   tree.forEach(item => {
+    item.isMe = item.key === openKeys.value[0]
     list.push(item)
   })
 
@@ -315,9 +339,11 @@ const popupOpen = ref(false)
 const tagInHome = ref([])
 const tagsOptions = ref([])
 const selectedTag = ref('')
+const selectedTagIndex = ref(-2)
 
-function getTagOptions(tag:string) {
+function getTagOptions(tag: string, index: number) {
   selectedTag.value = tag
+  selectedTagIndex.value = index
   apiJson.get({
     'tags()': 'bmTags()'
   }).then(data => {
@@ -326,35 +352,36 @@ function getTagOptions(tag:string) {
         value: item
       }
     })
+    popupOpen.value = true
   })
 }
 
-let currentInstance = getCurrentInstance()
+const currentInstance = getCurrentInstance()
 
 function loadTagInHome() {
   apiJson.get({
-    'Config': {
-      'key': 'tagInHome'
+    Config: {
+      key: 'tagInHome'
     }
   }).then(data => {
     console.log(data)
-    tagInHome.value = JSON.parse(data.Config.value||"[]")
-    if(tagInHome.value.length === 0){
+    tagInHome.value = JSON.parse(data.Config.value || '[]')
+    if (tagInHome.value.length === 0) {
       tagInHome.value = [
-        {tag:"选择书签标签用以首页显示",placeholder:true}
+        { tag: '选择书签标签用以首页显示', placeholder: true }
       ]
-    }else{
-      tagInHome.value = tagInHome.value.map(item=>{
+    } else {
+      tagInHome.value = tagInHome.value.map(item => {
         item.bookmarkList = ref([])
 
         apiJson.get({
-          "Bookmark[]":{
-            "@alias":"list",
-            "@order":"createdAt desc",
-            "tags":item.tag,
+          'Bookmark[]': {
+            '@alias': 'list',
+            '@order': 'createdAt desc',
+            tags: item.tag
           }
-        }).then(data=>{
-          item.bookmarkList = data.list.map(item=>{
+        }).then(data => {
+          item.bookmarkList = data.list.map(item => {
             item.tags = JSON.parse(item.tags)
             return item
           })
@@ -370,22 +397,29 @@ loadTagInHome()
 
 function submitTag() {
 
-  let value = [
-    {
-      tag: selectedTag.value
-    }
-  ]
+  let value = tagInHome.value
 
-  if (!selectedTag.value) {
-    value = []
+  if (selectedTagIndex.value === -1) {
+    if (selectedTag.value) {
+      value.push({
+        tag: selectedTag.value
+      })
+    }
+  } else {
+    if (!selectedTag.value) {
+      value = []
+    } else {
+      value[selectedTagIndex.value].tag = selectedTag.value
+    }
   }
 
+
   apiJson.put({
-    'Config': {
-      'key': 'tagInHome',
-      'value': value
+    Config: {
+      key: 'tagInHome',
+      value
     },
-    'tag': 'Config'
+    tag: 'Config'
   }).then(data => {
     popupOpen.value = false
     loadTagInHome()
@@ -393,9 +427,21 @@ function submitTag() {
 }
 
 </script>
+
+<style>
+li[isme="true"]:not(.ant-menu-submenu-active).ant-menu-submenu:after {
+  position: absolute;
+  inset-inline: 16px;
+  bottom: 0;
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+  content: "";
+  border-bottom-width: 2px;
+  border-bottom-color: #1677ff;
+}
+</style>
+
 <style scoped lang="scss">
-
-
 .slide-fade-enter-active {
   transition: all .4s ease;
 }
@@ -446,6 +492,5 @@ function submitTag() {
     border-radius: 12px;
   }
 }
-
 
 </style>

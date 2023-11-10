@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a-popover :mouseEnterDelay="simple ? 0.8 : 0.1">
+    <a-popover :mouseEnterDelay="simple ? 0.8 : 0.5">
       <template #content>
         <div style="width:300px">
           <div class="font-bold truncate ...">
@@ -47,7 +47,6 @@
       </div>
     </a-popover>
 
-
   </div>
 
 </template>
@@ -69,13 +68,13 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
-  width:{
-    type:String,
-    default:""
+  width: {
+    type: String,
+    default: ''
   }
 })
 
-const emit = defineEmits(['edit','drop'])
+const emit = defineEmits(['edit', 'drop'])
 
 function toURL (item) {
   apiJson.put({
@@ -88,7 +87,7 @@ function toURL (item) {
 }
 
 function edit () {
-  emit('edit',props.item)
+  emit('edit', props.item)
 }
 
 function drop () {
@@ -106,11 +105,11 @@ function drop () {
         Bookmark: {
           bmId: props.item.bmId,
           groupId: bookmark.curGroupId.value,
-          cateId:props.item.cateId,
+          cateId: props.item.cateId,
           dropAt: dayjs().format('YYYY-MM-DD HH:mm:ss')
         }
       }).then(data => {
-        emit("drop")
+        emit('drop')
         bookmark.loadBookmarkList()
         bookmark.loadSubCateBookmark()
         bookmark.loadCateBmNum()
@@ -120,7 +119,6 @@ function drop () {
     }
   })
 }
-
 
 </script>
 
@@ -175,7 +173,6 @@ function drop () {
 
     }
   }
-
 
   .remark {
     font-size: 12px;

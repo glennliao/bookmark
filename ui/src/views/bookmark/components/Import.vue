@@ -1,32 +1,34 @@
 <template>
-  <a-upload-dragger
-    v-model:fileList="fileList"
-    name="file"
-    action=""
-    :maxCount="1"
-    @change="handleChange"
-    :beforeUpload="()=>false"
-  >
-    <p class="ant-upload-drag-icon">
-      <inbox-outlined></inbox-outlined>
-    </p>
-    <p class="ant-upload-text">Click or drag .html file to this area to upload</p>
-    <p class="ant-upload-hint">
-      Support for a single or bulk upload. Strictly prohibit from uploading company data or other
-      band files
-    </p>
-  </a-upload-dragger>
+  <div>
+    <a-upload-dragger
+        v-model:fileList="fileList"
+        name="file"
+        action=""
+        :maxCount="1"
+        @change="handleChange"
+        :beforeUpload="()=>false"
+    >
+      <p class="ant-upload-drag-icon">
+        <inbox-outlined></inbox-outlined>
+      </p>
+      <p class="ant-upload-text">Click or drag .html file to this area to upload</p>
+      <p class="ant-upload-hint">
+        Support for a single or bulk upload. Strictly prohibit from uploading company data or other
+        band files
+      </p>
+    </a-upload-dragger>
 
-  <a-alert class="mt-2">
-    <template #message>
-      上传完毕后将自动在后台同步书签的信息,可刷新页面后查看。
-    </template>
-  </a-alert>
+    <a-alert class="mt-2">
+      <template #message>
+        上传完毕后将自动在后台同步书签的信息,可刷新页面后查看。
+      </template>
+    </a-alert>
 
-  <div class="mt-2">
-    <a-button @click="fetchMeta">手动触发书签图标更新</a-button>
-    <div style="margin-top: 4px;font-size: 13px;color:#818181">
-      尝试更新 @import 标记的书签， 如果网络获取失败，则暂保留该标记
+    <div class="mt-2">
+      <a-button @click="fetchMeta">手动触发书签图标更新</a-button>
+      <div style="margin-top: 4px;font-size: 13px;color:#818181">
+        尝试更新 @import 标记的书签， 如果网络获取失败，则暂保留该标记
+      </div>
     </div>
   </div>
 </template>
