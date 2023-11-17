@@ -183,6 +183,28 @@
     "executor": "default"
   },
   {
+    "name": "app_list",
+    "alias": "AppList",
+    "get": ["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "head":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "gets":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "heads":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "post":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "put":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "delete":["LOGIN","OWNER","GroupUser","GroupAdmin"],
+    "rowKey": "app_id",
+    "fieldsGet": {
+      "default": {
+        "in": {},
+        "out": {
+
+        }
+      }
+    },
+    "rowKeyGen": "idgen",
+    "executor": "default"
+  },
+  {
     "name": "tag",
     "alias": "Tag",
     "get": ["LOGIN","OWNER","GroupUser","GroupAdmin"],

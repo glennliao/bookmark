@@ -12,9 +12,14 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('../views/note/index.vue')
   },
   {
+    path: '/home',
+    name: 'Home',
+    component: () => import('../views/home/index.vue')
+  },
+  {
     path: '/',
     name: 'Index',
-    redirect: '/bookmark'
+    redirect: '/home'
   },
   {
     path: '/login',

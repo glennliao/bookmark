@@ -5,8 +5,14 @@
     <div class="flex mx-auto">
 
       <a-row class="w-full">
+        <a-col :sm="24" :md="0" class="w-full">
+          <div class="py-2 mx-2 my-2 mt-1">
+            <a-input-search allow-clear autofocus placeholder="search something..." v-model:value="searchKey"
+                            @search="search"/>
+          </div>
+        </a-col>
         <a-col :sm="24" :md="0">
-          <div class="mt-8 ml-10 flex flex-wrap" style="align-content: start">
+          <div class="mt-2 ml-2 flex flex-wrap" style="align-content: start">
             <div class="cursor-pointer p-2 m-1 rounded shadow-sm bg-white" v-for="item in tagList" :key="item"
                  @click="filterTag(item)"
                  :class="{'active-tag': activeTag == item}"
@@ -16,13 +22,10 @@
           </div>
         </a-col>
         <a-col :sm="24" :md="18" class="w-full">
-          <div class="p-2 m-2">
-            <a-input-search allow-clear autofocus placeholder="search something..." v-model:value="searchKey"
-                            @search="search"/>
-          </div>
-          <div class="note-item shadow rounded bg-white w-full" v-for="item in list" :key="item.noteId">
+
+          <div class="note-item shadow rounded  w-full" v-for="item in list" :key="item.noteId">
             <render :tags="item.tags" :content="item.content.markdown" style="display: block"/>
-            <div class="flex justify-end" style="border-top: 1px solid rgba(213,213,213,0.53);padding-top: 4px">
+            <div class="flex justify-end" style="border-top: 1px solid rgba(213,213,213,0.53);padding: 6px 12px;background: #e0e0e069">
               <a-button size="small" danger class="mr-2" @click="del(item)">del</a-button>
               <a-button size="small" @click="edit(item)">Edit</a-button>
             </div>
@@ -32,7 +35,11 @@
             <a-pagination v-model:current="pageNum" :default-page-size="pageSize" :total="total" show-less-items @change="onPageChange"/>
           </div>
         </a-col>
-        <a-col v-if="!smallerThanSm" :sm="0" :md="6">
+        <a-col v-if="!smallerThanSm" :sm="0" :md="6" >
+          <div class="mt-8 mx-4 ">
+            <a-input-search ref="searchInput" allow-clear autofocus placeholder="search something..." v-model:value="searchKey"
+                            @search="search"/>
+          </div>
           <div class="mt-8 ml-4 flex flex-wrap" style="align-content: start">
             <div class="cursor-pointer p-2 m-1 rounded shadow-sm bg-white" v-for="item in tagList" :key="item"
                  @click="filterTag(item)"
@@ -186,14 +193,17 @@ function search() {
   loadList(searchKey.value)
 }
 
-
+const searchInput = ref(null)
+onMounted(()=>{
+  searchInput.value && searchInput.value.focus()
+})
 
 </script>
 <style scoped lang="scss">
 
 .note-item {
-  margin: 6px auto;
-  padding: 6px;
+  margin: 0  auto 6px;
+  padding: 2px;
 }
 
 .active-tag {

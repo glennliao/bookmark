@@ -15,7 +15,7 @@
       <!-- content-->
       <div class="mt-4" v-if="isHome">
 
-        <div class="ml-2 mb-2 mt-4 " style="font-weight: 500">🕐 最近访问</div>
+        <div class="ml-2 mb-2 mt-4 section-title">🕐 <span >最近访问</span></div>
         <div class="flex mt-1">
           <transition-group appear name="slide-fade" tag="div" class="flex flex-wrap justify-start">
             <bookmark :simple="true" v-for="item in latestVisitList" :key="item.bmId" :item="item" @edit="edit(item)"/>
@@ -34,7 +34,7 @@
               ></a-select>
               <a-button @click="submitTag" class="ml-2">确定</a-button>
             </template>
-            <div class="ml-2 mb-2 mt-8 cursor-pointer" style="font-weight: 500">⭐ #{{ tag.tag }}</div>
+            <div class="ml-2 mb-2 mt-8 cursor-pointer section-title" style="font-weight: 500;display: inline-block">⭐ <span>{{ tag.tag }}</span> <EditOutlined /></div>
           </a-popover>
 
           <div class="flex mt-2">
@@ -57,7 +57,7 @@
               ></a-select>
               <a-button @click="submitTag" class="ml-2">确定</a-button>
             </template>
-            <div class="ml-2 mb-2 mt-8 cursor-pointer" style=""> + add new tag</div>
+            <div class="ml-2 mb-2 mt-8 cursor-pointer" style="color: #ccc"> + add new tag</div>
           </a-popover>
 
         </div>
@@ -80,7 +80,7 @@
 
           <a-segmented v-if="subCateList.length" class="mt-2 mx-2" @change="clickSubCate" v-model:value="curSubCateId"
                        :options="subCateList"
-                       style="background: #63636517;border-radius: 20px;max-width: 98%;overflow-x: auto;padding: 2px 0.5rem">
+                       style="background: rgb(255 255 255 / 44%);border-radius: 20px;max-width: 98%;overflow-x: auto;padding: 2px 0.5rem">
             <template #label="{ payload,title }">
               {{ title }} <span v-if="payload.count"
                                 style="font-size: 12px;margin-left: 2px">({{ payload.count }})</span>
@@ -123,12 +123,12 @@
 <script lang="ts" setup>
 import { treeEach } from '@/utils/tree'
 
-import { ref, onMounted, h, computed, toRaw, getCurrentInstance, watch } from 'vue'
+import { ref, onMounted, h, computed, toRaw, getCurrentInstance } from 'vue'
 import { useBookmark } from './hook/bookmark'
 import Setting from './components/Setting.vue'
 import BookmarkEditModal from '@/views/bookmark/components/BookmarkEditModal.vue'
 import Bookmark from '@/views/bookmark/components/Bookmark.vue'
-import { PlusOutlined, SearchOutlined } from '@ant-design/icons-vue'
+import { PlusOutlined, SearchOutlined, EditOutlined } from '@ant-design/icons-vue'
 import { apiJson } from '@/api'
 import { useRoute } from 'vue-router'
 import Search from '@/views/bookmark/components/Search.vue'
@@ -233,6 +233,7 @@ const cateItems = computed(() => {
 })
 
 function onCateClick(e) {
+  console.log("onCate",e)
   switch (e.key) {
     case '@home':
       isHome.value = true
@@ -246,6 +247,7 @@ function onCateClick(e) {
 }
 
 function clickSubCate(cateId: string) {
+  console.log("clickSubCate",cateId)
   curSubCateId.value = cateId
   loadSubCateBookmark()
 }
@@ -300,17 +302,6 @@ function foundCurCateInfo(keys: string[], tree: any[], parents: any[]) {
     }
   }
 }
-
-// function handleMenuClick(keyPath: string[]) {
-//   const keys = keyPath
-//
-//   curCateInfo.value = {}
-//   curSubCateBookmark.value = []
-//   curSubCateId.value = ''
-//   foundCurCateInfo(keys, cateTree.value.children, [])
-//   clickCate(keys)
-//   isHome.value = false
-// }
 
 const BookmarkModalRef = ref()
 const BookmarkSearchModalRef = ref()
@@ -428,20 +419,39 @@ function submitTag() {
 
 </script>
 
-<style>
+<style lang="scss">
+
+li[isme="true"]{
+  color: #1677ff;
+  font-weight: bold;
+}
+
 li[isme="true"]:not(.ant-menu-submenu-active).ant-menu-submenu:after {
   position: absolute;
   inset-inline: 16px;
   bottom: 0;
-  border-bottom: 2px solid transparent;
+  border-bottom: 2px solid #1677ff;
   transition: border-color 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
   content: "";
-  border-bottom-width: 2px;
-  border-bottom-color: #1677ff;
+
 }
 </style>
 
 <style scoped lang="scss">
+
+.section-title{
+  font-weight: 500;
+  span:nth-child(1){
+    filter: invert(100%)  grayscale(1) contrast(9);
+
+  }
+
+  span:nth-child(2){
+    color: #ccc;
+  }
+}
+
+
 .slide-fade-enter-active {
   transition: all .4s ease;
 }

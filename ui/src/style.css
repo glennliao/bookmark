@@ -1,70 +1,24 @@
-/*@tailwind base;*/
-@tailwind components;
-@tailwind utilities;
-
-ul {
-  margin-top: 0;
-  margin-bottom: 0;
-  margin-block-start: 0;
-  padding-inline-start: 0;
-}
-
-
-:root {
-  color-scheme: light;
-  --pf: 258.89 94.378% 40.941%;
-  --sf: 314 100% 37.647%;
-  --af: 174 60% 40.784%;
-  --nf: 219 14.085% 22.275%;
-  --in: 198 93% 60%;
-  --su: 158 64% 52%;
-  --wa: 43 96% 56%;
-  --er: 0 91% 71%;
-  --inc: 198 100% 12%;
-  --suc: 158 100% 10%;
-  --wac: 43 100% 11%;
-  --erc: 0 100% 14%;
-  --rounded-box: 1rem;
-  --rounded-btn: .5rem;
-  --rounded-badge: 1.9rem;
-  --animation-btn: .25s;
-  --animation-input: .2s;
-  --btn-text-case: uppercase;
-  --btn-focus-scale: .95;
-  --border-btn: 1px;
-  --tab-border: 1px;
-  --tab-radius: .5rem;
-  --p: 258.89 94.378% 51.176%;
-  --pc: 0 0% 100%;
-  --s: 314 100% 47.059%;
-  --sc: 0 0% 100%;
-  --a: 174 60% 50.98%;
-  --ac: 174.71 43.59% 15.294%;
-  --n: 219 14.085% 27.843%;
-  --nc: 0 0% 100%;
-  --b1: 0 0% 100%;
-  --b2: 0 0% 94.902%;
-  --b3: 180 1.9608% 90%;
-  --bc: 215 27.907% 16.863%
-}
 
 #app{
-  background-image: radial-gradient(hsla(0 0% 94.902%/.2) .5px,hsla(0 0% 94.902%/1) .5px);
-  background-size: 5px 5px;
+  /*background-size: 5px 5px;*/
+  /*background: url("https://picdl.sunbangyan.cn/2023/11/15/c6e9fcce5a92e1428c44c4cc1d5db298.jpg") no-repeat center center;*/
+  background-size: cover;
   min-height: 100vh;
 
+  backdrop-filter: blur(4px);
+  background: #47918a radial-gradient(ellipse at center, #47918a 0%, #0b3161 100%);
 }
 
-/*#bg{*/
-/*  position: absolute;*/
-/*  top: 0;*/
-/*  bottom: 0;*/
-/*  left: 0;*/
-/*  right:0;*/
-/*  filter: blur(1px);*/
-/*  background-color: unset !important;*/
-/*  background: url(https://api.timecdn.cn/v1/bing) no-repeat center center fixed;*/
-/*  z-index: 0;*/
-/*}*/
+.ant-layout{
+  background: transparent;
+}
 
+.ant-breadcrumb{
+  /*filter: invert(100%);*/
+  filter: invert(1) grayscale(1) contrast(9);
+  font-weight: bold;
+}
 
+.ant-menu-dark{
+  background: transparent;
+}

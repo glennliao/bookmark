@@ -129,6 +129,23 @@ type (
 )
 
 type (
+	AppList struct {
+		tablesync.TableMeta `charset:"utf8mb4" comment:"应用"`
+		Id                  uint64 `ddl:"primaryKey"`
+		AppId               string `ddl:"size:32;comment:appId"`
+		Title               string `ddl:"size:128;comment:标题"`
+		Url                 string `ddl:"size:512;comment:书签地址"`
+		Icon                string `ddl:"size:256;comment:图标地址"`
+		Remark              string `ddl:"size:1024;comment:备注"`
+		From                string `ddl:"size:32;comment:来源"`
+		UserId              string `ddl:"size:128;comment:标题"`
+		Created
+		Updated
+		Deleted
+	}
+)
+
+type (
 	Tag struct {
 		tablesync.TableMeta `charset:"utf8mb4" comment:"标签"`
 		Id                  uint64 `ddl:"primaryKey"`
@@ -162,6 +179,8 @@ func Tables() []tablesync.Table {
 
 		Note{},
 		NoteHistory{},
+
+		AppList{},
 
 		Tag{},
 		Config{},

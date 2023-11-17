@@ -196,6 +196,34 @@
       "Note": {}
     },
     "Executor": {}
+  },
+
+  {
+    "tag": "AppList",
+    "version": "1",
+    "method": "POST",
+    "structure": {
+      "AppList": {}
+    },
+    "Executor": {}
+  },
+  {
+    "tag": "AppList",
+    "version": "1",
+    "method": "PUT",
+    "structure": {
+      "AppList": {}
+    },
+    "Executor": {}
+  },
+  {
+    "tag": "AppList",
+    "version": "1",
+    "method": "DELETE",
+    "structure": {
+      "AppList": {}
+    },
+    "Executor": {}
   }
 
 ]

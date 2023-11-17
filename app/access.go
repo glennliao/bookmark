@@ -143,6 +143,8 @@ func AccessCondition(ctx context.Context, req config.ConditionReq, where *config
 				delete(req.NodeReq, "q")
 			}
 		}
+	case "AppList":
+		where.Add("user_id", user.UserId)
 
 	case "Config":
 		where.Add("for_id", user.UserId)

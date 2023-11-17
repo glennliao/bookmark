@@ -1,17 +1,17 @@
 <template>
   <a-modal
-      title="书签搜索"
-      v-model:open="visible"
+    title="书签搜索"
+    v-model:open="visible"
   >
     <div>
       <a-input-search
-          v-model:value="info.q"
-          placeholder="url or title"
-          enter-button="Search"
-          size="default"
-          ref="input"
-          @search="onSearch"
-          :loading="fetchLoading"
+        v-model:value="info.q"
+        placeholder="url or title"
+        enter-button="Search"
+        size="default"
+        ref="input"
+        @search="onSearch"
+        :loading="fetchLoading"
       />
 
       <div class="mt-1 p-1 bg-blue-100 rounded">
@@ -66,7 +66,7 @@ const {
 
 const emit = defineEmits(['edit'])
 
-function edit(e) {
+function edit (e) {
   emit('edit', e)
 }
 
@@ -81,11 +81,10 @@ window.addEventListener('keydown', function (event) {
   }
 })
 
-
 const tagsOptions = ref([])
 const selectTags = ref([])
 
-function loadTagList() {
+function loadTagList () {
   apiJson.get({
     'tags()': 'bmTags()'
   }).then(data => {
@@ -97,22 +96,28 @@ function loadTagList() {
   })
 }
 
-function filterByTag(tag) {
+function filterByTag (tag) {
   // let list = toRaw(selectTags.value)
   // if (list.includes(tag)) {
   //   list.splice(selectTags.value.findIndex(tag))
   // } else {
   //   list.push(tag)
   // }
+
+  if (selectTags.value.includes(tag)) {
+    selectTags.value = []
+    if (info.value.q) {
+      onSearch()
+    }
+    return
+  }
+
   let list = [tag]
-
-
   selectTags.value = list
-
   onSearch()
 }
 
-function onSearch() {
+function onSearch () {
   const q = info.value.q.trim()
   let tags = toRaw(selectTags.value)
 
@@ -156,7 +161,7 @@ function onSearch() {
 
 const input = ref(null)
 
-function open(_info = {}) {
+function open (_info = {}) {
 
   hasSearch.value = false
   list.value = []
@@ -171,7 +176,7 @@ function open(_info = {}) {
   })
 }
 
-function toURL(item) {
+function toURL (item) {
   apiJson.put({
     tag: 'BookmarkUse',
     BookmarkUse: {
@@ -181,7 +186,7 @@ function toURL(item) {
   window.open(item.url, '_blank')
 }
 
-function getCateInfo(cateId) {
+function getCateInfo (cateId) {
   const list = []
   let parentId = cateId
   let i = 10

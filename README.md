@@ -22,12 +22,10 @@
 - [x] markdown 编辑 
 
 ## 截图
-## bookmark
-![](./screenshot/bookmark1.png)
-![](./screenshot/bookmark2.png)
-![](./screenshot/bookmark3.png)
-## note
-![](./screenshot/note1.png)
+
+![](./screenshot/home.jpg)
+![](./screenshot/bookmark.jpg)
+![](./screenshot/note.jpg)
 
 
 ## 使用
