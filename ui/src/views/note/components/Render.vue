@@ -64,10 +64,12 @@ watch(() => [props.content, props.tags], (e) => {
 </script>
 
 <template>
-  <view>
-    <MdPreview showCodeRowNumber :editorId="id" :modelValue="text" />
-<!--    <MdCatalog :editorId="id" :scrollElement="scrollElement" />-->
-  </view>
+
+  <MdPreview showCodeRowNumber :editorId="id" :modelValue="text" />
+<!--  <div>-->
+<!--    <MdPreview showCodeRowNumber :editorId="id" :modelValue="text" />-->
+<!--&lt;!&ndash;    <MdCatalog :editorId="id" :scrollElement="scrollElement" />&ndash;&gt;-->
+<!--  </div>-->
 </template>
 
 <style lang="scss">

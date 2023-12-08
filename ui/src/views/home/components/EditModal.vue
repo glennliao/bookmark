@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { apiJson } from '@/api'
+import {ref} from 'vue'
 
-const emit = defineEmits("refresh")
+const emit = defineEmits(["refresh"])
 const openModel = ref(false)
 const editInfo = ref({})
 
@@ -12,7 +13,6 @@ const open = () => {
 }
 
 const submit = ()=>{
-  console.log("subm",editInfo, editInfo.value)
   apiJson.post({
     "AppList":{
       ...toRaw(editInfo.value)
@@ -37,7 +37,6 @@ defineExpose({
            @ok="submit"
   >
     <a-form>
-      {{editInfo}}
       <a-form-item label="title">
         <a-input v-model:value="editInfo.title"></a-input>
       </a-form-item>

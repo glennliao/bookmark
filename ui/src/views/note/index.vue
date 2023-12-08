@@ -23,8 +23,17 @@
         </a-col>
         <a-col :sm="24" :md="18" class="w-full">
 
-          <div class="note-item shadow rounded  w-full" v-for="item in list" :key="item.noteId">
-            <render :tags="item.tags" :content="item.content.markdown" style="display: block"/>
+          <div class="note-item shadow rounded  w-full " v-for="(item,index) in list" :key="item.noteId">
+            <div class="max-note-height relative"  :style="{
+              '--note-max-height': item.openFlag?'auto':'240px',
+              paddingBottom:item.needOpenFlag?'20px':0
+            }">
+              <render :id="item.noteId" @onHtmlChanged="onHtmlChange(item,index)" :tags="item.tags" :content="item.content.markdown" style="display: block"/>
+              <div v-if="item.needOpenFlag" @click="item.openFlag = !item.openFlag" class="cursor-pointer text-white" style="position: absolute;background: rgb(139 139 139 / 66%);bottom:0;width:100%;text-align: center;height: 20px;line-height: 20px">
+                  展开 / 收起
+              </div>
+            </div>
+
             <div class="flex justify-end" style="border-top: 1px solid rgba(213,213,213,0.53);padding: 6px 12px;background: #e0e0e069">
               <a-button size="small" danger class="mr-2" @click="del(item)">del</a-button>
               <a-button size="small" @click="edit(item)">Edit</a-button>
@@ -114,6 +123,8 @@ function loadList(searchKey = '') {
     list.value = data.list.map(item => {
       item.content = JSON.parse(item.content)
       item.tags = JSON.parse(item.tags || '[]')
+      item.openFlag = false
+      item.needOpenFlag = false
       return item
     })
   })
@@ -198,7 +209,23 @@ onMounted(()=>{
   searchInput.value && searchInput.value.focus()
 })
 
+
+const onHtmlChange = (item, index)=>{
+  const noteId = item.noteId
+  const h = document.getElementById(noteId).clientHeight
+  if (h > 240){
+    item.needOpenFlag = true
+    list.value[index] = item
+  }
+
+  item.height = h
+
+  console.log(item)
+}
 </script>
+
+
+
 <style scoped lang="scss">
 
 .note-item {
@@ -209,6 +236,11 @@ onMounted(()=>{
 .active-tag {
   background: #46a0fc;
   color: white;
+}
+
+.max-note-height {
+  max-height: var(--note-max-height);
+  overflow: hidden;
 }
 
 </style>

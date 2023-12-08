@@ -19,7 +19,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     name: 'Index',
-    redirect: '/home'
+    redirect: location.href.includes("?url=")?'/bookmark':"/home"
   },
   {
     path: '/login',
