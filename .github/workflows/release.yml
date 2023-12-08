@@ -56,7 +56,7 @@ jobs:
         run: |
           gf pack ./ui/dist ./packed/dist.go
           
-          gf build -s linux,windows -a amd64,arm64 --gf.gcfg.file=gf.yaml
+          gf build -s linux,windows -a amd64,arm64 --gf.gcfg.file=gf.yaml -p ./temp
 
           python release.py
 
