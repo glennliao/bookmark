@@ -26,10 +26,10 @@
           <div class="note-item shadow rounded  w-full " v-for="(item,index) in list" :key="item.noteId">
             <div class="max-note-height relative"  :style="{
               '--note-max-height': item.openFlag?'auto':'240px',
-              paddingBottom:item.needOpenFlag?'20px':0
+              paddingBottom:noteHeightMap[item.noteId]>240?'20px':0
             }">
-              <render :id="item.noteId" @onHtmlChanged="onHtmlChange(item,index)" :tags="item.tags" :content="item.content.markdown" style="display: block"/>
-              <div v-if="item.needOpenFlag" @click="item.openFlag = !item.openFlag" class="cursor-pointer text-white" style="position: absolute;background: rgb(139 139 139 / 66%);bottom:0;width:100%;text-align: center;height: 20px;line-height: 20px">
+              <render :id="item.noteId" @onHtmlChanged="onHtmlChange(item)" :tags="item.tags" :content="item.content.markdown" style="display: block"/>
+              <div v-if="noteHeightMap[item.noteId]>240" @click="item.openFlag = !item.openFlag" class="cursor-pointer text-white" style="position: absolute;background: rgb(139 139 139 / 66%);bottom:0;width:100%;text-align: center;height: 20px;line-height: 20px">
                   展开 / 收起
               </div>
             </div>
@@ -124,7 +124,6 @@ function loadList(searchKey = '') {
       item.content = JSON.parse(item.content)
       item.tags = JSON.parse(item.tags || '[]')
       item.openFlag = false
-      item.needOpenFlag = false
       return item
     })
   })
@@ -210,18 +209,15 @@ onMounted(()=>{
 })
 
 
-const onHtmlChange = (item, index)=>{
+const onHtmlChange = (item)=>{
   const noteId = item.noteId
   const h = document.getElementById(noteId).clientHeight
-  if (h > 240){
-    item.needOpenFlag = true
-    list.value[index] = item
-  }
-
-  item.height = h
-
-  console.log(item)
+  noteHeightMap.value[noteId] = h
 }
+
+
+const noteHeightMap = ref({})
+
 </script>
 
 
