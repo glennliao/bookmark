@@ -77,6 +77,9 @@ var (
 				configExample = strings.Replace(configExample, "{{secret}}", grand.S(32), 1)
 				gfile.PutContents("config.yaml", configExample)
 			}
+
+			if os.
+
 			return
 		},
 	}
@@ -88,4 +91,7 @@ func main() {
 		panic(err)
 	}
 	Main.Run(gctx.New())
+
+	x := g.Server("")
+	x.
 }

@@ -1,0 +1,9 @@
+run = "make"
+entrypoint = "main.go"
+language = "go"
+
+[nix]
+channel = "stable-22_11"
+
+[debugger]
+program = "main.go"
