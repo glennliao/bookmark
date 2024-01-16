@@ -139,6 +139,9 @@ type (
 		Remark              string `ddl:"size:1024;comment:备注"`
 		From                string `ddl:"size:32;comment:来源"`
 		UserId              string `ddl:"size:128;comment:标题"`
+		OpenType            string `ddl:"size:32;comment:打开方式"`
+		OpenParam           string `ddl:"type:json;comment:打开参数"`
+		Sorts               int32
 		Created
 		Updated
 		Deleted
