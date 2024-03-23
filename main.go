@@ -78,8 +78,6 @@ var (
 				gfile.PutContents("config.yaml", configExample)
 			}
 
-			if os.
-
 			return
 		},
 	}
@@ -91,7 +89,4 @@ func main() {
 		panic(err)
 	}
 	Main.Run(gctx.New())
-
-	x := g.Server("")
-	x.
 }
